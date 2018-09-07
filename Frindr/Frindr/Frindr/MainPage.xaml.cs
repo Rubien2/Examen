@@ -12,6 +12,9 @@ namespace Frindr
         public MainPage()
         {
             InitializeComponent();
+
+
+            //hello
         }
     }
 }
