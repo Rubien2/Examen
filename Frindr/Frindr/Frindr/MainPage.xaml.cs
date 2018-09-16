@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using SQLite;
-using System.IO;
 
 namespace Frindr
 {
     public partial class MainPage : ContentPage
     {
-        string userPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "User.txt");
+        public bool Registered { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
             App.Current.MainPage = new NavigationPage(this);
+            OnAppearing();
         }
 
         private void Button_Clicked(object sender, EventArgs e)
@@ -29,6 +24,19 @@ namespace Frindr
         {
             Login login = new Login();
             Navigation.PushModalAsync(login);
+        }
+
+        public void RegisteredMessage()
+        {
+            if (Registered)
+            {
+                DisplayAlert("Registry complete","You have succesfully registered","Ok");
+            }
+        }
+
+        protected override void OnAppearing()
+        {
+            RegisteredMessage();
         }
     }
 }

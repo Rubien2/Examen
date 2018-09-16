@@ -8,6 +8,7 @@
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
             <Entry x:Name="txtUsername"/>
+            <Entry x:Name="txtPassword" IsPassword="True"/>
             <Button Clicked="Button_Clicked"/>
         </StackLayout>
     </ContentPage.Content>

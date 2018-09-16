@@ -6,23 +6,35 @@ using System.Threading.Tasks;
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using SQLite;
 
 namespace Frindr
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Register : ContentPage
 	{
-        string userRecords = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "user.txt");
-		public Register ()
+        string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "user.db3");
+        Connection conn = new Connection();
+
+        public Register ()
 		{
 			InitializeComponent();
-		}
+        }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            using (StreamWriter streamWriter = new StreamWriter(File.Create(userRecords)))
+            try
             {
-                streamWriter.WriteLine("Harry");
+                SQLiteConnection db = conn.SQLConnection;
+                var content = db.CreateCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255))");
+                content.ExecuteNonQuery();
+                
+                var cmd = db.CreateCommand("INSERT INTO client (name, pw) VALUES ('" + txtUsername.Text + "', '" + txtPassword.Text + "')");
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception edde)
+            {
+                DisplayAlert("An error occurred", "An error occurred: " + edde.ToString(),"Ok");
             }
         }
     }

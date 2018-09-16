@@ -1,35 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using SQLite;
 
 namespace Frindr
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
+    [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Login : ContentPage
 	{
-        string userRecords = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "user.txt");
+        Connection conn = new Connection();
+
         public Login ()
 		{
-			InitializeComponent ();
+			InitializeComponent ();  
 		}
 
-        public void CheckUsername()
+        private void btnConfirm_Clicked(object sender, EventArgs e)
         {
-            using (StreamReader streamReader = new StreamReader(userRecords))
+            try
             {
-                string content = streamReader.ReadToEnd();
+                
+                SQLiteConnection connect = conn.SQLConnection;
 
-                if(txtUsername.Text == content)
-                {
-                    Profile profile = new Profile();
-                    Navigation.PushModalAsync(profile);
-                }
+                
+                    //I HATE THIS WEIRD QUERY
+                    var db = connect.CreateCommand("SELECT * FROM client WHERE name = '" + txtUsername.Text + "' AND pw = '" + txtPassword.Text + "'");
+                    int result = db.ExecuteNonQuery();
+
+                    if(result == 1)
+                    {
+                        DisplayAlert("WE IN","IM A GENIUS","ok");
+                    }
+                    //con.Close();
+                
+                
+            }
+            catch (Exception ea)
+            {
+                DisplayAlert("An error occurred", "Something went wrong with your login attempt. Try again or come back later","Ok");
+                Console.WriteLine(ea.ToString());
             }
         }
-	}
+    }
 }
