@@ -4,7 +4,7 @@
              x:Class="Frindr.Register">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
+            <Label Text="Registratie pagina"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
             <Entry x:Name="txtUsername"/>

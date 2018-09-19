@@ -11,7 +11,6 @@ namespace Frindr
         {
             InitializeComponent();
             App.Current.MainPage = new NavigationPage(this);
-            OnAppearing();
         }
 
         private void Button_Clicked(object sender, EventArgs e)
@@ -24,19 +23,6 @@ namespace Frindr
         {
             Login login = new Login();
             Navigation.PushModalAsync(login);
-        }
-
-        public void RegisteredMessage()
-        {
-            if (Registered)
-            {
-                DisplayAlert("Registry complete","You have succesfully registered","Ok");
-            }
-        }
-
-        protected override void OnAppearing()
-        {
-            RegisteredMessage();
         }
     }
 }

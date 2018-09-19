@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
-using SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace Frindr
 {
     class Connection
     {
-        public SQLiteConnection SQLConnection { get; set; } = new SQLiteConnection(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "user.db3"));
+        readonly static string Location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "main.sqlite");
+        public SqliteConnection SQLConnection { get; set; } = new SqliteConnection("Data Source=" + Location);
     }
 }

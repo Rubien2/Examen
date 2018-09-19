@@ -2,7 +2,8 @@
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SQLite;
+
+using Microsoft.Data.Sqlite;
 
 namespace Frindr
 {
@@ -13,27 +14,42 @@ namespace Frindr
 
         public Login ()
 		{
-			InitializeComponent ();  
+			InitializeComponent ();
 		}
 
         private void btnConfirm_Clicked(object sender, EventArgs e)
         {
             try
             {
-                
-                SQLiteConnection connect = conn.SQLConnection;
+                //conn.SQLConnection
+                using (SqliteConnection con = conn.SQLConnection)
+                {
+                    con.Open();
+                    string cmdStr = $"SELECT * FROM client WHERE name = '{txtUsername.Text}' AND pw = '{txtPassword.Text}'";
 
-                
-                    //I HATE THIS WEIRD QUERY
-                    var db = connect.CreateCommand("SELECT * FROM client WHERE name = '" + txtUsername.Text + "' AND pw = '" + txtPassword.Text + "'");
-                    int result = db.ExecuteNonQuery();
-
-                    if(result == 1)
+                    SqliteCommand cmd = new SqliteCommand(cmdStr, con);
+                    cmd.ExecuteNonQuery();
+                    
+                    using (SqliteDataReader rdr = cmd.ExecuteReader())
                     {
-                        DisplayAlert("WE IN","IM A GENIUS","ok");
+                        while (rdr.Read())
+                        {
+                            string readUser = rdr.GetString(1);
+                            string readPass = rdr.GetString(2);
+
+                            if (txtUsername.Text == readUser && txtPassword.Text == readPass)
+                            {
+                                DisplayAlert("WE IN", "WOUTER IS A GENIUS", "ok");
+                            }
+                            else
+                            {
+                                DisplayAlert("Login fout", "Gebruiker en/of wachtwoord is fout", "Ok");
+                            }
+                        }
+                        rdr.Close();
                     }
-                    //con.Close();
-                
+                    con.Close();
+                }
                 
             }
             catch (Exception ea)

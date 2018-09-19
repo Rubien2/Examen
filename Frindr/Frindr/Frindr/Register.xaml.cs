@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace Frindr
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
+    [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Register : ContentPage
 	{
-        string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "user.db3");
         Connection conn = new Connection();
 
         public Register ()
@@ -25,12 +19,18 @@ namespace Frindr
         {
             try
             {
-                SQLiteConnection db = conn.SQLConnection;
-                var content = db.CreateCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255))");
-                content.ExecuteNonQuery();
+                using (SqliteConnection con = conn.SQLConnection)
+                {
+                    con.Open();
+                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255))", con);
+                    cmd.ExecuteNonQuery();
+
+                    SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw) VALUES ('{txtUsername.Text}', '{txtPassword.Text}')", con);
+                    cmd2.ExecuteNonQuery();
+
+                    con.Close();
+                }
                 
-                var cmd = db.CreateCommand("INSERT INTO client (name, pw) VALUES ('" + txtUsername.Text + "', '" + txtPassword.Text + "')");
-                cmd.ExecuteNonQuery();
             }
             catch (Exception edde)
             {
