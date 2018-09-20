@@ -10,6 +10,7 @@ namespace Frindr
         public MainPage()
         {
             InitializeComponent();
+
             App.Current.MainPage = new NavigationPage(this);
         }
 
