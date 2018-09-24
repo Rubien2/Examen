@@ -10,17 +10,11 @@ using Xamarin.Forms.Xaml;
 namespace Frindr
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class Profile : ContentPage
+	public partial class RegisterPage : ContentPage
 	{
-		public Profile ()
+		public RegisterPage ()
 		{
 			InitializeComponent ();
-            DisplayAlert("Harry", "Harry", "Harry");
-        }
-
-        public void Nothing()
-        {
-            
-        }
+		}
 	}
 }
