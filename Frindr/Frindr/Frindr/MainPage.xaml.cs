@@ -11,7 +11,11 @@ namespace Frindr
         {
             InitializeComponent();
 
-            App.Current.MainPage = new NavigationPage(this);
+            var registerPage = new LoginPage();
+
+            Navigation.PushModalAsync(registerPage);
+
+            //App.Current.MainPage = new NavigationPage(this);
         }
 
         private void Button_Clicked(object sender, EventArgs e)
