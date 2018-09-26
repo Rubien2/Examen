@@ -1,15 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Frindr.Register">
+             x:Class="Frindr.ExitPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Registratie pagina"
+            <Label Text="Goodbye"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
-            <Entry x:Name="txtUsername"/>
-            <Entry x:Name="txtPassword" IsPassword="True"/>
-            <Button Clicked="Button_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

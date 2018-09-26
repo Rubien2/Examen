@@ -10,11 +10,12 @@ using Xamarin.Forms.Xaml;
 namespace Frindr
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class LoginPage : ContentPage
+	public partial class FriendFinderPage : ContentPage
 	{
-		public LoginPage ()
+		public FriendFinderPage ()
 		{
 			InitializeComponent ();
-		}
+
+        }
 	}
 }

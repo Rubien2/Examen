@@ -11,22 +11,28 @@ namespace Frindr
         {
             InitializeComponent();
 
-            var registerPage = new LoginPage();
+            var newPage = new MenuPage();
 
-            Navigation.PushModalAsync(registerPage);
+            Navigation.PushModalAsync(newPage);
 
+            /*var page = (Page)Activator.CreateInstance(typeof(FriendFinderPage));
+
+            var Detail = new NavigationPage(page);
+            
+            Navigation.PushModalAsync(Detail);
+            */
             //App.Current.MainPage = new NavigationPage(this);
         }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            Register register = new Register();
+            RegisterPage register = new RegisterPage();
             Navigation.PushModalAsync(register);
         }
 
         private void Button_Clicked_1(object sender, EventArgs e)
         {
-            Login login = new Login();
+            LoginPage login = new LoginPage();
             Navigation.PushModalAsync(login);
         }
     }
