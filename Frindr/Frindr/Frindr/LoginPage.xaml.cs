@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 
 namespace Frindr
 {
@@ -9,6 +10,7 @@ namespace Frindr
 	public partial class LoginPage : ContentPage
 	{
         Connection conn = new Connection();
+        RestfulClass restful = new RestfulClass();
 
         public LoginPage()
         {
@@ -22,7 +24,7 @@ namespace Frindr
                 using (SqliteConnection con = conn.SQLConnection)
                 {
                     con.Open();
-                    string cmdStr = $"SELECT * FROM client WHERE name = '{NameEntry.Text}' AND pw = '{PasswordEntry.Text}' AND id = 1";
+                    string cmdStr = $"SELECT * FROM client WHERE id = 1";
 
                     SqliteCommand cmd = new SqliteCommand(cmdStr, con);
                     cmd.ExecuteNonQuery();
@@ -33,10 +35,10 @@ namespace Frindr
                         {
                             string readUser = rdr.GetString(1);
                             string readPass = rdr.GetString(2);
-                            /*
+                            
                             try
                             {
-                                string cmdStr2 = $"DELETE FROM client WHERE name = '{NameEntry.Text}' AND pw = '{PasswordEntry.Text}' AND id = 1";
+                                string cmdStr2 = $"DELETE FROM client WHERE id = 5000";
                                 SqliteCommand cmd1 = new SqliteCommand(cmdStr2, con);
                                 SqliteDataReader rdr2 = cmd1.ExecuteReader();
 
@@ -59,7 +61,7 @@ namespace Frindr
                                 {
                                     DisplayAlert("Login fout", "Gebruiker en/of wachtwoord is fout", "Ok");
                                 }
-                            }*/
+                            }
                             if (NameEntry.Text == readUser && PasswordEntry.Text == readPass)
                             {
                                 Profile profile = new Profile();
@@ -85,6 +87,19 @@ namespace Frindr
             {
                 DisplayAlert("An error occurred", "Something went wrong with your login attempt. Try again or come back later", "Ok");
                 Console.WriteLine(ea.ToString());
+            }
+
+            string getUser = restful.GetData($"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{PasswordEntry.Text}");
+            
+            JsonValues json = JsonConvert.DeserializeObject<JsonValues>(getUser);
+
+            //json.pwd is null
+            Console.WriteLine(json.Pwd + "1");
+            Console.WriteLine(PasswordEntry.Text);
+
+            if (PasswordEntry.Text == json.Pwd)
+            {
+                Console.WriteLine("We in");
             }
         }
     }

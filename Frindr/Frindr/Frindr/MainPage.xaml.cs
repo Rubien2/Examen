@@ -6,7 +6,7 @@ namespace Frindr
 {
     public partial class MainPage : ContentPage
     {
-        Connection con = new Connection();
+        Connection conn = new Connection();
         public string Username { get; set; }
 
         public MainPage()
@@ -16,11 +16,11 @@ namespace Frindr
             //auto login check, also not safe at all
             try
             {
-                using (SqliteConnection conn = con.SQLConnection)
+                using (SqliteConnection con = conn.SQLConnection)
                 {
-                    conn.Open();
+                    con.Open();
                     string cmdStr = "SELECT name FROM sqlite_master WHERE type='table' AND name = 'client'";
-                    SqliteCommand cmd = new SqliteCommand(cmdStr, conn);
+                    SqliteCommand cmd = new SqliteCommand(cmdStr, con);
                     cmd.ExecuteNonQuery();
 
                     using (SqliteDataReader rdr = cmd.ExecuteReader())
@@ -28,7 +28,7 @@ namespace Frindr
                         while (rdr.Read())
                         {
                             string cmdStr2 = "SELECT * FROM client WHERE id = 1";
-                            SqliteCommand cmd2 = new SqliteCommand(cmdStr2, conn);
+                            SqliteCommand cmd2 = new SqliteCommand(cmdStr2, con);
                             cmd2.ExecuteNonQuery();
 
                             using (SqliteDataReader rdr2 = cmd2.ExecuteReader())
@@ -40,10 +40,10 @@ namespace Frindr
                                     rdr2.Close();
                                 }
                             }
-                                rdr.Close();
+                            rdr.Close();
                         }
                     }
-                    conn.Close();
+                    con.Close();
                 }
             }
 
@@ -51,19 +51,8 @@ namespace Frindr
             {
                 DisplayAlert("Error", ea.ToString(), "Ok");
             }
-            
-        }
-        //change to register page if no results
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-            RegisterPage registerPage = new RegisterPage();
-            Navigation.PushModalAsync(registerPage);
-        }
 
-        private void Button_Clicked_1(object sender, EventArgs e)
-        {
-            LoginPage loginPage = new LoginPage();
-            Navigation.PushModalAsync(loginPage);
+            Navigation.PushModalAsync(new RegisterPage());
         }
     }
 }
