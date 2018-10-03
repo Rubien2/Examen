@@ -7,19 +7,20 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Frindr.pages
+namespace Frindr
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class ProfilePage : ContentPage
+	public partial class HobbyRegisterPage : ContentPage
 	{
-		public ProfilePage ()
+		public HobbyRegisterPage ()
 		{
 			InitializeComponent ();
 		}
 
-        private void btnSettings_Clicked(object sender, EventArgs e)
+        private void CreateAccountButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new ProfileSettingsPage());
+            MenuPage menuPage = new MenuPage();
+            Navigation.PushModalAsync(menuPage);
         }
     }
 }

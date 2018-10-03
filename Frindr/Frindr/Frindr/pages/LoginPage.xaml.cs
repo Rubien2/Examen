@@ -19,12 +19,12 @@ namespace Frindr
 
         private void LoginButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new MenuPage());
+            Navigation.PushModalAsync(new MenuPage());
         }
 
         private void RegisterButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new RegisterPage());
+            Navigation.PushModalAsync(new RegisterPage());
         }
     }
 }

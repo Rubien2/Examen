@@ -4,12 +4,12 @@
              x:Class="Frindr.ProfileSettingsPage">
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout>
-                <StackLayout>
+            <StackLayout Margin="10">
+                <StackLayout Margin="0,0,0,30">
                     <Label Text="Afbeelding" FontSize="Large"/>
                     <Image Source="" BackgroundColor="Accent" HorizontalOptions="Start" HeightRequest="145" WidthRequest="145" Grid.Column="0" x:Name="ProfileImage"/>
                 </StackLayout>
-                <StackLayout>
+                <StackLayout Margin="0,0,0,30">
                     <Label Text="Algemene informatie" FontSize="Large"></Label>
                     <Entry Placeholder="Naam" x:Name="NameEntry"/>
                     <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry"/>
@@ -20,12 +20,15 @@
                         <Label Text="Geboorte datum:" VerticalTextAlignment="Center"></Label>
                         <DatePicker x:Name="BirthdayPicker" HorizontalOptions="FillAndExpand"/>
                     </StackLayout>
+                    
+                    <Editor Keyboard="Chat" Placeholder="Beschrijving" x:Name="DescriptionEditor"/>
+                    
                 </StackLayout>
-                <StackLayout>
+                <StackLayout Margin="0,0,0,30">
                     <Label Text="Hobby's" FontSize="Large"></Label>
-                    <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton"></Button>
+                    <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton" Clicked="SelectHobbyButton_Clicked"></Button>
                 </StackLayout>
-                <StackLayout>
+                <StackLayout Margin="0,0,0,30">
                     <Label Text="Privacy" FontSize="Large"></Label>
                     <StackLayout Orientation="Horizontal">
                         <Switch IsToggled="false" HeightRequest="5" x:Name="PrivacyFindSwitch"></Switch>

@@ -12,9 +12,25 @@ namespace Frindr
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class ProfileSettingsPage : ContentPage
 	{
-		public ProfileSettingsPage ()
+
+        
+
+        public ProfileSettingsPage ()
 		{
 			InitializeComponent ();
 		}
-	}
+
+        private async void SelectHobbyButton_Clicked(object sender, EventArgs e)
+        {
+            this.IsEnabled = false;
+   
+            //SelectHobbyButton.IsEnabled = false;
+            await Navigation.PushModalAsync(new pages.SelectHobbyPage());
+
+            this.IsEnabled = true;
+        }
+
+
+
+    }
 }

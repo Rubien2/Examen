@@ -6,22 +6,21 @@ namespace Frindr
     public partial class MainPage : ContentPage
     {
         public bool Registered { get; set; }
+        public static string records { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
 
-            var newPage = new MenuPage();
+            records = pages.GlobalVariables.GetRecords();
 
-            Navigation.PushModalAsync(newPage);
+        }
 
-            /*var page = (Page)Activator.CreateInstance(typeof(FriendFinderPage));
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
 
-            var Detail = new NavigationPage(page);
-            
-            Navigation.PushModalAsync(Detail);
-            */
-            //App.Current.MainPage = new NavigationPage(this);
+            Navigation.PushModalAsync(new FirstRegisterPage());
         }
 
         private void Button_Clicked(object sender, EventArgs e)

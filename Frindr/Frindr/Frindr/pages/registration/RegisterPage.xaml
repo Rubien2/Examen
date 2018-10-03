@@ -29,11 +29,11 @@
                 <Label Text="Andere gebruikers mogen mijn locatie zien"></Label>
             </StackLayout>
             
-            <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton"/>
-            <Button Text="Registreren" x:Name="RegisterButton"/>
-            
+            <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton" Clicked="SelectHobbyButton_Clicked"/>
+            <Button Text="Registreren" x:Name="RegisterButton" Clicked="RegisterButton_Clicked"/>
+            <Button Text="Ik heb al een account" x:Name="GoToLoginButton" Clicked="GoToLoginButton_Clicked"/>
 
-        </StackLayout>
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>

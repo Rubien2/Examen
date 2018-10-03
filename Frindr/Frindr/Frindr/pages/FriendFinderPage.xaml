@@ -5,21 +5,24 @@
              Title="Vrienden zoeker">
 
     <StackLayout>
-        
-        <StackLayout Orientation="Horizontal">
-                <Button Text="Extend" x:Name="ShowFilterButton"></Button>
-                <Label VerticalTextAlignment="Center" Text="Selecteer een maximus afstand:"></Label>
-                <Picker x:Name="DistancePicker"></Picker>
-            </StackLayout>
-            <StackLayout Orientation="Horizontal" IsVisible="False" x:Name="ExtraFilterStackLayout">
-                <Label Text="Selecteer een leeftijds categorie:"></Label>
-                <Picker x:Name="AgePicker"></Picker>
-            </StackLayout>
+        <Frame>
+            <StackLayout>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                    <Picker HorizontalOptions="StartAndExpand" x:Name="DistancePicker"></Picker>
+                    <Button HorizontalOptions="End" Text="Show" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
+                </StackLayout>
 
-            <ScrollView>
+                <StackLayout HorizontalOptions="Start" Orientation="Horizontal" IsVisible="False" x:Name="ExtraFilterStackLayout">
+                    
+                    <Picker x:Name="AgePicker"></Picker>
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
+        <ScrollView>
                 
-            </ScrollView>
+        </ScrollView>
             
-        </StackLayout>
+    </StackLayout>
 
 </ContentPage>
