@@ -24,7 +24,7 @@ namespace Frindr
                 using (SqliteConnection con = conn.SQLConnection)
                 {
                     con.Open();
-                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255), email VARCHAR(255), auto TINYINT)", con);
+                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255), email VARCHAR(255), auto TINYINT(1))", con);
                     cmd.ExecuteNonQuery();
 
                     SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1",con);
@@ -48,7 +48,7 @@ namespace Frindr
                     con.Close();
                 }
             }
-            catch (Exception ea)
+            catch (SqliteException)
             {
                 DisplayAlert("An error occurred", "Git gud", "Ok");
             }
