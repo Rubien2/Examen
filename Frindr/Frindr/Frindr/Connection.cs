@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Data.Sqlite;
 
@@ -12,14 +13,19 @@ namespace Frindr
 
     class JsonValues
     {
-        public int? ID { get; set; }
-        public string User { get; set; }
-        public string Pwd { get; set; }
-        public string Email { get; set; }
-        public string Location { get; set; }
-        public string Birthday { get; set; }
-        public string ImagePath { get; set; }
-        public bool UserVisibility { get; set; }
-        public bool LocationVisibility { get; set; }
+        public int? id { get; set; }
+        public string name { get; set; }
+        public string email { get; set; }
+        public string pwd { get; set; }
+        public string location { get; set; }
+        public string birthday { get; set; }
+        public string imagePath { get; set; }
+        public int userVisible { get; set; }
+        public int locationVisible { get; set; }
+    }
+
+    class Records
+    {
+        public List<JsonValues> records { get; set; }
     }
 }

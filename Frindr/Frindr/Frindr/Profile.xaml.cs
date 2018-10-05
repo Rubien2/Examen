@@ -14,20 +14,19 @@ namespace Frindr
     public partial class Profile : ContentPage
     {
         public string Username { get; set; }
-        MainPage mp = new MainPage();
         Connection conn = new Connection();
 
         public Profile()
         {
             InitializeComponent();
-            lblProfile.Text = "Welcome " + mp.Username;
+            lblProfile.Text = "Welcome " + Username;
         }
 
         private void btnLogout_Clicked(object sender, EventArgs e)
         {
             using (SqliteConnection con = conn.SQLConnection)
             {
-                string cmdStr = $"DELETE FROM client WHERE name = {mp.Username}, pw = {/*insert password. email and id*/""}";
+                string cmdStr = $"DELETE FROM client WHERE name = '{Username}', pw = '{/*insert password. email and id*/""}'";
                 SqliteCommand cmd = new SqliteCommand(cmdStr, con);
             }
         }

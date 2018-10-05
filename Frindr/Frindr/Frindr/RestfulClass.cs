@@ -32,7 +32,7 @@ namespace Frindr
         }
 
         //--------****|IMPORTANT|*****------\\
-        //All data except ID can't be NULL
+        //All data except ID can"t be NULL
         public void SetData(string url, string json)  //updates row specified by URL. Data specified by Json needs to be serialized
         {
             string newUrl = apiLocation + url;
@@ -41,7 +41,7 @@ namespace Frindr
         }
 
         //--------****|IMPORTANT|*****------\\
-        //All data except ID can't be NULL
+        //All data except ID can"t be NULL
         public void CreateData(string url, string json)  //creates new row specified by URL. Data specified by Json needs to be serialized
         {
             string newUrl = apiLocation + url;
@@ -58,7 +58,7 @@ namespace Frindr
 
 
         //function used to modify data specified by Url and Method.
-        //don't use this function use the functions above.
+        //don"t use this function use the functions above.
         private string ModifyData(string url, string method)
         {
             var rxcui = "198440";

@@ -7,13 +7,11 @@ namespace Frindr
     public partial class MainPage : ContentPage
     {
         Connection conn = new Connection();
-        public string Username { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
 
-            //auto login check, also not safe at all
             try
             {
                 using (SqliteConnection con = conn.SQLConnection)
@@ -25,6 +23,11 @@ namespace Frindr
 
                     using (SqliteDataReader rdr = cmd.ExecuteReader())
                     {
+                        if (!rdr.HasRows)
+                        {
+                            Navigation.PushModalAsync(new RegisterPage());
+                        }
+
                         while (rdr.Read())
                         {
                             string cmdStr2 = "SELECT * FROM client WHERE id = 1";
@@ -35,24 +38,35 @@ namespace Frindr
                             {
                                 while (rdr2.Read())
                                 {
-                                    Username = rdr2.GetString(1);
-                                    Navigation.PushModalAsync(new Profile());
-                                    rdr2.Close();
+                                    byte check = 1;
+                                    byte checkAgain = rdr2.GetByte(3);
+                                    //tinyint keeps returning 0 even tho it's 1
+                                    if (rdr2.GetByte(4) == check)
+                                    {
+                                        Navigation.PushModalAsync(new Profile());
+                                    }
+                                    else
+                                    {
+                                        Navigation.PushModalAsync(new LoginPage());
+                                    }
                                 }
+                                rdr2.Close();
                             }
-                            rdr.Close();
                         }
+                        rdr.Close();
                     }
                     con.Close();
                 }
             }
 
-            catch (Exception ea)
+            catch (ArgumentOutOfRangeException ea)
             {
-                DisplayAlert("Error", ea.ToString(), "Ok");
+                Console.WriteLine(ea.ToString());
             }
-
-            Navigation.PushModalAsync(new RegisterPage());
+            catch (SqliteException ea)
+            {
+                Console.WriteLine(ea.ToString());
+            }
         }
     }
 }

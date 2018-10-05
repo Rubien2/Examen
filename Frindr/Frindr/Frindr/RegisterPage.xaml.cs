@@ -24,40 +24,51 @@ namespace Frindr
                 using (SqliteConnection con = conn.SQLConnection)
                 {
                     con.Open();
-                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255), email VARCHAR(255))", con);
+                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255), email VARCHAR(255), auto TINYINT)", con);
                     cmd.ExecuteNonQuery();
 
-                    try
-                    {
-                        SqliteCommand cmd1 = new SqliteCommand($"UPDATE client SET name = {NameEntry.Text}, pw = {PasswordEntry.Text}, email = {EmailEntry.Text} WHERE id = 1", con);
-                        cmd1.ExecuteNonQuery();
-                    }
+                    SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1",con);
+                    cmd1.ExecuteNonQuery();
 
-                    catch (SqliteException ea)
+                    using (SqliteDataReader rdr = cmd1.ExecuteReader())
                     {
-                        SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw, email) VALUES ('{NameEntry.Text}', '{PasswordEntry.Text}', '{EmailEntry.Text}')", con);
-                        cmd2.ExecuteNonQuery();
+                        if (!rdr.HasRows)
+                        {
+                            SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw, email, auto) VALUES ('{NameEntry.Text}', '{PasswordEntry.Text}', '{EmailEntry.Text}', 1)", con);
+                            cmd2.ExecuteNonQuery();
+                        }
+
+                        while (rdr.Read())
+                        {
+                            SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}', pw = '{PasswordEntry.Text}', email = '{EmailEntry.Text}', auto = 1 WHERE id = 1", con);
+                            cmd3.ExecuteNonQuery();
+                        }
+                        rdr.Close();
                     }
-                    
                     con.Close();
                 }
             }
-
             catch (Exception ea)
             {
-                DisplayAlert("An error occurred", "0", "Ok");
+                DisplayAlert("An error occurred", "Git gud", "Ok");
             }
 
-            JsonValues json = new JsonValues();
-            json.ID = null;
-            json.User = NameEntry.Text;
-            json.Pwd = PasswordEntry.Text;
-            json.Email = EmailEntry.Text;
-            json.Location = LocationEntry.Text;
-            json.Birthday = $"{YearEntry.Text}-{MonthEntry.Text}-{DayEntry.Text}";
-            json.ImagePath = "Something";
-            json.UserVisibility = PrivacyFindSwitch.IsToggled;
-            json.LocationVisibility = PrivacyLocationSwitch.IsToggled;
+            int find = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
+            int location = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
+
+            //order for json: id, name, email, pwd, location, birthday, imagePath, userVisible, locationVisible
+            JsonValues json = new JsonValues
+            {
+                id = null,
+                name = NameEntry.Text,
+                email = EmailEntry.Text,
+                pwd = PasswordEntry.Text,
+                location = LocationEntry.Text,
+                birthday = $"{YearEntry.Text}-{MonthEntry.Text}-{DayEntry.Text}",
+                imagePath = "Something",
+                userVisible = find,
+                locationVisible = location
+            };
 
             string output = JsonConvert.SerializeObject(json);
             

@@ -30,7 +30,7 @@
                 <Label Text="Andere gebruikers mogen mijn locatie zien"></Label>
             </StackLayout>
             
-            <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton"/>
+            <Button Text="Selecteer hobbys" x:Name="SelectHobbyButton"/>
             <Button Text="Registreren" x:Name="RegisterButton" Clicked="Button_Clicked"/>
             
 

@@ -24,83 +24,53 @@ namespace Frindr
                 using (SqliteConnection con = conn.SQLConnection)
                 {
                     con.Open();
-                    string cmdStr = $"SELECT * FROM client WHERE id = 1";
 
-                    SqliteCommand cmd = new SqliteCommand(cmdStr, con);
-                    cmd.ExecuteNonQuery();
+                    string getUser = restful.GetData($"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{PasswordEntry.Text}");
 
-                    using (SqliteDataReader rdr = cmd.ExecuteReader())
+                    Records json = JsonConvert.DeserializeObject<Records>(getUser);
+
+                    //check for hash later
+
+                    if (NameEntry.Text == json.records[0].name && PasswordEntry.Text == json.records[0].pwd)
                     {
-                        while (rdr.Read())
+                        string cmdStr = $"SELECT * FROM client WHERE id = 1";
+
+                        SqliteCommand cmd = new SqliteCommand(cmdStr, con);
+                        cmd.ExecuteNonQuery();
+
+                        using (SqliteDataReader rdr = cmd.ExecuteReader())
                         {
-                            string readUser = rdr.GetString(1);
-                            string readPass = rdr.GetString(2);
-                            
-                            try
+                            while (rdr.Read())
                             {
-                                string cmdStr2 = $"DELETE FROM client WHERE id = 5000";
-                                SqliteCommand cmd1 = new SqliteCommand(cmdStr2, con);
-                                SqliteDataReader rdr2 = cmd1.ExecuteReader();
+                                try
+                                {
+                                    string cmdStr1 = $"UPDATE client SET name = '{json.records[0].name}', pw = '{json.records[0].pwd}', email = '{json.records[0].email}', auto = {Convert.ToInt32(RememberSwitch.IsToggled)} WHERE id = 1";
+                                    SqliteCommand cmd1 = new SqliteCommand(cmdStr1, con);
+                                    cmd1.ExecuteNonQuery();
 
-                                while (rdr2.Read())
+                                    Navigation.PushModalAsync(new Profile());
+                                }
+                                catch (SqliteException ea)
                                 {
-                                    //check if record exists online and then insert into local
-                                    rdr2.Close();
+                                    DisplayAlert("", ea.ToString(), "ok");
                                 }
                             }
-
-                            catch (SqliteException ea)
-                            {
-                                if (NameEntry.Text == readUser && PasswordEntry.Text == readPass)
-                                {
-                                    Profile profile = new Profile();
-                                    profile.Username = readUser;
-                                    Navigation.PushModalAsync(profile);
-                                }
-                                else
-                                {
-                                    DisplayAlert("Login fout", "Gebruiker en/of wachtwoord is fout", "Ok");
-                                }
-                            }
-                            if (NameEntry.Text == readUser && PasswordEntry.Text == readPass)
-                            {
-                                Profile profile = new Profile();
-                                profile.Username = NameEntry.Text;
-                                Navigation.PushModalAsync(profile);
-                            }
-                            else
-                            {
-                                DisplayAlert("Login fout", "Gebruiker en/of wachtwoord is fout", "Ok");
-                            }
+                            rdr.Close();
                         }
-                        rdr.Close();
+                        con.Close();
                     }
-                    con.Close();
-                }
-                if (RememberSwitch.IsToggled)
-                {
-                    
                 }
             }
 
             catch (Exception ea)
             {
-                DisplayAlert("An error occurred", "Something went wrong with your login attempt. Try again or come back later", "Ok");
-                Console.WriteLine(ea.ToString());
-            }
+                DisplayAlert("Error",ea.ToString(),"OK");
+            }            
+        }
 
-            string getUser = restful.GetData($"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{PasswordEntry.Text}");
-            
-            JsonValues json = JsonConvert.DeserializeObject<JsonValues>(getUser);
-
-            //json.pwd is null
-            Console.WriteLine(json.Pwd + "1");
-            Console.WriteLine(PasswordEntry.Text);
-
-            if (PasswordEntry.Text == json.Pwd)
-            {
-                Console.WriteLine("We in");
-            }
+        private void RegisterButton_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new RegisterPage());
         }
     }
 }
