@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Data.Sqlite;
 
 namespace Frindr
@@ -27,5 +29,22 @@ namespace Frindr
     class Records
     {
         public List<JsonValues> records { get; set; }
+    }
+
+    class Hash
+    {
+        public string HashString(string passwordString)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                byte[] toBeHashed = sha.ComputeHash(Encoding.UTF8.GetBytes(passwordString));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < toBeHashed.Length; i++)
+                {
+                    builder.Append(toBeHashed[i].ToString());
+                }
+                return builder.ToString();
+            }
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace Frindr
 	{
         Connection conn = new Connection();
         RestfulClass restful = new RestfulClass();
+        Hash hash = new Hash();
 
         public LoginPage()
         {
@@ -19,19 +20,21 @@ namespace Frindr
 
         private void btnConfirm_Clicked(object sender, EventArgs e)
         {
+            string hashedString = hash.HashString(PasswordEntry.Text);
+
             try
             {
                 using (SqliteConnection con = conn.SQLConnection)
                 {
                     con.Open();
 
-                    string getUser = restful.GetData($"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{PasswordEntry.Text}");
+                    string getUser = restful.GetData($"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{hashedString}");
 
                     Records json = JsonConvert.DeserializeObject<Records>(getUser);
 
                     //check for hash later
 
-                    if (NameEntry.Text == json.records[0].name && PasswordEntry.Text == json.records[0].pwd)
+                    if (NameEntry.Text == json.records[0].name && hashedString == json.records[0].pwd)
                     {
                         string cmdStr = $"SELECT * FROM client WHERE id = 1";
 

@@ -11,6 +11,7 @@ namespace Frindr
 	{
         Connection conn = new Connection();
         RestfulClass restful = new RestfulClass();
+        Hash hash = new Hash();
 
         public RegisterPage()
         {
@@ -19,12 +20,14 @@ namespace Frindr
 
         private void Button_Clicked(object sender, EventArgs e)
         {
+            string hashedString = hash.HashString(PasswordEntry.Text);
+
             try
             {
                 using (SqliteConnection con = conn.SQLConnection)
                 {
                     con.Open();
-                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(255), email VARCHAR(255), auto TINYINT(1))", con);
+                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
                     cmd.ExecuteNonQuery();
 
                     SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1",con);
@@ -34,13 +37,13 @@ namespace Frindr
                     {
                         if (!rdr.HasRows)
                         {
-                            SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw, email, auto) VALUES ('{NameEntry.Text}', '{PasswordEntry.Text}', '{EmailEntry.Text}', 1)", con);
+                            SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw, email, auto) VALUES ('{NameEntry.Text}', '{hashedString}', '{EmailEntry.Text}', 1)", con);
                             cmd2.ExecuteNonQuery();
                         }
 
                         while (rdr.Read())
                         {
-                            SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}', pw = '{PasswordEntry.Text}', email = '{EmailEntry.Text}', auto = 1 WHERE id = 1", con);
+                            SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}', pw = '{hashedString}', email = '{EmailEntry.Text}', auto = 1 WHERE id = 1", con);
                             cmd3.ExecuteNonQuery();
                         }
                         rdr.Close();
@@ -62,7 +65,7 @@ namespace Frindr
                 id = null,
                 name = NameEntry.Text,
                 email = EmailEntry.Text,
-                pwd = PasswordEntry.Text,
+                pwd = hashedString,
                 location = LocationEntry.Text,
                 birthday = $"{YearEntry.Text}-{MonthEntry.Text}-{DayEntry.Text}",
                 imagePath = "Something",

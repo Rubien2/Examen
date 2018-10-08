@@ -39,7 +39,6 @@ namespace Frindr
                                 while (rdr2.Read())
                                 {
                                     byte check = 1;
-                                    byte checkAgain = rdr2.GetByte(3);
                                     //tinyint keeps returning 0 even tho it's 1
                                     if (rdr2.GetByte(4) == check)
                                     {
