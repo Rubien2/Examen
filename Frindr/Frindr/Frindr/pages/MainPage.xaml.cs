@@ -6,14 +6,17 @@ namespace Frindr
     public partial class MainPage : ContentPage
     {
         public bool Registered { get; set; }
-        public static string records { get; set; }
+        public static string users { get; set; }
+        public static string hobbies { get; set; }
+        public static string userHobby { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
 
-            records = pages.GlobalVariables.GetRecords();
-
+            users = pages.GlobalVariables.GetUsers();
+            hobbies = pages.GlobalVariables.GetHobbies();
+            userHobby = pages.GlobalVariables.GetUserHobbies();
         }
 
         protected override void OnAppearing()

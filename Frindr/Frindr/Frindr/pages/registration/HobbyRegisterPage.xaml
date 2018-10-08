@@ -9,17 +9,19 @@
             </Frame>
             <StackLayout HorizontalOptions="CenterAndExpand">
                 <ListView x:Name="MyListView"
-                ItemsSource="{Binding Items}"
-                CachingStrategy="RecycleElement">
-
+                ItemTapped="Handle_ItemTapped"
+                CachingStrategy="RecycleElement"
+                IsGroupingEnabled="True"
+                GroupDisplayBinding="{Binding name}"
+                >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
-                                <StackLayout>
-                                    <Label Text="{Binding Text}" 
-                       Style="{DynamicResource ListItemTextStyle}" />
-                                    <Label Text="{Binding Detail}" 
-                       Style="{DynamicResource ListItemDetailTextStyle}"/>
+                                <StackLayout Orientation="Horizontal">
+
+                                    <Switch IsToggled="{Binding selected}"></Switch>
+                                    <Label Text="{Binding hobby}" VerticalTextAlignment="Center"/>
+
                                 </StackLayout>
                             </ViewCell>
                         </DataTemplate>
@@ -27,7 +29,7 @@
 
                 </ListView>
             </StackLayout>
-            <Frame>
+            <Frame VerticalOptions="End">
                 <Button Text="Account aanmaken" x:Name="CreateAccountButton" Clicked="CreateAccountButton_Clicked"></Button>
             </Frame>
         </StackLayout>

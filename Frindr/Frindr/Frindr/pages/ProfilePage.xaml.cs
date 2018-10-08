@@ -12,10 +12,16 @@ namespace Frindr.pages
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class ProfilePage : ContentPage
 	{
-		public ProfilePage ()
+
+        public ProfilePage ()
 		{
-			InitializeComponent ();
+            InitializeComponent();
 		}
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+        }
 
         private void btnSettings_Clicked(object sender, EventArgs e)
         {

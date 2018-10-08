@@ -3,35 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Frindr.pages.SelectHobbyPage">
     <StackLayout>
-      <ListView x:Name="MyListView"
+        <ListView x:Name="MyListView"
                 ItemTapped="Handle_ItemTapped"
                 CachingStrategy="RecycleElement"
                 IsGroupingEnabled="True"
                 GroupDisplayBinding="{Binding name}"
                 >
-            
-        <!--Built in Cells-->
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <TextCell Text="{Binding hobby}" />
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    
-        <!--Custom View Cells-->
-        <!--
-        <ListView.ItemTemplate>
+            <ListView.ItemTemplate>
           <DataTemplate>
             <ViewCell>
-              <StackLayout>
-                <Label Text="{Binding Text}" 
-                       Style="{DynamicResource ListItemTextStyle}" />
-                <Label Text="{Binding Detail}" 
-                       Style="{DynamicResource ListItemDetailTextStyle}"/>
-              </StackLayout>
+              <StackLayout Orientation="Horizontal">
+
+                <Switch IsToggled="{Binding selected}"></Switch>
+                <Label Text="{Binding hobby}" VerticalTextAlignment="Center"/>
+                            
+               </StackLayout>
             </ViewCell>
           </DataTemplate>
         </ListView.ItemTemplate>
-        -->
+        
       </ListView>
     </StackLayout>
 </ContentPage>

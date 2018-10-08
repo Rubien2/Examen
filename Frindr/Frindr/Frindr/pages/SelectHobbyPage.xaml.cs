@@ -34,15 +34,14 @@ namespace Frindr.pages
 
         void FillListView()
         {
-            var records = MainPage.records;
+            var records = MainPage.hobbies;
 
-            
 
             if (records != null)
             {
                 MyListView.ItemsSource = null;
           
-                var root = JsonConvert.DeserializeObject<GlobalVariables.Records>(records);
+                var root = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(records);
                 //Convert list to observable collection. This is easier for the grouping in the listview
                 ObservableCollection<GlobalVariables.Hobbies> hobbiesCollection = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
 
@@ -100,5 +99,10 @@ namespace Frindr.pages
             ((ListView)sender).SelectedItem = null;
         }
 
+        protected override bool OnBackButtonPressed()
+        {
+
+            return base.OnBackButtonPressed();
+        }
     }
 }
