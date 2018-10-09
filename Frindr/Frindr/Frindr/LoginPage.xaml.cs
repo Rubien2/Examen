@@ -13,6 +13,9 @@ namespace Frindr
         RestfulClass restful = new RestfulClass();
         Hash hash = new Hash();
 
+        public static string Username { get; set; }
+        public static string Email { get; set; }
+
         public LoginPage()
         {
             InitializeComponent();
@@ -28,11 +31,12 @@ namespace Frindr
                 {
                     con.Open();
 
+                    SqliteCommand cmd5 = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
+                    cmd5.ExecuteNonQuery();
+
                     string getUser = restful.GetData($"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{hashedString}");
 
                     Records json = JsonConvert.DeserializeObject<Records>(getUser);
-
-                    //check for hash later
 
                     if (NameEntry.Text == json.records[0].name && hashedString == json.records[0].pwd)
                     {
@@ -43,6 +47,27 @@ namespace Frindr
 
                         using (SqliteDataReader rdr = cmd.ExecuteReader())
                         {
+                            if (!rdr.HasRows)
+                            {
+                                try
+                                {
+                                    string cmdStr2 = $"INSERT INTO client (name, pw, email, auto) VALUES ('{json.records[0].name}','{json.records[0].pwd}','{json.records[0].email}', {Convert.ToInt32(RememberSwitch.IsToggled)})";
+                                    SqliteCommand cmd2 = new SqliteCommand(cmdStr2, con);
+                                    cmd2.ExecuteNonQuery();
+
+                                    
+                                    
+                                    Username = json.records[0].name;
+                                    Email = json.records[0].email;
+                                    Profile profile = new Profile();
+                                    Navigation.PushModalAsync(profile, true);
+                                }
+                                catch (SqliteException)
+                                {
+                                    DisplayAlert("Login error", "Couldn't log you in. Please try again or come back later", "ok");
+                                }
+                            }
+
                             while (rdr.Read())
                             {
                                 try
@@ -51,11 +76,16 @@ namespace Frindr
                                     SqliteCommand cmd1 = new SqliteCommand(cmdStr1, con);
                                     cmd1.ExecuteNonQuery();
 
-                                    Navigation.PushModalAsync(new Profile());
+                                    
+                                    
+                                    Username = json.records[0].name;
+                                    Email = json.records[0].email;
+                                    Profile profile = new Profile();
+                                    Navigation.PushModalAsync(profile, true);
                                 }
-                                catch (SqliteException ea)
+                                catch (SqliteException)
                                 {
-                                    DisplayAlert("", ea.ToString(), "ok");
+                                    DisplayAlert("Login error", "Couldn't log you in. Please try again or come back later", "ok");
                                 }
                             }
                             rdr.Close();

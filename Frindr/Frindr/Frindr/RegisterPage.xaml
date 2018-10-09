@@ -32,7 +32,8 @@
             
             <Button Text="Selecteer hobbys" x:Name="SelectHobbyButton"/>
             <Button Text="Registreren" x:Name="RegisterButton" Clicked="Button_Clicked"/>
-            
+            <Button x:Name="LoginButton" Clicked="LoginButton_Clicked"/>
+
 
         </StackLayout>
     </ContentPage.Content>

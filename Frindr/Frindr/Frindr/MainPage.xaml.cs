@@ -30,25 +30,22 @@ namespace Frindr
 
                         while (rdr.Read())
                         {
-                            string cmdStr2 = "SELECT * FROM client WHERE id = 1";
+                            string cmdStr2 = "SELECT * FROM client WHERE id = 1 AND auto = 1";
                             SqliteCommand cmd2 = new SqliteCommand(cmdStr2, con);
                             cmd2.ExecuteNonQuery();
 
                             using (SqliteDataReader rdr2 = cmd2.ExecuteReader())
                             {
+                                if (!rdr2.HasRows)
+                                {
+                                    Navigation.PushModalAsync(new LoginPage());
+                                }
+
                                 while (rdr2.Read())
                                 {
-                                    byte check = 1;
-                                    //tinyint keeps returning 0 even tho it's 1
-                                    if (rdr2.GetByte(4) == check)
-                                    {
-                                        Navigation.PushModalAsync(new Profile());
-                                    }
-                                    else
-                                    {
-                                        Navigation.PushModalAsync(new LoginPage());
-                                    }
+                                    Navigation.PushModalAsync(new Profile());
                                 }
+
                                 rdr2.Close();
                             }
                         }

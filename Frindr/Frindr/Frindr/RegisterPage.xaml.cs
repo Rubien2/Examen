@@ -79,5 +79,10 @@ namespace Frindr
 
             Navigation.PushModalAsync(new Profile());
         }
+
+        private void LoginButton_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new LoginPage());
+        }
     }
 }

@@ -5,6 +5,7 @@
     <ContentPage.Content>
         <StackLayout>
             <Label x:Name="lblProfile" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
+            <Label x:Name="lblEmail" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
             <Button x:Name="btnLogout" VerticalOptions="Center" HorizontalOptions="Center" Clicked="btnLogout_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
