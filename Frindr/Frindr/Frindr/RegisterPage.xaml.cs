@@ -13,6 +13,9 @@ namespace Frindr
         RestfulClass restful = new RestfulClass();
         Hash hash = new Hash();
 
+        public static string Username { get; set; }
+        public static string Email { get; set; }
+
         public RegisterPage()
         {
             InitializeComponent();
@@ -20,64 +23,74 @@ namespace Frindr
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            string hashedString = hash.HashString(PasswordEntry.Text);
-
-            try
+            if (conn.IsOnline())
             {
-                using (SqliteConnection con = conn.SQLConnection)
+                string hashedString = hash.HashString(PasswordEntry.Text);
+
+                try
                 {
-                    con.Open();
-                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
-                    cmd.ExecuteNonQuery();
-
-                    SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1",con);
-                    cmd1.ExecuteNonQuery();
-
-                    using (SqliteDataReader rdr = cmd1.ExecuteReader())
+                    using (SqliteConnection con = conn.SQLConnection)
                     {
-                        if (!rdr.HasRows)
-                        {
-                            SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw, email, auto) VALUES ('{NameEntry.Text}', '{hashedString}', '{EmailEntry.Text}', 1)", con);
-                            cmd2.ExecuteNonQuery();
-                        }
+                        con.Open();
+                        SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
+                        cmd.ExecuteNonQuery();
 
-                        while (rdr.Read())
+                        SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1", con);
+                        cmd1.ExecuteNonQuery();
+
+                        using (SqliteDataReader rdr = cmd1.ExecuteReader())
                         {
-                            SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}', pw = '{hashedString}', email = '{EmailEntry.Text}', auto = 1 WHERE id = 1", con);
-                            cmd3.ExecuteNonQuery();
+                            if (!rdr.HasRows)
+                            {
+                                SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw, email, auto) VALUES ('{NameEntry.Text}', '{hashedString}', '{EmailEntry.Text}', 1)", con);
+                                cmd2.ExecuteNonQuery();
+                            }
+
+                            while (rdr.Read())
+                            {
+                                SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}', pw = '{hashedString}', email = '{EmailEntry.Text}', auto = 1 WHERE id = 1", con);
+                                cmd3.ExecuteNonQuery();
+                            }
+                            rdr.Close();
                         }
-                        rdr.Close();
+                        con.Close();
                     }
-                    con.Close();
                 }
+                catch (SqliteException)
+                {
+                    DisplayAlert("An error occurred", "Git gud", "Ok");
+                }
+
+                int find = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
+                int location = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
+
+                //order for json: id, name, email, pwd, location, birthday, imagePath, userVisible, locationVisible
+                JsonValues json = new JsonValues
+                {
+                    id = null,
+                    name = NameEntry.Text,
+                    email = EmailEntry.Text,
+                    pwd = hashedString,
+                    location = LocationEntry.Text,
+                    birthday = $"{YearEntry.Text}-{MonthEntry.Text}-{DayEntry.Text}",
+                    imagePath = "Something",
+                    userVisible = find,
+                    locationVisible = location
+                };
+
+                string output = JsonConvert.SerializeObject(json);
+
+                restful.CreateData($"/records/user", output);
+
+                Username = json.name;
+                Email = json.email;
+                Profile profile = new Profile();
+                Navigation.PushModalAsync(profile, true);
             }
-            catch (SqliteException)
+            else
             {
-                DisplayAlert("An error occurred", "Git gud", "Ok");
+                DisplayAlert("Check internet connection","Frindr could not connect to the internet, please check your internet connection and try again","Continue");
             }
-
-            int find = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
-            int location = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
-
-            //order for json: id, name, email, pwd, location, birthday, imagePath, userVisible, locationVisible
-            JsonValues json = new JsonValues
-            {
-                id = null,
-                name = NameEntry.Text,
-                email = EmailEntry.Text,
-                pwd = hashedString,
-                location = LocationEntry.Text,
-                birthday = $"{YearEntry.Text}-{MonthEntry.Text}-{DayEntry.Text}",
-                imagePath = "Something",
-                userVisible = find,
-                locationVisible = location
-            };
-
-            string output = JsonConvert.SerializeObject(json);
-            
-            restful.CreateData($"/records/user", output);
-
-            Navigation.PushModalAsync(new Profile());
         }
 
         private void LoginButton_Clicked(object sender, EventArgs e)

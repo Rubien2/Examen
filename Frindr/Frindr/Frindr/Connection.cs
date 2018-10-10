@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 
 namespace Frindr
 {
@@ -11,6 +12,22 @@ namespace Frindr
     {
         readonly static string Location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "main.sqlite");
         public SqliteConnection SQLConnection { get; set; } = new SqliteConnection("Data Source=" + Location);
+        
+        public bool IsOnline()
+        {
+            RestfulClass rest = new RestfulClass();
+            string check = rest.GetData("/records/hobby/1");
+
+            try
+            {
+                HobbyRecords json = JsonConvert.DeserializeObject<HobbyRecords>(check);
+                return true;
+            }
+            catch (ArgumentNullException)
+            {
+                return false;
+            }
+        }
     }
 
     class JsonValues
@@ -26,9 +43,21 @@ namespace Frindr
         public int locationVisible { get; set; }
     }
 
-    class Records
+    class UserRecords
     {
         public List<JsonValues> records { get; set; }
+    }
+
+    class HobbyJson
+    {
+        public int? id { get; set; }
+        public string hobby { get; set; }
+        public int hobbyCategoryId { get; set; }
+    }
+
+    class HobbyRecords
+    {
+        public List<HobbyJson> records { get; set; }
     }
 
     class Hash
