@@ -53,6 +53,7 @@ namespace Frindr.UWP
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 Xamarin.Forms.Forms.Init(e);
+                Xamarin.FormsMaps.Init();
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {

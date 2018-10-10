@@ -16,5 +16,15 @@ namespace Frindr
 		{
 			InitializeComponent ();
 		}
-	}
+
+        private void LoginButton_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new MenuPage());
+        }
+
+        private void RegisterButton_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new RegisterPage());
+        }
+    }
 }

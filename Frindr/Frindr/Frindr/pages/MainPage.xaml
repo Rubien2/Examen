@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Frindr"
              x:Class="Frindr.MainPage">
-
+C:\Users\Gebruiker\Source\Repos\Examen\Frindr\Frindr\Frindr\pages\MainPage.xaml.cs
     <StackLayout>
         <!-- Place new controls here -->
         <Label Text="Welcome to Xamarin.Forms!" 

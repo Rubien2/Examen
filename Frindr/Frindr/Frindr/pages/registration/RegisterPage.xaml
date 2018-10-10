@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Frindr.RegisterPage">
     <ContentPage.Content>
-
+        <ScrollView>
         <StackLayout HorizontalOptions="Center">
             <Label Text="FRINDR" FontSize="75" HorizontalOptions="CenterAndExpand" Margin="25"></Label>
             <Entry Placeholder="Naam" x:Name="NameEntry"/>
@@ -11,10 +11,9 @@
             <Entry Placeholder="E-mail" x:Name="EmailEntry"/>
             <Entry Placeholder="Locatie" x:Name="LocationEntry"/>
 
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                <Entry Placeholder="Dag" WidthRequest="100" x:Name="DayEntry"/>
-                <Entry Placeholder="Maand" WidthRequest="100" x:Name="MonthEntry"/>
-                <Entry Placeholder="Jaar" WidthRequest="150" x:Name="YearEntry"/>
+            <StackLayout Orientation="Horizontal">
+                    <Label Text="Geboorte datum:" VerticalTextAlignment="Center"></Label>
+                <DatePicker x:Name="BirthdayPicker" HorizontalOptions="FillAndExpand"/>
             </StackLayout>
 
             <StackLayout Orientation="Horizontal">
@@ -30,10 +29,11 @@
                 <Label Text="Andere gebruikers mogen mijn locatie zien"></Label>
             </StackLayout>
             
-            <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton"/>
-            <Button Text="Registreren" x:Name="RegisterButton"/>
-            
+            <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton" Clicked="SelectHobbyButton_Clicked"/>
+            <Button Text="Registreren" x:Name="RegisterButton" Clicked="RegisterButton_Clicked"/>
+            <Button Text="Ik heb al een account" x:Name="GoToLoginButton" Clicked="GoToLoginButton_Clicked"/>
 
-        </StackLayout>
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

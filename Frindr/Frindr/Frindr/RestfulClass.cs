@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Xamarin.Forms;
 using System.Threading.Tasks;
 
-namespace restful
+namespace Frindr
 {
 
     //class for intervacing with a restfull API. Go to: https://github.com/mevdschee/php-crud-api for documentation.

@@ -10,11 +10,18 @@ using Xamarin.Forms.Xaml;
 namespace Frindr
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class RegisterPage : ContentPage
+	public partial class ExitPage : ContentPage
 	{
-		public RegisterPage ()
+		public ExitPage ()
 		{
 			InitializeComponent ();
-		}
+
+            ShutDown();
+        }
+
+        private void ShutDown()
+        {
+            this.ShutDown();
+        }
 	}
 }
