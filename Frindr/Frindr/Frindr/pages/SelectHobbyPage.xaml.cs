@@ -17,6 +17,10 @@ namespace Frindr.pages
     public partial class SelectHobbyPage : ContentPage
     {
         public ObservableCollection<string> Items { get; set; }
+        private ObservableCollection<GlobalVariables.Category> grouped { get; set; }
+
+        private ObservableCollection<GlobalVariables.Hobbies> hobbiesCollection = GlobalVariables.hobbiesCollection;
+        private ObservableCollection<GlobalVariables.Hobbies> selectedHobbies   = GlobalVariables.selectedHobbies;
 
         public SelectHobbyPage()
         {
@@ -30,8 +34,6 @@ namespace Frindr.pages
             FillListView();
         }
 
-        private ObservableCollection<GlobalVariables.Category> grouped { get; set; }
-
         void FillListView()
         {
             var records = MainPage.hobbies;
@@ -43,7 +45,7 @@ namespace Frindr.pages
           
                 var root = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(records);
                 //Convert list to observable collection. This is easier for the grouping in the listview
-                ObservableCollection<GlobalVariables.Hobbies> hobbiesCollection = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
+                hobbiesCollection = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
 
                 grouped = new ObservableCollection<GlobalVariables.Category>();
 
@@ -58,6 +60,11 @@ namespace Frindr.pages
                 //add hobbies to groups
                 foreach(var hobby in hobbiesCollection)
                 {
+                    if (selectedHobbies != null && selectedHobbies.Any(p => p.id == hobby.id))
+                    {
+                        hobby.selected = true;
+                    }
+
                     int caseSwitch = hobby.hobbyCategoryId;
                     switch (caseSwitch)
                     {
@@ -103,6 +110,14 @@ namespace Frindr.pages
         {
 
             return base.OnBackButtonPressed();
+        }
+
+        private void SafeHobbySelectionButton_Clicked(object sender, EventArgs e)
+        {
+            var selected = hobbiesCollection
+            .Where(p => p.selected)
+            .ToList();
+            GlobalVariables.selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(selected); //this ACTUALLY works!
         }
     }
 }

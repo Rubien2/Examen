@@ -18,8 +18,9 @@ namespace Frindr
 
         public OtherProfilePage ()
 		{
-			InitializeComponent ();
 
+			InitializeComponent();
+            
             SetLabels();
 
             SetSelectedHobbies();
@@ -31,6 +32,18 @@ namespace Frindr
             lblEmail.Text       = SelectedUser.email;
             lblLocation.Text    = SelectedUser.location;
             lblProfileName.Text = SelectedUser.name;
+
+
+            //check if location is visible
+            if(SelectedUser.locationVisible == 0)
+            {
+                lblLocation.IsVisible = false;
+            }
+            else
+            {
+                lblLocation.IsVisible = true;
+                lblLocation.Text = SelectedUser.location;
+            }
         }
 
         private List<int> GetSelectedUserHobbies()

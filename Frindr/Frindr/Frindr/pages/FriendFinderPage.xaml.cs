@@ -9,12 +9,14 @@ using Xamarin.Forms.Xaml;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Reflection;
+using Xamarin.Forms.Maps;
 
 namespace Frindr
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class FriendFinderPage : ContentPage
 	{
+
         public static pages.GlobalVariables.User SelectedUser { get; set; }
 
         public FriendFinderPage()
@@ -46,22 +48,78 @@ namespace Frindr
             }
         }
 
-        private void LoadUsers()
+        private async void LoadUsers()
         {
 
             //TODO: afstand berekenen, observable collection filteren en sorteren.
 
-            var records = MainPage.users;
+            var records     = MainPage.users;
+            var userHobby   = MainPage.userHobby;
 
-            if (records != null)
+            if (records != null && pages.GlobalVariables.selectedHobbies != null)
             {
                 FriendFinderListView.ItemsSource = null;
 
                 var root = JsonConvert.DeserializeObject<pages.GlobalVariables.UserRecords>(records);
-                //Convert list to observable collection. This is easier for the grouping in the listview
-                ObservableCollection<pages.GlobalVariables.User> userCollection = new ObservableCollection<pages.GlobalVariables.User>(root.records);
+                var userHobbyRoot = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(userHobby);
+
+
+                //Convert list to observable collection. This is easier for the grouping and filtering in the listview
+                var userCollection = new ObservableCollection<pages.GlobalVariables.User>(root.records);
+                var userHobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbyRoot.records);
+                var filteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+                //var filteredUserHobbies     = new ObservableCollection<pages.GlobalVariables.UserHobby>();
+                List<int> filteredUserHobbiesUserIdList = null;
+                /*
+                try { 
+                foreach (var h in pages.GlobalVariables.selectedHobbies)
+                {
+                    if(h != null)
+                    {
+                            //filteredUserHobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbies.Where(p => p.hobbyId == h.id));
+                        if(userHobbies.Any(p => p.hobbyId == h.id))
+                            {
+                                foreach (var uh in userHobbies.Where(p => p.hobbyId == h.id))
+                                {
+                                    if (uh.userId != null)
+                                    {
+                                        filteredUserHobbiesUserIdList.Add(uh.userId);
+                                    }
+                                }
+                            }
+                    }
+                }
+                }
+                catch (NullReferenceException e)
+                {
+                    await DisplayAlert("derp", e.ToString(), "ok");
+                }
+                */
                 FriendFinderListView.ItemsSource = userCollection;
+
+                //TODO: dynamisch locatie ophalen van ingelogde gebruiker
+
+                string currentUserAddres = "3904SW";
+                //var currentUserPosition = await GetCoordinatesOfAddresAsync(currentUserAddres);
+
+                /*
+                
+                    string userLocation = i.location;
+
+                    var userPosition = await GetCoordinatesOfAddresAsync(i.location);
+
+                    var distance = Distance(currentUserPosition[0], currentUserPosition[1], userPosition[0], userPosition[1], 'K');
+                } 
+                */
+                //userCollection.Select<>;
+
             }
+            else
+            if (pages.GlobalVariables.selectedHobbies == null)
+            {
+                await DisplayAlert("","U heeft nog geen hobby's geselecteerd. Ga naar uw profiel instellingen om een hobby te selecteren","Ok");
+            }
+            
         }
 
         private void FriendFinderListView_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -75,6 +133,61 @@ namespace Frindr
 
             ((ListView)sender).SelectedItem = null;
 
+            ((ListView)sender).IsEnabled = true;
         }
+
+        private async Task<double[]> GetCoordinatesOfAddresAsync(string addres)
+        {
+
+            Geocoder gc = new Geocoder();
+
+            IEnumerable<Position> result = await gc.GetPositionsForAddressAsync(addres);
+            
+            double[] userCoordinates = null;
+
+            foreach (Position pos in result)
+            {
+
+                System.Diagnostics.Debug.WriteLine("Lat: {0}, Lng: {1}", pos.Latitude, pos.Longitude);
+
+                userCoordinates[0] = pos.Latitude;
+                userCoordinates[1] = pos.Longitude;
+                
+            }
+
+            return userCoordinates;
+
+        }
+
+        //Voodoo code to measure distance from geodatasource.com
+
+        private double Distance(double lat1, double lon1, double lat2, double lon2, char unit)
+        {
+            double theta = lon1 - lon2;
+            double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
+            dist = Math.Acos(dist);
+            dist = rad2deg(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit == 'K')
+            {
+                dist = dist * 1.609344;
+            }
+            else if (unit == 'N')
+            {
+                dist = dist * 0.8684;
+            }
+            return (dist);
+        }
+
+        private double deg2rad(double deg)
+        {
+            return (deg * Math.PI / 180.0);
+        }
+
+        private double rad2deg(double rad)
+        {
+            return (rad / Math.PI * 180.0);
+        }
+
     }
 }

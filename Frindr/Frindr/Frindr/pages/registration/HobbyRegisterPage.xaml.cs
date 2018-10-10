@@ -15,28 +15,34 @@ namespace Frindr
 	public partial class HobbyRegisterPage : ContentPage
 	{
 
-        public static string hobbies { get; set; }
+        private ObservableCollection<pages.GlobalVariables.Category> grouped { get; set; }
+
+        private ObservableCollection<pages.GlobalVariables.Hobbies> hobbiesCollection = pages.GlobalVariables.hobbiesCollection;
+        private ObservableCollection<pages.GlobalVariables.Hobbies> selectedHobbies = pages.GlobalVariables.selectedHobbies;
+
 
         public HobbyRegisterPage ()
 		{
 			InitializeComponent ();
-
-            GetHobbies();
 
             FillListView();
 		}
 
         private void CreateAccountButton_Clicked(object sender, EventArgs e)
         {
+
+            var selected = hobbiesCollection
+            .Where(p => p.selected)
+            .ToList();
+            pages.GlobalVariables.selectedHobbies = new ObservableCollection<pages.GlobalVariables.Hobbies>(selected); 
+
             MenuPage menuPage = new MenuPage();
             Navigation.PushModalAsync(menuPage);
         }
 
-        private ObservableCollection<pages.GlobalVariables.Category> grouped { get; set; }
-
         void FillListView()
         {
-            var records = hobbies;
+            var records = MainPage.hobbies;
 
 
             if (records != null)
@@ -45,21 +51,26 @@ namespace Frindr
 
                 var root = JsonConvert.DeserializeObject<pages.GlobalVariables.HobbyRecords>(records);
                 //Convert list to observable collection. This is easier for the grouping in the listview
-                ObservableCollection<pages.GlobalVariables.Hobbies> hobbiesCollection = new ObservableCollection<pages.GlobalVariables.Hobbies>(root.records);
+                hobbiesCollection = new ObservableCollection<pages.GlobalVariables.Hobbies>(root.records);
 
                 grouped = new ObservableCollection<pages.GlobalVariables.Category>();
 
                 //Define Hobby categories
-                var VideoGamesGroup = new pages.GlobalVariables.Category() { id = 1, name = "Video games" };
-                var SportGroup = new pages.GlobalVariables.Category() { id = 2, name = "Sporten" };
+                var VideoGamesGroup =       new pages.GlobalVariables.Category() { id = 1, name = "Video games" };
+                var SportGroup =            new pages.GlobalVariables.Category() { id = 2, name = "Sporten" };
                 var HobbyAndFreeTimeGroup = new pages.GlobalVariables.Category() { id = 3, name = "Hobby en vrije tijd" };
-                var DoItYourselfGroup = new pages.GlobalVariables.Category() { id = 4, name = "Doe-het-zelf" };
-                var TechnologieGroup = new pages.GlobalVariables.Category() { id = 5, name = "Technologie" };
-                var OtherGroup = new pages.GlobalVariables.Category() { id = 0, name = "Overig" };
+                var DoItYourselfGroup =     new pages.GlobalVariables.Category() { id = 4, name = "Doe-het-zelf" };
+                var TechnologieGroup =      new pages.GlobalVariables.Category() { id = 5, name = "Technologie" };
+                var OtherGroup =            new pages.GlobalVariables.Category() { id = 0, name = "Overig" };
 
                 //add hobbies to groups
                 foreach (var hobby in hobbiesCollection)
                 {
+                    if (selectedHobbies != null && selectedHobbies.Any(p => p.id == hobby.id))
+                    {
+                        hobby.selected = true;
+                    }
+
                     int caseSwitch = hobby.hobbyCategoryId;
                     switch (caseSwitch)
                     {
@@ -105,11 +116,6 @@ namespace Frindr
         {
 
             return base.OnBackButtonPressed();
-        }
-
-        private void GetHobbies()
-        {
-            hobbies = MainPage.hobbies;
         }
 
     }

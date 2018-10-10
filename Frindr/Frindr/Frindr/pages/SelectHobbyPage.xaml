@@ -23,5 +23,8 @@
         </ListView.ItemTemplate>
         
       </ListView>
+
+        <Button x:Name="SafeHobbySelectionButton" Text="Opslaan" Clicked="SafeHobbySelectionButton_Clicked"></Button>
+        
     </StackLayout>
 </ContentPage>

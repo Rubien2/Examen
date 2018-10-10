@@ -11,6 +11,11 @@ namespace Frindr.pages
         public static string users;
         public static string userHobbies;
 
+        public static ObservableCollection<Hobbies> hobbiesCollection { get; set; }
+
+        //----global account variables
+
+        public static ObservableCollection<Hobbies> selectedHobbies { get; set; }
 
         //----------------------||||CLASSES||||-------------------------
 
@@ -49,6 +54,7 @@ namespace Frindr.pages
         {
             public int id { get; set; }
             public string name { get; set; }
+            public bool selected { get; internal set; }
         }
 
         //User table
