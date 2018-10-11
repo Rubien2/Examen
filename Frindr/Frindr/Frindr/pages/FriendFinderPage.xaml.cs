@@ -53,8 +53,8 @@ namespace Frindr
 
             //TODO: afstand berekenen, observable collection filteren en sorteren.
 
-            var records     = MainPage.users;
-            var userHobby   = MainPage.userHobby;
+            var records     = MainPage.Users;
+            var userHobby   = MainPage.UserHobby;
 
             if (records != null && pages.GlobalVariables.selectedHobbies != null)
             {

@@ -84,8 +84,8 @@ namespace Frindr
 
                 Username = json.name;
                 Email = json.email;
-                Profile profile = new Profile();
-                Navigation.PushModalAsync(profile, true);
+                //Profile profile = new Profile();
+                //Navigation.PushModalAsync(profile, true);
             }
             else
             {

@@ -13,6 +13,9 @@ namespace Frindr
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class PersonalRegisterPage : ContentPage
 	{
+        RestfulClass rest = new RestfulClass();
+        Connection conn = new Connection();
+
 		public PersonalRegisterPage ()
 		{
 			InitializeComponent ();
@@ -20,10 +23,17 @@ namespace Frindr
 
         private void NextButton_Clicked(object sender, EventArgs e)
         {
-            if (CheckName(NameEntry.Text) && CheckLocation(LocationEntry.Text) && CheckAge())
+            if (conn.IsOnline())
             {
-                HobbyRegisterPage hobbyRegisterPage = new HobbyRegisterPage();
-                Navigation.PushModalAsync(hobbyRegisterPage);
+                if (CheckName(NameEntry.Text) && CheckLocation(LocationEntry.Text) && CheckAge())
+                {
+                    HobbyRegisterPage hobbyRegisterPage = new HobbyRegisterPage();
+                    Navigation.PushModalAsync(hobbyRegisterPage);
+                }
+            }
+            else
+            {
+                DisplayAlert("Check internet connection", "Frindr could not connect to the internet, please check your internet connection and try again", "Continue");
             }
         }
 
@@ -38,6 +48,7 @@ namespace Frindr
             }
         
             bool isLocationValid = Regex.IsMatch(location, regex);
+
             if (isLocationValid)
             {
                 return true;
@@ -56,6 +67,7 @@ namespace Frindr
             var age = (today - birthday) /10000;
 
             if (age >= 18) return true;
+
             else
             {
                 DisplayAlert("","Je moet minimaal 18 jaar zijn","ok");

@@ -19,6 +19,10 @@ namespace Frindr.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
+            Bundle bundle = new Bundle();
+            Xamarin.FormsMaps.Init(this, bundle);
+
             LoadApplication(new App());
         }
     }

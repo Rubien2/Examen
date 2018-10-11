@@ -8,7 +8,9 @@
             <StackLayout Margin="0, 50, 0, 0">
             <Entry Placeholder="Naam" x:Name="NameEntry"/>
             <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry"/>
-            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                <Label Text="Onthoud mij"/>
+                <Switch x:Name="RememberSwitch"/>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
                 <Button Text="Registreer" x:Name="RegisterButton" HorizontalOptions="CenterAndExpand" WidthRequest="150" Clicked="RegisterButton_Clicked"/>
                     <Button Text="Log-in" x:Name="LoginButton" HorizontalOptions="FillAndExpand" WidthRequest="150" Clicked="LoginButton_Clicked"/>
             </StackLayout>
