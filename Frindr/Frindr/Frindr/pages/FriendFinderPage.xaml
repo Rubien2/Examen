@@ -8,7 +8,7 @@
         <Frame>
             <StackLayout>
                 <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                    <Picker HorizontalOptions="StartAndExpand" x:Name="DistancePicker"></Picker>
+                    <Picker HorizontalOptions="StartAndExpand" x:Name="DistancePicker" SelectedIndexChanged="DistancePicker_SelectedIndexChanged"></Picker>
                     <Button HorizontalOptions="End" Text="Show" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
                 </StackLayout>
 

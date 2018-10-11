@@ -18,6 +18,7 @@ namespace Frindr
 	{
 
         public static pages.GlobalVariables.User SelectedUser { get; set; }
+        ObservableCollection<pages.GlobalVariables.User> filteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
 
         public FriendFinderPage()
         {
@@ -63,55 +64,51 @@ namespace Frindr
                 var root = JsonConvert.DeserializeObject<pages.GlobalVariables.UserRecords>(records);
                 var userHobbyRoot = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(userHobby);
 
-
                 //Convert list to observable collection. This is easier for the grouping and filtering in the listview
-                var userCollection = new ObservableCollection<pages.GlobalVariables.User>(root.records);
-                var userHobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbyRoot.records);
-                var filteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
-                //var filteredUserHobbies     = new ObservableCollection<pages.GlobalVariables.UserHobby>();
-                List<int> filteredUserHobbiesUserIdList = null;
-                /*
-                try { 
-                foreach (var h in pages.GlobalVariables.selectedHobbies)
+                var userCollection          = new ObservableCollection<pages.GlobalVariables.User>(root.records);
+                var userHobbies             = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbyRoot.records);
+                var selectedHobbies         = new ObservableCollection<pages.GlobalVariables.Hobbies>(pages.GlobalVariables.selectedHobbies);
+                var selectedUserhobbies     = new ObservableCollection<pages.GlobalVariables.UserHobby>();
+
+                //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId 
+                foreach (var uHobby in userHobbies)
                 {
-                    if(h != null)
+                    if (selectedHobbies.Any(p => p.id == uHobby.hobbyId))
                     {
-                            //filteredUserHobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbies.Where(p => p.hobbyId == h.id));
-                        if(userHobbies.Any(p => p.hobbyId == h.id))
-                            {
-                                foreach (var uh in userHobbies.Where(p => p.hobbyId == h.id))
-                                {
-                                    if (uh.userId != null)
-                                    {
-                                        filteredUserHobbiesUserIdList.Add(uh.userId);
-                                    }
-                                }
-                            }
+                        selectedUserhobbies.Add(uHobby);
                     }
                 }
-                }
-                catch (NullReferenceException e)
+
+                //loop through each user and check if user.id is present in selectedUserHobbies.userId column. add to filtered user collection if it is.
+                foreach (var user in userCollection)
                 {
-                    await DisplayAlert("derp", e.ToString(), "ok");
+                    if (selectedUserhobbies.Any(p => p.userId == user.id))
+                    {
+                        filteredUserCollection.Add(user);
+                    }
                 }
-                */
-                FriendFinderListView.ItemsSource = userCollection;
 
-                //TODO: dynamisch locatie ophalen van ingelogde gebruiker
+                //TODO: calculate distance. and depending on distance in KM filter filterUserCollection further
 
-                string currentUserAddres = "3904SW";
-                //var currentUserPosition = await GetCoordinatesOfAddresAsync(currentUserAddres);
+                string currentUserAddres = "3904 sw";
 
-                /*
+
+                if (DistancePicker.SelectedIndex != 0)
+                {
+                    string selectedDistanceWithoutLetters = System.Text.RegularExpressions.Regex.Replace(DistancePicker.SelectedItem.ToString(), "[^0-9.]", "");
+
+                    double selectedDistance = double.Parse(selectedDistanceWithoutLetters);
+
+                    FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
+
+                }
+                else
+                {
+                    FriendFinderListView.ItemsSource = filteredUserCollection;
+                }
+
+
                 
-                    string userLocation = i.location;
-
-                    var userPosition = await GetCoordinatesOfAddresAsync(i.location);
-
-                    var distance = Distance(currentUserPosition[0], currentUserPosition[1], userPosition[0], userPosition[1], 'K');
-                } 
-                */
-                //userCollection.Select<>;
 
             }
             else
@@ -136,32 +133,25 @@ namespace Frindr
             ((ListView)sender).IsEnabled = true;
         }
 
-        private async Task<double[]> GetCoordinatesOfAddresAsync(string addres)
+        //filter users when distance changed
+        private async void DistancePicker_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-            Geocoder gc = new Geocoder();
-
-            IEnumerable<Position> result = await gc.GetPositionsForAddressAsync(addres);
-            
-            double[] userCoordinates = null;
-
-            foreach (Position pos in result)
+            if (DistancePicker.SelectedIndex != 0)
             {
+                string selectedDistanceWithoutLetters = System.Text.RegularExpressions.Regex.Replace(DistancePicker.SelectedItem.ToString(), "[^0-9.]", "");
 
-                System.Diagnostics.Debug.WriteLine("Lat: {0}, Lng: {1}", pos.Latitude, pos.Longitude);
+                double selectedDistance = double.Parse(selectedDistanceWithoutLetters);
 
-                userCoordinates[0] = pos.Latitude;
-                userCoordinates[1] = pos.Longitude;
-                
+                string currentUserAddres = "3904 SW";
+
+                FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
             }
-
-            return userCoordinates;
-
+            
         }
 
-        //Voodoo code to measure distance from geodatasource.com
+        //voodoo code to calculate distance between 2 points
 
-        private double Distance(double lat1, double lon1, double lat2, double lon2, char unit)
+        private double CalculateDistance(double lat1, double lon1, double lat2, double lon2, char unit)
         {
             double theta = lon1 - lon2;
             double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
@@ -187,6 +177,52 @@ namespace Frindr
         private double rad2deg(double rad)
         {
             return (rad / Math.PI * 180.0);
+        }
+
+
+        //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
+
+        private async void FilterDistance(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
+        {
+            try
+            {
+
+            
+            Geocoder geocoder = new Geocoder();
+            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
+
+            var currentUserCoordinates = currentUserPosition.ToArray();
+
+            foreach (var user in localFilteredUserCollection)
+            {
+                var userPosition = await geocoder.GetPositionsForAddressAsync(user.location);
+                var userCoordinates = userPosition.ToArray();
+
+                double distance = CalculateDistance(currentUserCoordinates[0].Latitude, currentUserCoordinates[0].Longitude, userCoordinates[0].Latitude, userCoordinates[0].Longitude, 'K');
+
+                if (distance >= maxDistance)
+                {
+                    localFilteredUserCollection.Remove(user);
+                }
+            }
+
+            }
+            catch (Exception e)
+            {
+                await DisplayAlert("", e.ToString(), "");
+                Console.WriteLine(e.ToString());
+            }
+
+            try
+            {
+                FriendFinderListView.ItemsSource = null;
+                FriendFinderListView.ItemsSource = localFilteredUserCollection;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
         }
 
     }
