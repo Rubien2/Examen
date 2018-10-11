@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Frindr.ProfileSettingsPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Margin="10">
+                <StackLayout Margin="0,0,0,30">
+                    <Label Text="Afbeelding" FontSize="Large"/>
+                    <Image Source="" BackgroundColor="Accent" HorizontalOptions="Start" HeightRequest="145" WidthRequest="145" Grid.Column="0" x:Name="ProfileImage"/>
+                </StackLayout>
+                <StackLayout Margin="0,0,0,30">
+                    <Label Text="Algemene informatie" FontSize="Large"></Label>
+                    <Entry Placeholder="Naam" x:Name="NameEntry"/>
+                    <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry"/>
+                    <Entry Placeholder="E-mail" x:Name="EmailEntry"/>
+                    <Entry Placeholder="Locatie" x:Name="LocationEntry"/>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Geboorte datum:" VerticalTextAlignment="Center"></Label>
+                        <DatePicker x:Name="BirthdayPicker" HorizontalOptions="FillAndExpand"/>
+                    </StackLayout>
+                    
+                    <Editor Keyboard="Chat" Placeholder="Beschrijving" x:Name="DescriptionEditor"/>
+                    
+                </StackLayout>
+                <StackLayout Margin="0,0,0,30">
+                    <Label Text="Hobby's" FontSize="Large"></Label>
+                    <Button Text="Selecteer hobby's" x:Name="SelectHobbyButton" Clicked="SelectHobbyButton_Clicked"></Button>
+                </StackLayout>
+                <StackLayout Margin="0,0,0,30">
+                    <Label Text="Privacy" FontSize="Large"></Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Switch IsToggled="false" HeightRequest="5" x:Name="PrivacyFindSwitch"></Switch>
+                        <Label Text="Andere gebruikers kunnen mij vinden"></Label>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Switch IsToggled="false" HeightRequest="5" x:Name="PrivacyLocationSwitch"></Switch>
+                        <Label Text="Andere gebruikers mogen mijn locatie zien"></Label>
+                    </StackLayout>
+                </StackLayout>
+                <Button Text="Opslaan" x:Name="SaveSettingsButton"></Button>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
