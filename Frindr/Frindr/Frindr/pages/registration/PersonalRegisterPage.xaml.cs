@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using System.Text.RegularExpressions;
+using Microsoft.Data.Sqlite;
 
 namespace Frindr
 {
@@ -27,6 +28,19 @@ namespace Frindr
             {
                 if (CheckName(NameEntry.Text) && CheckLocation(LocationEntry.Text) && CheckAge())
                 {
+                    using (SqliteConnection con = conn.SQLConnection)
+                    {
+                        con.Open();
+                        SqliteCommand cmd = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}'", con);
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+
+                    pages.GlobalVariables.loginUser.name = NameEntry.Text;
+                    pages.GlobalVariables.loginUser.location = LocationEntry.Text;
+                    pages.GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
+                    pages.GlobalVariables.loginUser.imagePath = "iets";
+                    
                     HobbyRegisterPage hobbyRegisterPage = new HobbyRegisterPage();
                     Navigation.PushModalAsync(hobbyRegisterPage);
                 }

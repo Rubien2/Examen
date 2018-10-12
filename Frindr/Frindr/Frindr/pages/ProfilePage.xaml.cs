@@ -25,7 +25,7 @@ namespace Frindr.pages
 
         private void btnSettings_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new ProfileSettingsPage());
+            Navigation.PushModalAsync(new ProfileSettingsPage());
         }
     }
 }

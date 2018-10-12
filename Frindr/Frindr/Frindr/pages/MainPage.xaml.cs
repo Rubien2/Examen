@@ -34,7 +34,7 @@ namespace Frindr
                     {
                         if (!rdr.HasRows)
                         {
-                            Navigation.PushModalAsync(new RegisterPage());
+                            Navigation.PushModalAsync(new FirstRegisterPage());
                         }
 
                         while (rdr.Read())
@@ -52,7 +52,7 @@ namespace Frindr
 
                                 while (rdr2.Read())
                                 {
-                                    Navigation.PushModalAsync(new ProfilePage());
+                                    Navigation.PushModalAsync(new MenuPage());
                                 }
 
                                 rdr2.Close();
@@ -72,25 +72,6 @@ namespace Frindr
             {
                 Console.WriteLine(ea.ToString());
             }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            Navigation.PushModalAsync(new FirstRegisterPage());
-        }
-
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-            RegisterPage register = new RegisterPage();
-            Navigation.PushModalAsync(register);
-        }
-
-        private void Button_Clicked_1(object sender, EventArgs e)
-        {
-            LoginPage login = new LoginPage();
-            Navigation.PushModalAsync(login);
         }
     }
 }

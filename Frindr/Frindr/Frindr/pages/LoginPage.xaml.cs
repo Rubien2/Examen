@@ -22,7 +22,7 @@ namespace Frindr
             InitializeComponent();
         }
 
-        private void btnConfirm_Clicked(object sender, EventArgs e)
+        private void LoginButton_Clicked(object sender, EventArgs e)
         {
             if (conn.IsOnline())
             {
@@ -61,8 +61,8 @@ namespace Frindr
                                         Username = json.records[0].name;
                                         Email = json.records[0].email;
                                         //ProfilePage.LoggedIn = true;
-                                        ProfilePage profile = new ProfilePage();
-                                        Navigation.PushModalAsync(profile, true);
+                                        MenuPage profile = new MenuPage();
+                                        Navigation.PushModalAsync(profile);
                                     }
                                     catch (SqliteException)
                                     {
@@ -80,9 +80,9 @@ namespace Frindr
 
                                         Username = json.records[0].name;
                                         Email = json.records[0].email;
-                                        //ProfilePage.LoggedIn = true;
-                                        ProfilePage profile = new ProfilePage();
-                                        Navigation.PushModalAsync(profile, true);
+
+                                        MenuPage menuPage = new MenuPage();
+                                        Navigation.PushModalAsync(menuPage);
                                     }
                                     catch (SqliteException)
                                     {

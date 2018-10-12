@@ -14,6 +14,7 @@ namespace Frindr
 	public partial class FirstRegisterPage : ContentPage
 	{
         Connection conn = new Connection();
+        RestfulClass restful = new RestfulClass();
         Hash hash = new Hash();
         string hashedString;
 		public FirstRegisterPage ()
@@ -23,44 +24,55 @@ namespace Frindr
 
         private void NextButton_Clicked(object sender, EventArgs e)
         {
-            if (CheckEmail(EmailEntry.Text) && CheckPassword(PasswordEntry.Text))
+            if (conn.IsOnline())
             {
-                try
+                if (CheckEmail(EmailEntry.Text) && CheckPassword(PasswordEntry.Text))
                 {
-                    using (SqliteConnection con = conn.SQLConnection)
+                    try
                     {
-                        con.Open();
-                        SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
-                        cmd.ExecuteNonQuery();
-
-                        SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1", con);
-                        cmd1.ExecuteNonQuery();
-
-                        using (SqliteDataReader rdr = cmd1.ExecuteReader())
+                        using (SqliteConnection con = conn.SQLConnection)
                         {
-                            if (!rdr.HasRows)
-                            {
-                                SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (pw, email) VALUES ('{hashedString}', '{EmailEntry.Text}')", con);
-                                cmd2.ExecuteNonQuery();
-                            }
+                            con.Open();
+                            SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
+                            cmd.ExecuteNonQuery();
 
-                            while (rdr.Read())
+                            SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1", con);
+                            cmd1.ExecuteNonQuery();
+
+                            using (SqliteDataReader rdr = cmd1.ExecuteReader())
                             {
-                                SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET pw = '{hashedString}', email = '{EmailEntry.Text}' WHERE id = 1", con);
-                                cmd3.ExecuteNonQuery();
+                                if (!rdr.HasRows)
+                                {
+                                    SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (pw, email, auto) VALUES ('{hashedString}', '{EmailEntry.Text}', 1)", con);
+                                    cmd2.ExecuteNonQuery();
+                                }
+
+                                while (rdr.Read())
+                                {
+                                    SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET pw = '{hashedString}', email = '{EmailEntry.Text}', auto = 1", con);
+                                    cmd3.ExecuteNonQuery();
+                                }
+                                rdr.Close();
                             }
-                            rdr.Close();
+                            con.Close();
                         }
-                        con.Close();
                     }
-                }
-                catch (SqliteException)
-                {
-                    DisplayAlert("An error occurred", "Git gud", "Ok");
-                }
+                    //remove later
+                    catch (SqliteException)
+                    {
+                        DisplayAlert("An error occurred", "Git gud", "Ok");
+                    }
 
-                PersonalRegisterPage personalRegisterPage = new PersonalRegisterPage();
-                Navigation.PushModalAsync(personalRegisterPage);
+                    pages.GlobalVariables.loginUser.email = EmailEntry.Text;
+                    pages.GlobalVariables.loginUser.pwd = hashedString;
+
+                    PersonalRegisterPage personalRegisterPage = new PersonalRegisterPage();
+                    Navigation.PushModalAsync(personalRegisterPage);
+                }
+            }
+            else
+            {
+                DisplayAlert("Check internet connection", "Frindr could not connect to the internet, please check your internet connection and try again", "Continue");
             }
         }
 
