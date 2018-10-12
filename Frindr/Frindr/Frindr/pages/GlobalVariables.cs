@@ -94,6 +94,8 @@ namespace Frindr.pages
             public int locationVisible { get; set; }
         }
 
+        public static User loginUser = new User();
+
         //UserHobby table
 
         public static string GetUserHobbies()
@@ -123,7 +125,7 @@ namespace Frindr.pages
             public int hobbyId { get; set; }
         }
 
-        
+
 
     }
 
