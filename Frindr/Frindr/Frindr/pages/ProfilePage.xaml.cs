@@ -27,5 +27,13 @@ namespace Frindr.pages
         {
             Navigation.PushAsync(new ProfileSettingsPage());
         }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+            
+            //return base.OnBackButtonPressed();
+        }
+
     }
 }

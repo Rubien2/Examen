@@ -118,6 +118,8 @@ namespace Frindr.pages
             .Where(p => p.selected)
             .ToList();
             GlobalVariables.selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(selected); //this ACTUALLY works!
+
+            Navigation.PopModalAsync();
         }
     }
 }

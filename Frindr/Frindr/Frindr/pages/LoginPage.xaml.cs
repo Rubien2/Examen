@@ -24,7 +24,7 @@ namespace Frindr
 
         private void RegisterButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushModalAsync(new RegisterPage());
+            Navigation.PushModalAsync(new FirstRegisterPage());
         }
     }
 }

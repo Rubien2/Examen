@@ -3,32 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Frindr.HobbyRegisterPage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout HorizontalOptions="EndAndExpand">
             <Frame>
                 <Label Text="Selecteer uw interesses" HorizontalOptions="Center"/>
             </Frame>
-            <StackLayout HorizontalOptions="CenterAndExpand">
-                <ListView x:Name="MyListView"
+
+            <ListView x:Name="MyListView"
                 ItemTapped="Handle_ItemTapped"
                 CachingStrategy="RecycleElement"
                 IsGroupingEnabled="True"
                 GroupDisplayBinding="{Binding name}"
                 >
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <StackLayout Orientation="Horizontal">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal">
 
-                                    <Switch IsToggled="{Binding selected}"></Switch>
-                                    <Label Text="{Binding hobby}" VerticalTextAlignment="Center"/>
+                                <Switch IsToggled="{Binding selected}"></Switch>
+                                <Label Text="{Binding hobby}" VerticalTextAlignment="Center"/>
 
-                                </StackLayout>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
 
-                </ListView>
-            </StackLayout>
+            </ListView>
             <Frame VerticalOptions="End">
                 <Button Text="Account aanmaken" x:Name="CreateAccountButton" Clicked="CreateAccountButton_Clicked"></Button>
             </Frame>
