@@ -146,6 +146,10 @@ namespace Frindr
 
                 FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
             }
+            else
+            {
+                FriendFinderListView.ItemsSource = filteredUserCollection;
+            }
             
         }
 
@@ -184,10 +188,9 @@ namespace Frindr
 
         private async void FilterDistance(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
         {
-            try
-            {
 
-            
+            var distanceFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+
             Geocoder geocoder = new Geocoder();
             var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
 
@@ -200,29 +203,23 @@ namespace Frindr
 
                 double distance = CalculateDistance(currentUserCoordinates[0].Latitude, currentUserCoordinates[0].Longitude, userCoordinates[0].Latitude, userCoordinates[0].Longitude, 'K');
 
-                if (distance >= maxDistance)
+                if (distance <= maxDistance)
                 {
-                    localFilteredUserCollection.Remove(user);
+                    distanceFilteredUserCollection.Add(user);
                 }
             }
 
-            }
-            catch (Exception e)
-            {
-                await DisplayAlert("", e.ToString(), "");
-                Console.WriteLine(e.ToString());
-            }
+            FriendFinderListView.ItemsSource = distanceFilteredUserCollection;
 
-            try
-            {
-                FriendFinderListView.ItemsSource = null;
-                FriendFinderListView.ItemsSource = localFilteredUserCollection;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+        }
 
+        //prefent you from going back to the register page
+        protected override bool OnBackButtonPressed()
+        {
+
+            return true;
+            
+            //return base.OnBackButtonPressed();
         }
 
     }
