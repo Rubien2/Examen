@@ -49,7 +49,7 @@ namespace Frindr
         private List<int> GetSelectedUserHobbies()
         {
 
-            pages.GlobalVariables.UserHobbyRecords userHobby = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(MainPage.userHobby);
+            pages.GlobalVariables.UserHobbyRecords userHobby = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(MainPage.UserHobby);
 
             List<int> hobbyIdList = new List<int>();
 
@@ -72,7 +72,7 @@ namespace Frindr
 
             List<int> selectedUserHobbies = GetSelectedUserHobbies();
 
-            pages.GlobalVariables.HobbyRecords hobbies = JsonConvert.DeserializeObject<pages.GlobalVariables.HobbyRecords>(MainPage.hobbies);
+            pages.GlobalVariables.HobbyRecords hobbies = JsonConvert.DeserializeObject<pages.GlobalVariables.HobbyRecords>(MainPage.Hobbies);
 
             string userHobbies = null;
 

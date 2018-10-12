@@ -36,7 +36,7 @@ namespace Frindr.pages
 
         void FillListView()
         {
-            var records = MainPage.hobbies;
+            var records = MainPage.Hobbies;
 
 
             if (records != null)

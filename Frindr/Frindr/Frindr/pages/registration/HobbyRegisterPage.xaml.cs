@@ -32,9 +32,13 @@ namespace Frindr
         {
 
             var selected = hobbiesCollection
-            .Where(p => p.selected)
-            .ToList();
-            pages.GlobalVariables.selectedHobbies = new ObservableCollection<pages.GlobalVariables.Hobbies>(selected); 
+             .Where(p => p.selected)
+             .ToList();
+            pages.GlobalVariables.selectedHobbies = new ObservableCollection<pages.GlobalVariables.Hobbies>(selected);
+
+            RestfulClass rest = new RestfulClass();
+            string json = JsonConvert.SerializeObject(pages.GlobalVariables.loginUser);
+            rest.CreateData("/records/user/", json);
 
             MenuPage menuPage = new MenuPage();
             Navigation.PushModalAsync(menuPage);
@@ -42,7 +46,7 @@ namespace Frindr
 
         void FillListView()
         {
-            var records = MainPage.hobbies;
+            var records = MainPage.Hobbies;
 
 
             if (records != null)

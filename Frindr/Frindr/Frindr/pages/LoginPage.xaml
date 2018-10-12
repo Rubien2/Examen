@@ -11,7 +11,9 @@
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
                 <Button Text="Registreer" x:Name="RegisterButton" HorizontalOptions="CenterAndExpand" WidthRequest="150" Clicked="RegisterButton_Clicked"/>
                     <Button Text="Log-in" x:Name="LoginButton" HorizontalOptions="FillAndExpand" WidthRequest="150" Clicked="LoginButton_Clicked"/>
-            </StackLayout>
+                    <Label Text="Onthoud mij"/>
+                    <Switch x:Name="RememberSwitch"/>
+                </StackLayout>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>
