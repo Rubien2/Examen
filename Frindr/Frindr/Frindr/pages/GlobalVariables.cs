@@ -125,8 +125,6 @@ namespace Frindr.pages
             public int hobbyId { get; set; }
         }
 
-
-
     }
 
 }
