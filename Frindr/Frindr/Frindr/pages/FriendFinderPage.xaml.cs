@@ -13,9 +13,9 @@ using Xamarin.Forms.Maps;
 
 namespace Frindr
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class FriendFinderPage : ContentPage
-	{
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class FriendFinderPage : ContentPage
+    {
 
         public static pages.GlobalVariables.User SelectedUser { get; set; }
         ObservableCollection<pages.GlobalVariables.User> filteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
@@ -24,11 +24,11 @@ namespace Frindr
         {
             InitializeComponent();
 
-            ObservableCollection<string> AgeList = new ObservableCollection<string> {"Elke leeftijd", "18-21 Jaar", "22-25 Jaar", "26-30 Jaar", "31-36 Jaar", "37-45 Jaar", "46-50 Jaar", "50+" };
+            ObservableCollection<string> AgeList = new ObservableCollection<string> { "Elke leeftijd", "18-21 Jaar", "22-25 Jaar", "26-30 Jaar", "31-36 Jaar", "37-45 Jaar", "46-50 Jaar", "50+" };
             AgePicker.ItemsSource = AgeList;
             AgePicker.SelectedIndex = 0;
 
-            ObservableCollection<string> DistanceList = new ObservableCollection<string> { "Alle afstanden", "< 2 KM", "< 5 KM", "< 10 KM", "< 15 KM", "< 25 KM", "< 50 KM", "< 75 KM", "< 100 KM"};
+            ObservableCollection<string> DistanceList = new ObservableCollection<string> { "Alle afstanden", "< 2 KM", "< 5 KM", "< 10 KM", "< 15 KM", "< 25 KM", "< 50 KM", "< 75 KM", "< 100 KM" };
             DistancePicker.ItemsSource = DistanceList;
             DistancePicker.SelectedIndex = 0;
 
@@ -54,8 +54,8 @@ namespace Frindr
 
             //TODO: afstand berekenen, observable collection filteren en sorteren.
 
-            var records     = MainPage.Users;
-            var userHobby   = MainPage.UserHobby;
+            var records = MainPage.Users;
+            var userHobby = MainPage.UserHobby;
 
             if (records != null && pages.GlobalVariables.selectedHobbies != null)
             {
@@ -65,10 +65,10 @@ namespace Frindr
                 var userHobbyRoot = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(userHobby);
 
                 //Convert list to observable collection. This is easier for the grouping and filtering in the listview
-                var userCollection          = new ObservableCollection<pages.GlobalVariables.User>(root.records);
-                var userHobbies             = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbyRoot.records);
-                var selectedHobbies         = new ObservableCollection<pages.GlobalVariables.Hobbies>(pages.GlobalVariables.selectedHobbies);
-                var selectedUserhobbies     = new ObservableCollection<pages.GlobalVariables.UserHobby>();
+                var userCollection = new ObservableCollection<pages.GlobalVariables.User>(root.records);
+                var userHobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbyRoot.records);
+                var selectedHobbies = new ObservableCollection<pages.GlobalVariables.Hobbies>(pages.GlobalVariables.selectedHobbies);
+                var selectedUserhobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>();
 
                 //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId 
                 foreach (var uHobby in userHobbies)
@@ -108,15 +108,15 @@ namespace Frindr
                 }
 
 
-                
+
 
             }
             else
             if (pages.GlobalVariables.selectedHobbies == null)
             {
-                await DisplayAlert("","U heeft nog geen hobby's geselecteerd. Ga naar uw profiel instellingen om een hobby te selecteren","Ok");
+                await DisplayAlert("", "U heeft nog geen hobby's geselecteerd. Ga naar uw profiel instellingen om een hobby te selecteren", "Ok");
             }
-            
+
         }
 
         private void FriendFinderListView_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -150,7 +150,7 @@ namespace Frindr
             {
                 FriendFinderListView.ItemsSource = filteredUserCollection;
             }
-            
+
         }
 
         //voodoo code to calculate distance between 2 points
@@ -218,7 +218,7 @@ namespace Frindr
         {
 
             return true;
-            
+
             //return base.OnBackButtonPressed();
         }
 
