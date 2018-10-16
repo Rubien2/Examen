@@ -26,7 +26,7 @@ namespace Frindr
         {
             if (conn.IsOnline())
             {
-                if (CheckEmail(EmailEntry.Text) && CheckPassword(PasswordEntry.Text))
+                if (CheckEmail(EmailEntry.Text) && CheckPassword(PasswordEntry.Text) && PasswordEntry.Text == ConfirmPasswordEntry.Text)
                 {
                     try
                     {
