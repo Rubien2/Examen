@@ -16,6 +16,9 @@ namespace Frindr.pages
         public ProfilePage ()
 		{
             InitializeComponent();
+            lblProfileName.Text = GlobalVariables.loginUser.name;
+            lblEmail.Text = GlobalVariables.loginUser.email;
+            lblLocation.Text = GlobalVariables.loginUser.location;
 		}
 
         protected override void OnAppearing()

@@ -12,7 +12,6 @@
                 <StackLayout Margin="0,0,0,30">
                     <Label Text="Algemene informatie" FontSize="Large"></Label>
                     <Entry Placeholder="Naam" x:Name="NameEntry"/>
-                    <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry"/>
                     <Entry Placeholder="E-mail" x:Name="EmailEntry"/>
                     <Entry Placeholder="Locatie" x:Name="LocationEntry"/>
 

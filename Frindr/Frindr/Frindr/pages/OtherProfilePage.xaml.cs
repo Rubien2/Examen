@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Frindr.pages;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Newtonsoft.Json;
@@ -14,7 +14,7 @@ namespace Frindr
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class OtherProfilePage : ContentPage
 	{
-        pages.GlobalVariables.User SelectedUser = FriendFinderPage.SelectedUser;
+        GlobalVariables.User SelectedUser = FriendFinderPage.SelectedUser;
 
         public OtherProfilePage ()
 		{
@@ -49,11 +49,11 @@ namespace Frindr
         private List<int> GetSelectedUserHobbies()
         {
 
-            pages.GlobalVariables.UserHobbyRecords userHobby = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(MainPage.UserHobby);
+            GlobalVariables.UserHobbyRecords userHobby = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(MainPage.UserHobby);
 
             List<int> hobbyIdList = new List<int>();
 
-            foreach(pages.GlobalVariables.UserHobby i in userHobby.records)
+            foreach(GlobalVariables.UserHobby i in userHobby.records)
             {
                 if(i.userId == SelectedUser.id)
                 {
@@ -72,11 +72,11 @@ namespace Frindr
 
             List<int> selectedUserHobbies = GetSelectedUserHobbies();
 
-            pages.GlobalVariables.HobbyRecords hobbies = JsonConvert.DeserializeObject<pages.GlobalVariables.HobbyRecords>(MainPage.Hobbies);
+            GlobalVariables.HobbyRecords hobbies = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(MainPage.Hobbies);
 
             string userHobbies = null;
 
-            foreach (pages.GlobalVariables.Hobbies i in hobbies.records)
+            foreach (GlobalVariables.Hobbies i in hobbies.records)
             {
                 if (selectedUserHobbies.Contains(i.id))
                 {

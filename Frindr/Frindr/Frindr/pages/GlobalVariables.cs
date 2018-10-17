@@ -47,7 +47,6 @@ namespace Frindr.pages
         public class HobbyRecords
         {
             public List<Hobbies> records { get; set; }
-
         }
 
         public class Category : ObservableCollection<Hobbies>

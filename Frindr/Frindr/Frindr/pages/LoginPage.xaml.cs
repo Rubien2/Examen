@@ -14,9 +14,6 @@ namespace Frindr
         RestfulClass restful = new RestfulClass();
         Hash hash = new Hash();
 
-        public static string Username { get; set; }
-        public static string Email { get; set; }
-
         public LoginPage()
         {
             InitializeComponent();
@@ -58,9 +55,15 @@ namespace Frindr
                                         SqliteCommand cmd2 = new SqliteCommand(cmdStr2, con);
                                         cmd2.ExecuteNonQuery();
 
-                                        Username = json.records[0].name;
-                                        Email = json.records[0].email;
-                                        //ProfilePage.LoggedIn = true;
+                                        GlobalVariables.loginUser.name = json.records[0].name;
+                                        GlobalVariables.loginUser.pwd = json.records[0].pwd;
+                                        GlobalVariables.loginUser.email = json.records[0].email;
+                                        GlobalVariables.loginUser.birthday = json.records[0].birthday;
+                                        GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
+                                        GlobalVariables.loginUser.location = json.records[0].location;
+                                        GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
+                                        GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
+
                                         MenuPage profile = new MenuPage();
                                         Navigation.PushModalAsync(profile);
                                     }
@@ -78,8 +81,14 @@ namespace Frindr
                                         SqliteCommand cmd1 = new SqliteCommand(cmdStr1, con);
                                         cmd1.ExecuteNonQuery();
 
-                                        Username = json.records[0].name;
-                                        Email = json.records[0].email;
+                                        GlobalVariables.loginUser.name = json.records[0].name;
+                                        GlobalVariables.loginUser.pwd = json.records[0].pwd;
+                                        GlobalVariables.loginUser.email = json.records[0].email;
+                                        GlobalVariables.loginUser.birthday = json.records[0].birthday;
+                                        GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
+                                        GlobalVariables.loginUser.location = json.records[0].location;
+                                        GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
+                                        GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
 
                                         MenuPage menuPage = new MenuPage();
                                         Navigation.PushModalAsync(menuPage);
