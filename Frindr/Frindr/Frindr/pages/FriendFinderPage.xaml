@@ -7,15 +7,27 @@
     <StackLayout>
         <Frame>
             <StackLayout>
-                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                    <Picker HorizontalOptions="StartAndExpand" x:Name="DistancePicker" SelectedIndexChanged="DistancePicker_SelectedIndexChanged"></Picker>
-                    <Button HorizontalOptions="End" Text="Show" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
+                <StackLayout Orientation="Horizontal">
+                    <Button Text="Show filters" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
                 </StackLayout>
+                <StackLayout IsVisible="False" x:Name="ExtraFilterStackLayout">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                <StackLayout HorizontalOptions="Start" Orientation="Horizontal" IsVisible="False" x:Name="ExtraFilterStackLayout">
-                    
-                    <Picker x:Name="AgePicker"></Picker>
-                </StackLayout>
+                        <Label x:Name="lblSelectedDistance" Grid.Column="0" Grid.Row="0" Text="Afstand:"></Label>
+                        <Slider x:Name="DistanceSlider" Unfocused="DistanceSlider_Unfocused" ValueChanged="DistanceSlider_ValueChanged" 
+                                Minimum="0" Maximum="150" HorizontalOptions="Fill"
+                                MaximumTrackColor="Black" MinimumTrackColor="Black" 
+                                Grid.Column="1" Grid.Row="0"/>
+                    </Grid>
+                    <Picker x:Name="AgePicker" SelectedIndexChanged="AgePicker_SelectedIndexChanged"></Picker>
+                    </StackLayout>
             </StackLayout>
         </Frame>
 

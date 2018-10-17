@@ -36,7 +36,7 @@
                 <Label x:Name="lblHobbies" Text="[Hobby lijst]"></Label>
             </StackLayout>
 
-            <Button x:Name="btnSettings" Text="Verstuur bericht" VerticalOptions="End"></Button>
+            <Button x:Name="btnSendMessage" Text="Verstuur bericht" VerticalOptions="End" Clicked="btnSendMessage_Clicked"></Button>
 
         </StackLayout>
     </ContentPage.Content>
