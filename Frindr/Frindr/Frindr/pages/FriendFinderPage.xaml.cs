@@ -24,11 +24,9 @@ namespace Frindr
         {
             InitializeComponent();
 
-            ObservableCollection<string> AgeList = new ObservableCollection<string> { "Elke leeftijd", "18-21 Jaar", "22-25 Jaar", "26-30 Jaar", "31-36 Jaar", "37-45 Jaar", "46-50 Jaar", "50+" };
-            AgePicker.ItemsSource = AgeList;
-            AgePicker.SelectedIndex = 0;
-
             LoadUsers();
+            SetRangeSliderTextFormat();
+
         }
 
         private void ShowFilterButton_Clicked(object sender, EventArgs e)
@@ -55,7 +53,7 @@ namespace Frindr
 
             if (records != null && pages.GlobalVariables.selectedHobbies != null)
             {
-                FriendFinderListView.ItemsSource = null;
+                //FriendFinderListView.ItemsSource = null;
                 filteredUserCollection.Clear();
 
                 var root = JsonConvert.DeserializeObject<pages.GlobalVariables.UserRecords>(records);
@@ -86,49 +84,45 @@ namespace Frindr
                 }
 
                 //Filter users on distance
-                if(DistanceSlider.Value != 0)
+                if(DistanceRangeSlider.UpperValue != DistanceRangeSlider.MaximumValue)
                 {
                     string currentUserAddres = "3904 SW";
 
-                    double selectedDistance = DistanceSlider.Value;
+                    double selectedDistance = DistanceRangeSlider.UpperValue;
 
                     filteredUserCollection = await FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
                 }
 
-                //Filter users on age
-                if (AgePicker.SelectedIndex != 0)
-                {
-                    string currentuserage = 1999.ToString();
-                }
+
+                filteredUserCollection = await FilterAge(filteredUserCollection);
+
 
                 FriendFinderListView.ItemsSource = filteredUserCollection;
 
             }
-            else
-            if (pages.GlobalVariables.selectedHobbies == null)
-            {
-                await DisplayAlert("", "U heeft nog geen hobby's geselecteerd. Ga naar uw profiel instellingen om een hobby te selecteren", "Ok");
-            }
-
         }
 
         //function to filter users age. age format: yyyyMMdd
-        private Task<ObservableCollection<pages.GlobalVariables.User>> FilterAge(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection)
+        private async Task<ObservableCollection<pages.GlobalVariables.User>> FilterAge(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection)
         {
-            int birthday = 19990601;
-            int age = CheckAge(birthday);
+
+            var ageFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
 
             foreach (var user in localFilteredUserCollection)
             {
                 DateTime userBirthday =  DateTime.Parse(user.birthday);
                 int userBirthdayString = int.Parse(userBirthday.ToString("yyyyMMdd"));
-                int userAge = CheckAge(birthday);
+                int userAge = CheckAge(userBirthdayString);
 
-                int ageDifference = (age - birthday) / 10000;
+
+                if(userAge >= AgeRangeSlider.LowerValue && userAge <= AgeRangeSlider.UpperValue || userAge >= AgeRangeSlider.LowerValue && AgeRangeSlider.UpperValue == AgeRangeSlider.MaximumValue)
+                {
+                    ageFilteredUserCollection.Add(user);
+                }
 
             }
 
-            return null;
+            return ageFilteredUserCollection;
 
         }
 
@@ -172,7 +166,14 @@ namespace Frindr
 
         }
 
-        
+        private void SetRangeSliderTextFormat()
+        {
+            
+            DistanceRangeSlider.TextFormat = "Onbeperkt";
+
+            AgeRangeSlider.TextFormat = "0 Jaar";
+
+        }
 
         //voodoo code to calculate distance between 2 points from geodatasource.com
 
@@ -228,30 +229,26 @@ namespace Frindr
         }
 
         //filter users when selected age changed
-        private void AgePicker_SelectedIndexChanged(object sender, EventArgs e)
+        private void DistanceRangeSlider_DragCompleted(object sender, ValueChangedEventArgs e)
         {
             LoadUsers();
         }
 
-        bool updateUsers = true;
-
-        private async void DistanceSlider_ValueChanged(object sender, ValueChangedEventArgs e)
+        private void AgeRangeSlider_DragCompleted(object sender, FocusEventArgs e)
         {
-            if (DistanceSlider.Value == 0) lblSelectedDistance.Text = "Afstand: elke";
-            else lblSelectedDistance.Text = "Afstand: " + Math.Round(DistanceSlider.Value) + " KM";
+            LoadUsers();
+        }
 
-            if (updateUsers == true)
+        private void DistanceRangeSlider_UpperValueChanged(object sender, EventArgs e)
+        {
+            if (DistanceRangeSlider.UpperValue == DistanceRangeSlider.MaximumValue)
             {
-                updateUsers = false;
-                await Task.Delay(1000);
-                LoadUsers();
-                updateUsers = true;
-            }            
-        }
-
-        private void DistanceSlider_Unfocused(object sender, FocusEventArgs e)
-        {
-            LoadUsers();
+                DistanceRangeSlider.TextFormat = "Onbeperkt";
+            }
+            else
+            {
+                DistanceRangeSlider.TextFormat = "0 KM";
+            }
         }
     }
 }

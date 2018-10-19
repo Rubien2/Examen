@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:Xamarin.RangeSlider.Forms;assembly=Xamarin.RangeSlider.Forms"
              x:Class="Frindr.FriendFinderPage"
              Title="Vrienden zoeker">
 
@@ -14,19 +15,38 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Label x:Name="lblSelectedDistance" Grid.Column="0" Grid.Row="0" Text="Afstand:"></Label>
-                        <Slider x:Name="DistanceSlider" Unfocused="DistanceSlider_Unfocused" ValueChanged="DistanceSlider_ValueChanged" 
-                                Minimum="0" Maximum="150" HorizontalOptions="Fill"
-                                MaximumTrackColor="Black" MinimumTrackColor="Black" 
-                                Grid.Column="1" Grid.Row="0"/>
+                        <!-- first row distance -->
+                        <Label x:Name="lblSelectedDistance" Grid.Column="0" Grid.Row="0" Text="Afstand:" VerticalOptions="Center"></Label>
+                        <forms:RangeSlider x:Name="DistanceRangeSlider" 
+                                           MinimumValue="0" MaximumValue="150" 
+                                           LowerValue="0" UpperValue="150" 
+                                           StepValue="1" StepValueContinuously="True" 
+                                           Grid.Column="1" Grid.Row="0"
+                                           ShowTextAboveThumbs="True" MinThumbHidden="True"
+                                           DragCompleted="DistanceRangeSlider_DragCompleted"
+                                           UpperValueChanged="DistanceRangeSlider_UpperValueChanged"
+                                           />
+
+                        <!-- second row age -->
+                        <Label x:Name="lblSelectedAge" Grid.Column="0" Grid.Row="1" Text="Leeftijd:" VerticalOptions="Center"></Label>
+                        <forms:RangeSlider x:Name="AgeRangeSlider" 
+                                           MinimumValue="18" MaximumValue="65" 
+                                           LowerValue="18" UpperValue="65" 
+                                           StepValue="1" StepValueContinuously="True" 
+                                           VerticalOptions="Center" Grid.Column="1" Grid.Row="1"
+                                           ShowTextAboveThumbs="True"
+                                           DragCompleted="AgeRangeSlider_DragCompleted"/>
+                        <!-- third row -->
+                        <!-- aan klant vragen of hij nog meer ideeën heeft -->
+                        
                     </Grid>
-                    <Picker x:Name="AgePicker" SelectedIndexChanged="AgePicker_SelectedIndexChanged"></Picker>
+                    
                     </StackLayout>
             </StackLayout>
         </Frame>
