@@ -73,8 +73,6 @@ namespace Frindr.pages
             }
         }
 
-
-
         public class UserRecords
         {
             public List<User> records { get; set; }

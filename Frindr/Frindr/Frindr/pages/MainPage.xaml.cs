@@ -17,11 +17,11 @@ namespace Frindr
         public MainPage()
         {
             InitializeComponent();
-
+            
             Users = GlobalVariables.GetUsers();
             Hobbies = GlobalVariables.GetHobbies();
             UserHobby = GlobalVariables.GetUserHobbies();
-
+            //online check moedafoeka
             try
             {
                 using (SqliteConnection con = conn.SQLConnection)

@@ -38,7 +38,7 @@
                         <Label Text="Andere gebruikers mogen mijn locatie zien"></Label>
                     </StackLayout>
                 </StackLayout>
-                <Button Text="Opslaan" x:Name="SaveSettingsButton"></Button>
+                <Button Text="Opslaan" x:Name="SaveSettingsButton" Clicked="SaveSettingsButton_Clicked"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
