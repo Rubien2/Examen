@@ -55,6 +55,7 @@ namespace Frindr
                                         SqliteCommand cmd2 = new SqliteCommand(cmdStr2, con);
                                         cmd2.ExecuteNonQuery();
 
+                                        GlobalVariables.loginUser.id = json.records[0].id ?? default(int);
                                         GlobalVariables.loginUser.name = json.records[0].name;
                                         GlobalVariables.loginUser.pwd = json.records[0].pwd;
                                         GlobalVariables.loginUser.email = json.records[0].email;
@@ -81,6 +82,7 @@ namespace Frindr
                                         SqliteCommand cmd1 = new SqliteCommand(cmdStr1, con);
                                         cmd1.ExecuteNonQuery();
 
+                                        GlobalVariables.loginUser.id = json.records[0].id ?? default(int);
                                         GlobalVariables.loginUser.name = json.records[0].name;
                                         GlobalVariables.loginUser.pwd = json.records[0].pwd;
                                         GlobalVariables.loginUser.email = json.records[0].email;

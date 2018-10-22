@@ -58,6 +58,7 @@ namespace Frindr
                                     string rest = restful.GetData($"/records/user?filter=pwd,eq,{rdr2.GetString(2)}&filter=email,eq,{rdr2.GetString(3)}");
                                     UserRecords json = JsonConvert.DeserializeObject<UserRecords>(rest);
 
+                                    GlobalVariables.loginUser.id = json.records[0].id ?? default(int);
                                     GlobalVariables.loginUser.name = json.records[0].name;
                                     GlobalVariables.loginUser.pwd = json.records[0].pwd;
                                     GlobalVariables.loginUser.email = json.records[0].email;
@@ -69,7 +70,6 @@ namespace Frindr
                                     
                                     Navigation.PushModalAsync(new MenuPage());
                                 }
-
                                 rdr2.Close();
                             }
                         }

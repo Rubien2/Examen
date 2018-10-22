@@ -63,9 +63,6 @@ namespace Frindr
                         con.Close();
                     }
 
-                    string nameCheck = GlobalVariables.loginUser.name;
-                    string pwCheck = GlobalVariables.loginUser.pwd;
-
                     GlobalVariables.loginUser.name = NameEntry.Text;
                     GlobalVariables.loginUser.email = EmailEntry.Text;
                     GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
@@ -75,10 +72,7 @@ namespace Frindr
 
                     string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
 
-                    string getData = rest.GetData($"/records/user?filter=name,eq,{nameCheck}&filter=pwd,eq,{pwCheck}");
-                    UserRecords user = JsonConvert.DeserializeObject<UserRecords>(getData);
-
-                    rest.SetData($"/records/user?filter=name,eq,{user.records[0].id}", json);
+                    rest.SetData($"/records/user?filter=id,eq,{GlobalVariables.loginUser.id}", json);
                 }
                 catch (SqliteException ea)
                 {
