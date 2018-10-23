@@ -62,7 +62,9 @@ namespace Frindr
 
                         con.Close();
                     }
+                    int? oldID = GlobalVariables.loginUser.id;
 
+                    GlobalVariables.loginUser.id = null;
                     GlobalVariables.loginUser.name = NameEntry.Text;
                     GlobalVariables.loginUser.email = EmailEntry.Text;
                     GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
@@ -72,7 +74,22 @@ namespace Frindr
 
                     string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
 
-                    rest.SetData($"/records/user?filter=id,eq,{GlobalVariables.loginUser.id}", json);
+                    GlobalVariables.loginUser.id = oldID;
+
+                    rest.SetData($"/records/user/{GlobalVariables.loginUser.id}", json);
+
+                    string newUserData = rest.GetData($"/records/user?filter=id,eq,{oldID}");
+                    UserRecords newUser = JsonConvert.DeserializeObject<UserRecords>(newUserData);
+
+                    GlobalVariables.loginUser.id = newUser.records[0].id;
+                    GlobalVariables.loginUser.name = newUser.records[0].name;
+                    GlobalVariables.loginUser.pwd = newUser.records[0].pwd;
+                    GlobalVariables.loginUser.email = newUser.records[0].email;
+                    GlobalVariables.loginUser.birthday = newUser.records[0].birthday;
+                    GlobalVariables.loginUser.imagePath = newUser.records[0].imagePath;
+                    GlobalVariables.loginUser.location = newUser.records[0].location;
+                    GlobalVariables.loginUser.locationVisible = newUser.records[0].locationVisible;
+                    GlobalVariables.loginUser.userVisible = newUser.records[0].userVisible;
                 }
                 catch (SqliteException ea)
                 {
