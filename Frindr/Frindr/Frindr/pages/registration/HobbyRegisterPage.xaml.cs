@@ -41,9 +41,11 @@ namespace Frindr
             string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
             rest.CreateData("/records/user/", json);
 
+            //put every selected hobby in database
             foreach(var hobby in selectedHobbies)
             {
-                rest.CreateData("/records/userHobby/",)
+                json = JsonConvert.SerializeObject(GlobalVariables.selectedHobbies);
+                rest.CreateData("/records/userHobby/","");
             }
 
             MenuPage menuPage = new MenuPage();
