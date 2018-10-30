@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Frindr.pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,7 +30,7 @@ namespace Frindr
 
         private void SelectHobbyButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushModalAsync(new pages.SelectHobbyPage());
+            Navigation.PushModalAsync(new SelectHobbyPage());
         }
     }
 }

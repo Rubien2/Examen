@@ -32,10 +32,11 @@ namespace Frindr
             lblEmail.Text       = SelectedUser.email;
             lblLocation.Text    = SelectedUser.location;
             lblProfileName.Text = SelectedUser.name;
+            lblDescription.Text = SelectedUser.description;
 
 
             //check if location is visible
-            if(SelectedUser.locationVisible == 0)
+            if(SelectedUser.locationVisible == 1)
             {
                 lblLocation.IsVisible = false;
             }

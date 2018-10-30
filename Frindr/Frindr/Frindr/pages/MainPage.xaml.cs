@@ -17,11 +17,10 @@ namespace Frindr
         public MainPage()
         {
             InitializeComponent();
-            
+
             Users = GlobalVariables.GetUsers();
             Hobbies = GlobalVariables.GetHobbies();
             UserHobby = GlobalVariables.GetUserHobbies();
-            //online check moedafoeka
             try
             {
                 using (SqliteConnection con = conn.SQLConnection)
@@ -62,12 +61,13 @@ namespace Frindr
                                     GlobalVariables.loginUser.name = json.records[0].name;
                                     GlobalVariables.loginUser.pwd = json.records[0].pwd;
                                     GlobalVariables.loginUser.email = json.records[0].email;
+                                    GlobalVariables.loginUser.description = json.records[0].description;
                                     GlobalVariables.loginUser.birthday = json.records[0].birthday;
                                     GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
                                     GlobalVariables.loginUser.location = json.records[0].location;
                                     GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
                                     GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
-                                    
+
                                     Navigation.PushModalAsync(new MenuPage());
                                 }
                                 rdr2.Close();

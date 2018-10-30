@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
+using Frindr.pages;
 
 namespace Frindr
 {
@@ -36,10 +37,10 @@ namespace Frindr
                         con.Close();
                     }
 
-                    pages.GlobalVariables.loginUser.name = NameEntry.Text;
-                    pages.GlobalVariables.loginUser.location = LocationEntry.Text;
-                    pages.GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
-                    pages.GlobalVariables.loginUser.imagePath = "iets";
+                    GlobalVariables.loginUser.name = NameEntry.Text;
+                    GlobalVariables.loginUser.location = LocationEntry.Text;
+                    GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
+                    GlobalVariables.loginUser.imagePath = "iets";
 
                     HobbyRegisterPage hobbyRegisterPage = new HobbyRegisterPage();
                     Navigation.PushModalAsync(hobbyRegisterPage);

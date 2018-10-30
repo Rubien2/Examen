@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Frindr.pages;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -35,7 +36,7 @@ namespace Frindr
                 {
                     
                     new MenuPageMenuItem { Id = 0, Title = "Vrienden Zoeker", TargetType = typeof(FriendFinderPage) },
-                    new MenuPageMenuItem { Id = 1, Title = "Profiel Pagina", TargetType = typeof(pages.ProfilePage)},
+                    new MenuPageMenuItem { Id = 1, Title = "Profiel Pagina", TargetType = typeof(ProfilePage)},
                     //new MenuPageMenuItem { Id = 2, Title = "Uitloggen", TargetType = typeof(FirstRegisterPage)},
                     new MenuPageMenuItem { Id = 3, Title = "Afsluiten", TargetType = typeof(ExitPage)},
                 });

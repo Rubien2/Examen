@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Reflection;
 using Xamarin.Forms.Maps;
+using Frindr.pages;
 
 namespace Frindr
 {
@@ -17,8 +18,8 @@ namespace Frindr
     public partial class FriendFinderPage : ContentPage
     {
 
-        public static pages.GlobalVariables.User SelectedUser { get; set; }
-        ObservableCollection<pages.GlobalVariables.User> filteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+        public static GlobalVariables.User SelectedUser { get; set; }
+        ObservableCollection<GlobalVariables.User> filteredUserCollection = new ObservableCollection<GlobalVariables.User>();
 
         public FriendFinderPage()
         {
@@ -54,23 +55,23 @@ namespace Frindr
 
             //TODO: afstand berekenen, observable collection filteren en sorteren.
 
-            var records = MainPage.Users;
-            var userHobby = MainPage.UserHobby;
+            var records = GlobalVariables.GetUsers();
+            var userHobby = GlobalVariables.GetUserHobbies();
 
-            if (records != null && pages.GlobalVariables.selectedHobbies != null)
+            if (records != null && GlobalVariables.selectedHobbies != null)
             {
                 FriendFinderListView.ItemsSource = null;
 
-                var root = JsonConvert.DeserializeObject<pages.GlobalVariables.UserRecords>(records);
-                var userHobbyRoot = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(userHobby);
+                var root = JsonConvert.DeserializeObject<GlobalVariables.UserRecords>(records);
+                var userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
 
                 //Convert list to observable collection. This is easier for the grouping and filtering in the listview
-                var userCollection = new ObservableCollection<pages.GlobalVariables.User>(root.records);
-                var userHobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbyRoot.records);
-                var selectedHobbies = new ObservableCollection<pages.GlobalVariables.Hobbies>(pages.GlobalVariables.selectedHobbies);
-                var selectedUserhobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>();
+                var userCollection = new ObservableCollection<GlobalVariables.User>(root.records);
+                var userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
+                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(GlobalVariables.selectedHobbies);
+                var selectedUserhobbies = new ObservableCollection<GlobalVariables.UserHobby>();
 
-                //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId 
+                //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId
                 foreach (var uHobby in userHobbies)
                 {
                     if (selectedHobbies.Any(p => p.id == uHobby.hobbyId))
@@ -82,15 +83,15 @@ namespace Frindr
                 //loop through each user and check if user.id is present in selectedUserHobbies.userId column. add to filtered user collection if it is.
                 foreach (var user in userCollection)
                 {
-                    if (selectedUserhobbies.Any(p => p.userId == user.id))
+                    if (selectedUserhobbies.Any(p => p.userId == user.id) && user.userVisible == 0)
                     {
                         filteredUserCollection.Add(user);
                     }
                 }
 
-                //TODO: calculate distance. and depending on distance in KM filter filterUserCollection further
-
-                string currentUserAddres = "3904 sw";
+                //huidig adres gebruiker
+                //gooit null reference
+                string currentUserAddres = GlobalVariables.loginUser.location;
 
 
                 if (DistancePicker.SelectedIndex != 0)
@@ -107,12 +108,16 @@ namespace Frindr
                     FriendFinderListView.ItemsSource = filteredUserCollection;
                 }
 
-
-
-
+                foreach (var user in userCollection)
+                {
+                    if(user.locationVisible == 1)
+                    {
+                        user.location = "";
+                    }
+                }
             }
             else
-            if (pages.GlobalVariables.selectedHobbies == null)
+            if (GlobalVariables.selectedHobbies == null)
             {
                 await DisplayAlert("", "U heeft nog geen hobby's geselecteerd. Ga naar uw profiel instellingen om een hobby te selecteren", "Ok");
             }
@@ -123,7 +128,7 @@ namespace Frindr
         {
             ((ListView)sender).IsEnabled = false;
 
-            SelectedUser = (pages.GlobalVariables.User)FriendFinderListView.SelectedItem;
+            SelectedUser = (GlobalVariables.User)FriendFinderListView.SelectedItem;
 
             OtherProfilePage otherProfilePage = new OtherProfilePage();
             Navigation.PushModalAsync(otherProfilePage);
@@ -186,10 +191,10 @@ namespace Frindr
 
         //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
 
-        private async void FilterDistance(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
+        private async void FilterDistance(ObservableCollection<GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
         {
 
-            var distanceFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+            var distanceFilteredUserCollection = new ObservableCollection<GlobalVariables.User>();
 
             Geocoder geocoder = new Geocoder();
             var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);

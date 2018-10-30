@@ -24,6 +24,8 @@ namespace Frindr
             NameEntry.Text = GlobalVariables.loginUser.name;
             EmailEntry.Text = GlobalVariables.loginUser.email;
             LocationEntry.Text = GlobalVariables.loginUser.location;
+            DescriptionEditor.Text = GlobalVariables.loginUser.description;
+
             try
             {
                 BirthdayPicker.Date = Convert.ToDateTime(GlobalVariables.loginUser.birthday);
@@ -40,11 +42,11 @@ namespace Frindr
 
         private async void SelectHobbyButton_Clicked(object sender, EventArgs e)
         {
-            this.IsEnabled = false;
+            IsEnabled = false;
 
             await Navigation.PushModalAsync(new SelectHobbyPage());
 
-            this.IsEnabled = true;
+            IsEnabled = true;
         }
 
         private void SaveSettingsButton_Clicked(object sender, EventArgs e)
@@ -62,34 +64,34 @@ namespace Frindr
 
                         con.Close();
                     }
-                    int? oldID = GlobalVariables.loginUser.id;
-
-                    GlobalVariables.loginUser.id = null;
                     GlobalVariables.loginUser.name = NameEntry.Text;
                     GlobalVariables.loginUser.email = EmailEntry.Text;
                     GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
+                    GlobalVariables.loginUser.description = DescriptionEditor.Text;
+                    //imagePath needs to be added
                     GlobalVariables.loginUser.location = LocationEntry.Text;
                     GlobalVariables.loginUser.userVisible = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
                     GlobalVariables.loginUser.locationVisible = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
 
                     string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
-
-                    GlobalVariables.loginUser.id = oldID;
-
+                    
+                    //SetData's URL can not have filters in it and needs a primary key only
                     rest.SetData($"/records/user/{GlobalVariables.loginUser.id}", json);
 
-                    string newUserData = rest.GetData($"/records/user?filter=id,eq,{oldID}");
+                    string newUserData = rest.GetData($"/records/user?filter=id,eq,{GlobalVariables.loginUser.id}");
                     UserRecords newUser = JsonConvert.DeserializeObject<UserRecords>(newUserData);
-
-                    GlobalVariables.loginUser.id = newUser.records[0].id;
+                    
                     GlobalVariables.loginUser.name = newUser.records[0].name;
                     GlobalVariables.loginUser.pwd = newUser.records[0].pwd;
                     GlobalVariables.loginUser.email = newUser.records[0].email;
+                    GlobalVariables.loginUser.description = newUser.records[0].description;
                     GlobalVariables.loginUser.birthday = newUser.records[0].birthday;
                     GlobalVariables.loginUser.imagePath = newUser.records[0].imagePath;
                     GlobalVariables.loginUser.location = newUser.records[0].location;
                     GlobalVariables.loginUser.locationVisible = newUser.records[0].locationVisible;
                     GlobalVariables.loginUser.userVisible = newUser.records[0].userVisible;
+
+                    Navigation.PushModalAsync(new MenuPage());
                 }
                 catch (SqliteException ea)
                 {

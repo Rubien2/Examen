@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using Frindr.pages;
 
 namespace Frindr
 {
@@ -15,10 +16,10 @@ namespace Frindr
 	public partial class HobbyRegisterPage : ContentPage
 	{
 
-        private ObservableCollection<pages.GlobalVariables.Category> grouped { get; set; }
+        private ObservableCollection<GlobalVariables.Category> grouped { get; set; }
 
-        private ObservableCollection<pages.GlobalVariables.Hobbies> hobbiesCollection = pages.GlobalVariables.hobbiesCollection;
-        private ObservableCollection<pages.GlobalVariables.Hobbies> selectedHobbies = pages.GlobalVariables.selectedHobbies;
+        private ObservableCollection<GlobalVariables.Hobbies> hobbiesCollection = GlobalVariables.hobbiesCollection;
+        private ObservableCollection<GlobalVariables.Hobbies> selectedHobbies = GlobalVariables.selectedHobbies;
 
 
         public HobbyRegisterPage ()
@@ -34,10 +35,10 @@ namespace Frindr
             var selected = hobbiesCollection
              .Where(p => p.selected)
              .ToList();
-            pages.GlobalVariables.selectedHobbies = new ObservableCollection<pages.GlobalVariables.Hobbies>(selected);
+            GlobalVariables.selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(selected);
 
             RestfulClass rest = new RestfulClass();
-            string json = JsonConvert.SerializeObject(pages.GlobalVariables.loginUser);
+            string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
             rest.CreateData("/records/user/", json);
 
             MenuPage menuPage = new MenuPage();
@@ -53,19 +54,19 @@ namespace Frindr
             {
                 MyListView.ItemsSource = null;
 
-                var root = JsonConvert.DeserializeObject<pages.GlobalVariables.HobbyRecords>(records);
+                var root = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(records);
                 //Convert list to observable collection. This is easier for the grouping in the listview
-                hobbiesCollection = new ObservableCollection<pages.GlobalVariables.Hobbies>(root.records);
+                hobbiesCollection = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
 
-                grouped = new ObservableCollection<pages.GlobalVariables.Category>();
+                grouped = new ObservableCollection<GlobalVariables.Category>();
 
                 //Define Hobby categories
-                var VideoGamesGroup =       new pages.GlobalVariables.Category() { id = 1, name = "Video games" };
-                var SportGroup =            new pages.GlobalVariables.Category() { id = 2, name = "Sporten" };
-                var HobbyAndFreeTimeGroup = new pages.GlobalVariables.Category() { id = 3, name = "Hobby en vrije tijd" };
-                var DoItYourselfGroup =     new pages.GlobalVariables.Category() { id = 4, name = "Doe-het-zelf" };
-                var TechnologieGroup =      new pages.GlobalVariables.Category() { id = 5, name = "Technologie" };
-                var OtherGroup =            new pages.GlobalVariables.Category() { id = 0, name = "Overig" };
+                var VideoGamesGroup =       new GlobalVariables.Category() { id = 1, name = "Video games" };
+                var SportGroup =            new GlobalVariables.Category() { id = 2, name = "Sporten" };
+                var HobbyAndFreeTimeGroup = new GlobalVariables.Category() { id = 3, name = "Hobby en vrije tijd" };
+                var DoItYourselfGroup =     new GlobalVariables.Category() { id = 4, name = "Doe-het-zelf" };
+                var TechnologieGroup =      new GlobalVariables.Category() { id = 5, name = "Technologie" };
+                var OtherGroup =            new GlobalVariables.Category() { id = 0, name = "Overig" };
 
                 //add hobbies to groups
                 foreach (var hobby in hobbiesCollection)

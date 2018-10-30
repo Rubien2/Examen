@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Microsoft.Data.Sqlite;
+using Frindr.pages;
 
 namespace Frindr
 {
@@ -63,8 +64,9 @@ namespace Frindr
                         DisplayAlert("An error occurred", "Git gud", "Ok");
                     }
 
-                    pages.GlobalVariables.loginUser.email = EmailEntry.Text;
-                    pages.GlobalVariables.loginUser.pwd = hashedString;
+                    GlobalVariables.loginUser.email = EmailEntry.Text;
+                    GlobalVariables.loginUser.pwd = hashedString;
+                    GlobalVariables.loginUser.description = "";
 
                     PersonalRegisterPage personalRegisterPage = new PersonalRegisterPage();
                     Navigation.PushModalAsync(personalRegisterPage);

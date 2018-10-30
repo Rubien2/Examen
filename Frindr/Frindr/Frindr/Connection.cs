@@ -36,6 +36,7 @@ namespace Frindr
         public int? id { get; set; }
         public string name { get; set; }
         public string email { get; set; }
+        public string description { get; set; }
         public string pwd { get; set; }
         public string location { get; set; }
         public string birthday { get; set; }

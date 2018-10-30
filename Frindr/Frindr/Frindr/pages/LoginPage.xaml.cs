@@ -59,6 +59,7 @@ namespace Frindr
                                         GlobalVariables.loginUser.name = json.records[0].name;
                                         GlobalVariables.loginUser.pwd = json.records[0].pwd;
                                         GlobalVariables.loginUser.email = json.records[0].email;
+                                        GlobalVariables.loginUser.description = json.records[0].description;
                                         GlobalVariables.loginUser.birthday = json.records[0].birthday;
                                         GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
                                         GlobalVariables.loginUser.location = json.records[0].location;
@@ -82,10 +83,11 @@ namespace Frindr
                                         SqliteCommand cmd1 = new SqliteCommand(cmdStr1, con);
                                         cmd1.ExecuteNonQuery();
 
-                                        GlobalVariables.loginUser.id = json.records[0].id ?? default(int);
+                                        GlobalVariables.loginUser.id = json.records[0].id;
                                         GlobalVariables.loginUser.name = json.records[0].name;
                                         GlobalVariables.loginUser.pwd = json.records[0].pwd;
                                         GlobalVariables.loginUser.email = json.records[0].email;
+                                        GlobalVariables.loginUser.description = json.records[0].description;
                                         GlobalVariables.loginUser.birthday = json.records[0].birthday;
                                         GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
                                         GlobalVariables.loginUser.location = json.records[0].location;
@@ -107,9 +109,9 @@ namespace Frindr
                     }
                 }
 
-                catch (Exception ea)
+                catch (Exception)
                 {
-                    DisplayAlert("Error", ea.ToString(), "OK");
+                    DisplayAlert("Login error", "Couldn't log you in. Please try again or come back later", "ok");
                 }
             }
             else
