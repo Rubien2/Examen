@@ -8,6 +8,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using Plugin.Messaging;
+using Plugin;
 
 namespace Frindr
 {
@@ -97,5 +99,29 @@ namespace Frindr
             lblHobbies.Text = userHobbies;
         }
 
+        private void btnSendMessage_Clicked(object sender, EventArgs e)
+        {
+            SendEmail(SelectedUser.email);
+        }
+
+
+        private void SendEmail(string receiverEmail)
+        {
+
+            var emailMessenger = CrossMessaging.Current.EmailMessenger;
+            if (emailMessenger.CanSendEmail)
+            {
+
+                // Alternatively use EmailBuilder fluent interface to construct more complex e-mail with multiple recipients, bcc, attachments etc.
+                var email = new EmailMessageBuilder()
+                  .To(receiverEmail)
+                  .Subject("Bericht van Frindr")
+                  .Body("Hallo " + SelectedUser.name)
+                  .Build();
+
+                emailMessenger.SendEmail(email);
+            }
+
+        }
     }
 }
