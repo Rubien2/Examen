@@ -90,6 +90,7 @@ namespace Frindr.pages
             public string imagePath { get; set; }
             public int userVisible { get; set; }
             public int locationVisible { get; set; }
+            public string distance { get; set; }
         }
 
         public static User loginUser = new User();
