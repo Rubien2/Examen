@@ -76,7 +76,7 @@
                             <Label Text="{Binding name}" VerticalTextAlignment="Center" Grid.Row="0" Grid.Column="1"/>
                             <!-- hobby's -->
                             <Label Text="{Binding location}" Grid.Row="1" Grid.Column="1"></Label>
-                            <Label Text="afstand" Grid.Row="1" Grid.Column="2"></Label>
+                            <Label Text="{Binding distance}" Grid.Row="1" Grid.Column="2"></Label>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

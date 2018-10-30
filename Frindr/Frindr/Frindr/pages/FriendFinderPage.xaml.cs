@@ -157,6 +157,7 @@ namespace Frindr
 
                 if (distance <= maxDistance)
                 {
+                    user.distance = distance.ToString();
                     distanceFilteredUserCollection.Add(user);
                 }
             }
