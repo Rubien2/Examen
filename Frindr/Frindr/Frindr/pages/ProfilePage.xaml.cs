@@ -16,6 +16,10 @@ namespace Frindr.pages
         public ProfilePage ()
 		{
             InitializeComponent();
+            lblProfileName.Text = GlobalVariables.loginUser.name;
+            lblEmail.Text = GlobalVariables.loginUser.email;
+            lblLocation.Text = GlobalVariables.loginUser.location;
+            lblDescription.Text = GlobalVariables.loginUser.description;
 		}
 
         protected override void OnAppearing()
@@ -25,7 +29,7 @@ namespace Frindr.pages
 
         private void btnSettings_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new ProfileSettingsPage());
+            Navigation.PushModalAsync(new ProfileSettingsPage());
         }
 
         protected override bool OnBackButtonPressed()

@@ -9,19 +9,19 @@
               
                 <Image Source="" BackgroundColor="Accent" HorizontalOptions="Start" HeightRequest="145" WidthRequest="145" x:Name="ProfileImage"/>
                 <StackLayout>
-                    <Label x:Name="lblProfileName" Text="[Account naam]"></Label>
-                    <Label x:Name="lblEmail" Text="[Email]"></Label>
-                    <Label x:Name="lblLocation" Text="[Locatie]"></Label>
+                    <Label x:Name="lblProfileName" Text="[Account naam]"/>
+                    <Label x:Name="lblEmail" Text="[Email]"/>
+                    <Label x:Name="lblLocation" Text="[Locatie]"/>
                 </StackLayout>
             </StackLayout>
 
             <StackLayout Margin="0,0,0,10">
-                <Label Text="Beschrijving" FontSize="Large"></Label>
-                <Label x:Name="lblDescription" Text="[beschrijving]"></Label>
+                <Label Text="Beschrijving" FontSize="Large"/>
+                <Label x:Name="lblDescription" Text="[beschrijving]"/>
             </StackLayout>
 
             <StackLayout Margin="0,0,0,10">
-                <Label Text="Hobby's" FontSize="Large"></Label>
+                <Label Text="Hobby's" FontSize="Large"/>
                 <ListView ItemsSource="">
                     <ListView.ItemTemplate>
                         <DataTemplate></DataTemplate>

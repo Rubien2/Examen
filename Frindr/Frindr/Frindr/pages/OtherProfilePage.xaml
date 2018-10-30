@@ -16,24 +16,16 @@
                 <Image Source="" BackgroundColor="Accent" HeightRequest="145" WidthRequest="145" Grid.Column="0"/>
 
                 <StackLayout Grid.Column="1">
-                    <Label x:Name="lblProfileName" Text="[Account naam]"></Label>
-                    <Label x:Name="lblEmail" Text="[Email]"></Label>
-                    <Label x:Name="lblLocation" Text="[Locatie]"></Label>
+                    <Label x:Name="lblProfileName" Text="[Account naam]"/>
+                    <Label x:Name="lblEmail" Text="[Email]"/>
+                    <Label x:Name="lblLocation" Text="[Locatie]"/>
                 </StackLayout>
-
             </Grid>
 
-            <!--
-            <StackLayout Margin="0,0,0,10">
-                <Label Text="Beschrijving" FontSize="Large"></Label>
-                <Label x:Name="lblDescription" Text="[beschrijving]"></Label>
-            </StackLayout>
-            -->
-            
-            
             <StackLayout Margin="0,0,0,10" VerticalOptions="End">
-                <Label Text="Hobby's" FontSize="Large"></Label>
-                <Label x:Name="lblHobbies" Text="[Hobby lijst]"></Label>
+                <Label x:Name="lblDescription" Text="[Beschrijving]"/>
+                <Label Text="Hobby's" FontSize="Large"/>
+                <Label x:Name="lblHobbies" Text="[Hobby lijst]"/>
             </StackLayout>
 
             <Button x:Name="btnSendMessage" Text="Verstuur bericht" VerticalOptions="End" Clicked="btnSendMessage_Clicked"></Button>

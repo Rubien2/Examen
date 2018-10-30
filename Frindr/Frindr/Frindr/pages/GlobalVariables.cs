@@ -47,7 +47,6 @@ namespace Frindr.pages
         public class HobbyRecords
         {
             public List<Hobbies> records { get; set; }
-
         }
 
         public class Category : ObservableCollection<Hobbies>
@@ -74,8 +73,6 @@ namespace Frindr.pages
             }
         }
 
-
-
         public class UserRecords
         {
             public List<User> records { get; set; }
@@ -83,9 +80,10 @@ namespace Frindr.pages
 
         public class User
         {
-            public int id { get; set; }
+            public int? id { get; set; }
             public string name { get; set; }
             public string email { get; set; }
+            public string description { get; set; }
             public string pwd { get; set; }
             public string location { get; set; }
             public string birthday { get; set; }
@@ -125,7 +123,6 @@ namespace Frindr.pages
             public int userId { get; set; }
             public int hobbyId { get; set; }
         }
-
     }
 
 }

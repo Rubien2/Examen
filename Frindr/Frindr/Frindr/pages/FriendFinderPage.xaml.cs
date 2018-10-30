@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Reflection;
 using Xamarin.Forms.Maps;
+using Frindr.pages;
 
 namespace Frindr
 {
@@ -17,8 +18,8 @@ namespace Frindr
     public partial class FriendFinderPage : ContentPage
     {
 
-        public static pages.GlobalVariables.User SelectedUser { get; set; }
-        ObservableCollection<pages.GlobalVariables.User> filteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+        public static GlobalVariables.User SelectedUser { get; set; }
+        ObservableCollection<GlobalVariables.User> filteredUserCollection = new ObservableCollection<GlobalVariables.User>();
 
         public FriendFinderPage()
         {
@@ -48,24 +49,24 @@ namespace Frindr
 
             //TODO: observable collection filteren en sorteren.
 
-            var records = MainPage.Users;
-            var userHobby = MainPage.UserHobby;
+            var records = GlobalVariables.GetUsers();
+            var userHobby = GlobalVariables.GetUserHobbies();
 
-            if (records != null && pages.GlobalVariables.selectedHobbies != null)
+            if (records != null && GlobalVariables.selectedHobbies != null)
             {
                 //FriendFinderListView.ItemsSource = null;
                 filteredUserCollection.Clear();
 
-                var root = JsonConvert.DeserializeObject<pages.GlobalVariables.UserRecords>(records);
-                var userHobbyRoot = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(userHobby);
+                var root = JsonConvert.DeserializeObject<GlobalVariables.UserRecords>(records);
+                var userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
 
                 //Convert list to observable collection. This is easier for the grouping and filtering in the listview
-                var userCollection = new ObservableCollection<pages.GlobalVariables.User>(root.records);
-                var userHobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>(userHobbyRoot.records);
-                var selectedHobbies = new ObservableCollection<pages.GlobalVariables.Hobbies>(pages.GlobalVariables.selectedHobbies);
-                var selectedUserhobbies = new ObservableCollection<pages.GlobalVariables.UserHobby>();
+                var userCollection = new ObservableCollection<GlobalVariables.User>(root.records);
+                var userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
+                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(GlobalVariables.selectedHobbies);
+                var selectedUserhobbies = new ObservableCollection<GlobalVariables.UserHobby>();
 
-                //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId 
+                //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId
                 foreach (var uHobby in userHobbies)
                 {
                     if (selectedHobbies.Any(p => p.id == uHobby.hobbyId))
@@ -77,16 +78,19 @@ namespace Frindr
                 //loop through each user and check if user.id is present in selectedUserHobbies.userId column. add to filtered user collection if it is.
                 foreach (var user in userCollection)
                 {
-                    if (selectedUserhobbies.Any(p => p.userId == user.id))
+                    if (selectedUserhobbies.Any(p => p.userId == user.id) && user.userVisible == 0)
                     {
                         filteredUserCollection.Add(user);
                     }
                 }
 
+
                 //Filter users on distance
                 if(DistanceRangeSlider.UpperValue != DistanceRangeSlider.MaximumValue)
                 {
-                    string currentUserAddres = "3904 SW";
+                    //huidig adres gebruiker
+                    //gooit null reference
+                    string currentUserAddres = GlobalVariables.loginUser.location;
 
                     double selectedDistance = DistanceRangeSlider.UpperValue;
 
@@ -95,9 +99,19 @@ namespace Frindr
 
 
                 filteredUserCollection = await FilterAge(filteredUserCollection);
-
-
+                
                 FriendFinderListView.ItemsSource = filteredUserCollection;
+
+                foreach (var user in userCollection)
+                {
+                    if(user.locationVisible == 1)
+                    {
+                        user.location = "";
+                    }
+                }
+            }
+            else
+            if (GlobalVariables.selectedHobbies == null)
 
             }
         }
@@ -109,6 +123,7 @@ namespace Frindr
             var ageFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
 
             foreach (var user in localFilteredUserCollection)
+
             {
                 DateTime userBirthday =  DateTime.Parse(user.birthday);
                 int userBirthdayString = int.Parse(userBirthday.ToString("yyyyMMdd"));
@@ -120,7 +135,10 @@ namespace Frindr
                     ageFilteredUserCollection.Add(user);
                 }
 
+            SelectedUser = (GlobalVariables.User)FriendFinderListView.SelectedItem;
+
             }
+
 
             return ageFilteredUserCollection;
 
@@ -206,12 +224,25 @@ namespace Frindr
             return (rad / Math.PI * 180.0);
         }
 
+
+
+        //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
+
+        private async void FilterDistance(ObservableCollection<GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
+        {
+
+            var distanceFilteredUserCollection = new ObservableCollection<GlobalVariables.User>();
+
+            Geocoder geocoder = new Geocoder();
+            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
+        
+        }
+
         //prefent you from going back to the register page
         protected override bool OnBackButtonPressed()
         {
 
             return true;
-
             //return base.OnBackButtonPressed();
         }
 

@@ -10,6 +10,7 @@ namespace Frindr
 {
     class Connection
     {
+        
         readonly static string Location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "main.sqlite");
         public SqliteConnection SQLConnection { get; set; } = new SqliteConnection("Data Source=" + Location);
 
@@ -35,6 +36,7 @@ namespace Frindr
         public int? id { get; set; }
         public string name { get; set; }
         public string email { get; set; }
+        public string description { get; set; }
         public string pwd { get; set; }
         public string location { get; set; }
         public string birthday { get; set; }

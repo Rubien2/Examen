@@ -113,7 +113,7 @@ namespace Frindr
             }
             else
             {
-                Console.Out.WriteLine(@"                Deletely unsuccesfull-lely");
+                Console.Out.WriteLine(@"                Deletely unsuccesful-laleluliloly");
             }
 
 
