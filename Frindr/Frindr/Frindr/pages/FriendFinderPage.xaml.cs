@@ -24,15 +24,9 @@ namespace Frindr
         {
             InitializeComponent();
 
-            ObservableCollection<string> AgeList = new ObservableCollection<string> { "Elke leeftijd", "18-21 Jaar", "22-25 Jaar", "26-30 Jaar", "31-36 Jaar", "37-45 Jaar", "46-50 Jaar", "50+" };
-            AgePicker.ItemsSource = AgeList;
-            AgePicker.SelectedIndex = 0;
-
-            ObservableCollection<string> DistanceList = new ObservableCollection<string> { "Alle afstanden", "< 2 KM", "< 5 KM", "< 10 KM", "< 15 KM", "< 25 KM", "< 50 KM", "< 75 KM", "< 100 KM" };
-            DistancePicker.ItemsSource = DistanceList;
-            DistancePicker.SelectedIndex = 0;
-
             LoadUsers();
+            SetRangeSliderTextFormat();
+
         }
 
         private void ShowFilterButton_Clicked(object sender, EventArgs e)
@@ -52,14 +46,15 @@ namespace Frindr
         private async void LoadUsers()
         {
 
-            //TODO: afstand berekenen, observable collection filteren en sorteren.
+            //TODO: observable collection filteren en sorteren.
 
             var records = MainPage.Users;
             var userHobby = MainPage.UserHobby;
 
             if (records != null && pages.GlobalVariables.selectedHobbies != null)
             {
-                FriendFinderListView.ItemsSource = null;
+                //FriendFinderListView.ItemsSource = null;
+                filteredUserCollection.Clear();
 
                 var root = JsonConvert.DeserializeObject<pages.GlobalVariables.UserRecords>(records);
                 var userHobbyRoot = JsonConvert.DeserializeObject<pages.GlobalVariables.UserHobbyRecords>(userHobby);
@@ -88,72 +83,100 @@ namespace Frindr
                     }
                 }
 
-                //TODO: calculate distance. and depending on distance in KM filter filterUserCollection further
-
-                string currentUserAddres = "3904 sw";
-
-
-                if (DistancePicker.SelectedIndex != 0)
+                //Filter users on distance
+                if(DistanceRangeSlider.UpperValue != DistanceRangeSlider.MaximumValue)
                 {
-                    string selectedDistanceWithoutLetters = System.Text.RegularExpressions.Regex.Replace(DistancePicker.SelectedItem.ToString(), "[^0-9.]", "");
+                    string currentUserAddres = "3904 SW";
 
-                    double selectedDistance = double.Parse(selectedDistanceWithoutLetters);
+                    double selectedDistance = DistanceRangeSlider.UpperValue;
 
-                    FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
-
-                }
-                else
-                {
-                    FriendFinderListView.ItemsSource = filteredUserCollection;
+                    filteredUserCollection = await FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
                 }
 
 
+                filteredUserCollection = await FilterAge(filteredUserCollection);
 
 
-            }
-            else
-            if (pages.GlobalVariables.selectedHobbies == null)
-            {
-                await DisplayAlert("", "U heeft nog geen hobby's geselecteerd. Ga naar uw profiel instellingen om een hobby te selecteren", "Ok");
-            }
-
-        }
-
-        private void FriendFinderListView_ItemTapped(object sender, ItemTappedEventArgs e)
-        {
-            ((ListView)sender).IsEnabled = false;
-
-            SelectedUser = (pages.GlobalVariables.User)FriendFinderListView.SelectedItem;
-
-            OtherProfilePage otherProfilePage = new OtherProfilePage();
-            Navigation.PushModalAsync(otherProfilePage);
-
-            ((ListView)sender).SelectedItem = null;
-
-            ((ListView)sender).IsEnabled = true;
-        }
-
-        //filter users when distance changed
-        private async void DistancePicker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (DistancePicker.SelectedIndex != 0)
-            {
-                string selectedDistanceWithoutLetters = System.Text.RegularExpressions.Regex.Replace(DistancePicker.SelectedItem.ToString(), "[^0-9.]", "");
-
-                double selectedDistance = double.Parse(selectedDistanceWithoutLetters);
-
-                string currentUserAddres = "3904 SW";
-
-                FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
-            }
-            else
-            {
                 FriendFinderListView.ItemsSource = filteredUserCollection;
+
             }
+        }
+
+        //function to filter users age. age format: yyyyMMdd
+        private async Task<ObservableCollection<pages.GlobalVariables.User>> FilterAge(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection)
+        {
+
+            var ageFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+
+            foreach (var user in localFilteredUserCollection)
+            {
+                DateTime userBirthday =  DateTime.Parse(user.birthday);
+                int userBirthdayString = int.Parse(userBirthday.ToString("yyyyMMdd"));
+                int userAge = CheckAge(userBirthdayString);
+
+
+                if(userAge >= AgeRangeSlider.LowerValue && userAge <= AgeRangeSlider.UpperValue || userAge >= AgeRangeSlider.LowerValue && AgeRangeSlider.UpperValue == AgeRangeSlider.MaximumValue)
+                {
+                    ageFilteredUserCollection.Add(user);
+                }
+
+            }
+
+            return ageFilteredUserCollection;
 
         }
 
-        //voodoo code to calculate distance between 2 points
+        //age format = yyyyMMdd
+        private int CheckAge(int birthday)
+        {
+            var today = int.Parse(DateTime.Today.ToString("yyyyMMdd"));
+            var age = (today - birthday) / 10000;
+
+            return age;
+        }
+
+        //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
+
+        private async Task<ObservableCollection<pages.GlobalVariables.User>> FilterDistance(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
+        {
+
+            var distanceFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+
+            Geocoder geocoder = new Geocoder();
+            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
+
+            var currentUserCoordinates = currentUserPosition.ToArray();
+
+            foreach (var user in localFilteredUserCollection)
+            {
+                var userPosition = await geocoder.GetPositionsForAddressAsync(user.location);
+                var userCoordinates = userPosition.ToArray();
+
+                double distance = CalculateDistance(currentUserCoordinates[0].Latitude,
+                    currentUserCoordinates[0].Longitude, userCoordinates[0].Latitude, userCoordinates[0].Longitude, 'K');
+
+                if (distance <= maxDistance)
+                {
+                    user.distance = distance.ToString();
+                    distanceFilteredUserCollection.Add(user);
+                }
+            }
+
+            //filteredUserCollection = distanceFilteredUserCollection;
+            return distanceFilteredUserCollection;
+
+        }
+
+        private void SetRangeSliderTextFormat()
+        {
+            
+            DistanceRangeSlider.TextFormat = "Onbeperkt";
+
+            AgeRangeSlider.TextFormat = "0 Jaar";
+
+        }
+
+        //voodoo code to calculate distance between 2 points from geodatasource.com
 
         private double CalculateDistance(double lat1, double lon1, double lat2, double lon2, char unit)
         {
@@ -183,36 +206,6 @@ namespace Frindr
             return (rad / Math.PI * 180.0);
         }
 
-
-        //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
-
-        private async void FilterDistance(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
-        {
-
-            var distanceFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
-
-            Geocoder geocoder = new Geocoder();
-            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
-
-            var currentUserCoordinates = currentUserPosition.ToArray();
-
-            foreach (var user in localFilteredUserCollection)
-            {
-                var userPosition = await geocoder.GetPositionsForAddressAsync(user.location);
-                var userCoordinates = userPosition.ToArray();
-
-                double distance = CalculateDistance(currentUserCoordinates[0].Latitude, currentUserCoordinates[0].Longitude, userCoordinates[0].Latitude, userCoordinates[0].Longitude, 'K');
-
-                if (distance <= maxDistance)
-                {
-                    distanceFilteredUserCollection.Add(user);
-                }
-            }
-
-            FriendFinderListView.ItemsSource = distanceFilteredUserCollection;
-
-        }
-
         //prefent you from going back to the register page
         protected override bool OnBackButtonPressed()
         {
@@ -222,5 +215,41 @@ namespace Frindr
             //return base.OnBackButtonPressed();
         }
 
+        private void FriendFinderListView_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            ((ListView)sender).IsEnabled = false;
+
+            SelectedUser = (pages.GlobalVariables.User)FriendFinderListView.SelectedItem;
+
+            OtherProfilePage otherProfilePage = new OtherProfilePage();
+            Navigation.PushModalAsync(otherProfilePage);
+
+            ((ListView)sender).SelectedItem = null;
+
+            ((ListView)sender).IsEnabled = true;
+        }
+
+        //filter users when selected age changed
+        private void DistanceRangeSlider_DragCompleted(object sender, ValueChangedEventArgs e)
+        {
+            LoadUsers();
+        }
+
+        private void AgeRangeSlider_DragCompleted(object sender, FocusEventArgs e)
+        {
+            LoadUsers();
+        }
+
+        private void DistanceRangeSlider_UpperValueChanged(object sender, EventArgs e)
+        {
+            if (DistanceRangeSlider.UpperValue == DistanceRangeSlider.MaximumValue)
+            {
+                DistanceRangeSlider.TextFormat = "Onbeperkt";
+            }
+            else
+            {
+                DistanceRangeSlider.TextFormat = "0 KM";
+            }
+        }
     }
 }

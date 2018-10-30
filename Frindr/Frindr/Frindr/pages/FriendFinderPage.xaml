@@ -1,21 +1,53 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:Xamarin.RangeSlider.Forms;assembly=Xamarin.RangeSlider.Forms"
              x:Class="Frindr.FriendFinderPage"
              Title="Vrienden zoeker">
 
     <StackLayout>
         <Frame>
             <StackLayout>
-                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                    <Picker HorizontalOptions="StartAndExpand" x:Name="DistancePicker" SelectedIndexChanged="DistancePicker_SelectedIndexChanged"></Picker>
-                    <Button HorizontalOptions="End" Text="Show" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
+                <StackLayout Orientation="Horizontal">
+                    <Button Text="Show filters" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
                 </StackLayout>
+                <StackLayout IsVisible="False" x:Name="ExtraFilterStackLayout">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                <StackLayout HorizontalOptions="Start" Orientation="Horizontal" IsVisible="False" x:Name="ExtraFilterStackLayout">
+                        <!-- first row distance -->
+                        <Label x:Name="lblSelectedDistance" Grid.Column="0" Grid.Row="0" Text="Afstand:" VerticalOptions="Center"></Label>
+                        <forms:RangeSlider x:Name="DistanceRangeSlider" 
+                                           MinimumValue="0" MaximumValue="150" 
+                                           LowerValue="0" UpperValue="150" 
+                                           StepValue="1" StepValueContinuously="True" 
+                                           Grid.Column="1" Grid.Row="0"
+                                           ShowTextAboveThumbs="True" MinThumbHidden="True"
+                                           DragCompleted="DistanceRangeSlider_DragCompleted"
+                                           UpperValueChanged="DistanceRangeSlider_UpperValueChanged"
+                                           />
+
+                        <!-- second row age -->
+                        <Label x:Name="lblSelectedAge" Grid.Column="0" Grid.Row="1" Text="Leeftijd:" VerticalOptions="Center"></Label>
+                        <forms:RangeSlider x:Name="AgeRangeSlider" 
+                                           MinimumValue="18" MaximumValue="65" 
+                                           LowerValue="18" UpperValue="65" 
+                                           StepValue="1" StepValueContinuously="True" 
+                                           VerticalOptions="Center" Grid.Column="1" Grid.Row="1"
+                                           ShowTextAboveThumbs="True"
+                                           DragCompleted="AgeRangeSlider_DragCompleted"/>
+                        <!-- third row -->
+                        <!-- aan klant vragen of hij nog meer ideeën heeft -->
+                        
+                    </Grid>
                     
-                    <Picker x:Name="AgePicker"></Picker>
-                </StackLayout>
+                    </StackLayout>
             </StackLayout>
         </Frame>
 
@@ -29,10 +61,11 @@
                 <DataTemplate>
                     <ViewCell>
 
-                        <Grid>
+                        <Grid Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -41,7 +74,9 @@
 
                             <Image Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" BackgroundColor="Accent"></Image>
                             <Label Text="{Binding name}" VerticalTextAlignment="Center" Grid.Row="0" Grid.Column="1"/>
+                            <!-- hobby's -->
                             <Label Text="{Binding location}" Grid.Row="1" Grid.Column="1"></Label>
+                            <Label Text="{Binding distance}" Grid.Row="1" Grid.Column="2"></Label>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
