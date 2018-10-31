@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Newtonsoft.Json;
@@ -41,6 +41,22 @@ namespace Frindr
             string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
             rest.CreateData("/records/user/", json);
 
+            Thread.Sleep(1000);
+            
+            //get id from user that's registering
+            string json2 = rest.GetData($"/records/user?filter=name,eq,{GlobalVariables.loginUser.name}&filter=email,eq,{GlobalVariables.loginUser.email}");
+            //$"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{hashedString}"
+            UserRecords deJson = JsonConvert.DeserializeObject<UserRecords>(json2);
+
+            foreach (var hobby in selected)
+            {
+                //no rows returned
+                GlobalVariables.hobbyUser.userId = deJson.records[0].id ?? default(int);
+                GlobalVariables.hobbyUser.hobbyId = hobby.id;
+
+                json = JsonConvert.SerializeObject(GlobalVariables.hobbyUser);
+                rest.CreateData("/records/userHobby/", json);
+            }
             MenuPage menuPage = new MenuPage();
             Navigation.PushModalAsync(menuPage);
         }

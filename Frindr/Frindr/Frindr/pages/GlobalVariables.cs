@@ -63,7 +63,7 @@ namespace Frindr.pages
             try
             {
                 RestfulClass restfulClass = new RestfulClass();
-                var returnValue = restfulClass.GetData("/records/user");
+                var returnValue = restfulClass.GetData($"/records/user?filter=id,neq,{loginUser.id}");
                 return returnValue;
 
             }
@@ -90,7 +90,6 @@ namespace Frindr.pages
             public string imagePath { get; set; }
             public int userVisible { get; set; }
             public int locationVisible { get; set; }
-            public string distance { get; set; }
         }
 
         public static User loginUser = new User();
@@ -123,6 +122,8 @@ namespace Frindr.pages
             public int userId { get; set; }
             public int hobbyId { get; set; }
         }
+
+        public static UserHobby hobbyUser = new UserHobby();
     }
 
 }

@@ -111,7 +111,7 @@ namespace Frindr
                 }
             }
             else
-            if (GlobalVariables.selectedHobbies == null)
+            if (GlobalVariables.selectedHobbies == null) { 
 
             }
         }
@@ -175,7 +175,7 @@ namespace Frindr
 
                 if (distance <= maxDistance)
                 {
-                    user.distance = distance.ToString();
+                    //user.distance = distance.ToString();
                     distanceFilteredUserCollection.Add(user);
                 }
             }
@@ -222,20 +222,6 @@ namespace Frindr
         private double rad2deg(double rad)
         {
             return (rad / Math.PI * 180.0);
-        }
-
-
-
-        //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
-
-        private async void FilterDistance(ObservableCollection<GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
-        {
-
-            var distanceFilteredUserCollection = new ObservableCollection<GlobalVariables.User>();
-
-            Geocoder geocoder = new Geocoder();
-            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
-        
         }
 
         //prefent you from going back to the register page

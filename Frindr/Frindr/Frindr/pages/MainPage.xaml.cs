@@ -3,12 +3,14 @@ using Microsoft.Data.Sqlite;
 using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
+using Frindr.pages;
 
 namespace Frindr
 {
     public partial class MainPage : ContentPage
     {
         Connection conn = new Connection();
+        
 
         public static string Users { get; set; }
         public static string Hobbies { get; set; }
@@ -67,6 +69,14 @@ namespace Frindr
                                     GlobalVariables.loginUser.location = json.records[0].location;
                                     GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
                                     GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
+
+                                    rest = restful.GetData($"/records/userHobby?filter=userId,eq,{json.records[0].id}");
+
+                                    GlobalVariables.UserHobbyRecords userHobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(rest);
+                                    foreach(var hobby in userHobbyRecords.records)
+                                    {
+                                        //get all selected hobbies somewhere
+                                    }
 
                                     Navigation.PushModalAsync(new MenuPage());
                                 }
