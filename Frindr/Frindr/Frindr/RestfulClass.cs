@@ -18,6 +18,11 @@ namespace Frindr
         //location of the api.php file
         readonly string apiLocation = "http://www.frindr.nl/api.php";
 
+        //FTP credentials used to store and get images
+        string ftpUser = "frindradmin@frindr.nl";
+        string ftpPassword = "frindrwachtwoord";
+        string ftpPath = "ftp://frindradmin%2540frindr.nl@ftp.strato.com/images/";
+
         HttpClient client;
 
 
@@ -154,5 +159,120 @@ namespace Frindr
             }
 
         }
+
+
+        //file string must reference filepath
+        public async void UploadImage(string file)
+        {
+            
+            try
+            {
+
+                string fileName = Path.GetFileName(file);
+
+                string json = JsonConvert.SerializeObject(pages.GlobalVariables.loginUser);
+                SetData($"/records/user/{pages.GlobalVariables.loginUser.id}",json);
+
+                string ftpImagePath = ftpPath + fileName;
+
+                //FTP webrequest used to upload images to the FTP webserver of frindr
+                bool sendToServer = SendFilesByFTP(ftpPassword, ftpUser, file, ftpPath);
+                if (!sendToServer)
+                {
+                    Console.WriteLine("Image could not be uploaded to server");
+                }
+            }
+            catch (Exception e)
+            {
+                //debug
+                Console.WriteLine("Exception Caught: " + e.ToString());
+
+                return;
+            }
+        }
+
+
+        public string GetImage(string ftpImageName)
+        {
+            try
+            {
+                string ftpImageFilePath = "ftp://frindradmin%2540frindr.nl@ftp.strato.com/images/" + ftpImageName;
+
+                // Create a new WebClient instance.
+                WebClient myWebClient = new WebClient();
+                myWebClient.Credentials = new System.Net.NetworkCredential(ftpUser, ftpPassword);
+
+                Console.WriteLine("Downloading " + ftpImageFilePath);
+                byte[] myDataBuffer = myWebClient.DownloadData(ftpImageFilePath);
+
+                string download = Encoding.ASCII.GetString(myDataBuffer);
+                Console.WriteLine(download);
+
+                return download;
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Get Image exception:" + e.ToString());
+
+                return e.ToString();
+            }
+        }
+
+
+        public static bool SendFilesByFTP(string password, string userName, string originFile, string destinationFile)
+        {
+            try
+            {
+
+                //
+                Uri severUri = new Uri(destinationFile);
+
+                //
+                if (severUri.Scheme != Uri.UriSchemeFtp)
+                    return false;
+
+                //
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(severUri);
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                request.UseBinary = true;
+                request.UsePassive = false;//true;
+                request.KeepAlive = false;
+                request.Timeout = System.Threading.Timeout.Infinite;
+                request.AuthenticationLevel = System.Net.Security.AuthenticationLevel.None;
+                request.Credentials = new NetworkCredential(userName, password);
+
+                StreamReader sourceStream = new StreamReader(originFile);
+                byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
+                sourceStream.Close();
+                request.ContentLength = fileContents.Length;
+
+                
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(fileContents, 0, fileContents.Length);
+                requestStream.Close();
+                requestStream.Dispose();
+                
+                //
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                //
+                response.Close();
+                response.Dispose();
+
+                //
+                return true;
+            }
+            catch (Exception e)
+            {
+                //
+                Console.WriteLine("SendFilesByFTP", e);
+
+                //
+                return (false);
+            }
+        }
+
     }
 }

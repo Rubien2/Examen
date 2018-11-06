@@ -8,6 +8,9 @@ using Xamarin.Forms.Xaml;
 using Frindr.pages;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using Plugin.Media.Abstractions;
+using Plugin.Media;
+using System.IO;
 
 namespace Frindr
 {
@@ -17,9 +20,18 @@ namespace Frindr
         RestfulClass rest = new RestfulClass();
         Connection conn = new Connection();
 
+        MediaFile selectedImageFilePath;
+
         public ProfileSettingsPage ()
 		{
 			InitializeComponent ();
+
+            var tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += (s, e) => {
+                OpenGallery();
+            };
+
+            ProfileImage.GestureRecognizers.Add(tapGestureRecognizer);
 
             NameEntry.Text = GlobalVariables.loginUser.name;
             EmailEntry.Text = GlobalVariables.loginUser.email;
@@ -99,5 +111,21 @@ namespace Frindr
                 }
             }
         }
+
+
+
+        private async void OpenGallery()
+        {
+            await CrossMedia.Current.Initialize();
+
+            selectedImageFilePath = await CrossMedia.Current.PickPhotoAsync();
+
+            ProfileImage.Source = selectedImageFilePath.Path;
+
+            RestfulClass restfulClass = new RestfulClass();
+
+            restfulClass.UploadImage(selectedImageFilePath.Path);
+        }
+
     }
 }

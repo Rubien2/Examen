@@ -9,7 +9,7 @@
         <Frame>
             <StackLayout>
                 <StackLayout Orientation="Horizontal">
-                    <Button Text="Show filters" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
+                    <Button Text="Filters" x:Name="ShowFilterButton" Clicked="ShowFilterButton_Clicked"></Button>
                 </StackLayout>
                 <StackLayout IsVisible="False" x:Name="ExtraFilterStackLayout">
                     <Grid>
@@ -42,8 +42,9 @@
                                            VerticalOptions="Center" Grid.Column="1" Grid.Row="1"
                                            ShowTextAboveThumbs="True"
                                            DragCompleted="AgeRangeSlider_DragCompleted"/>
-                        <!-- third row -->
-                        <!-- aan klant vragen of hij nog meer ideeën heeft -->
+
+
+                        <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Ga naar je profiel instellingen om andere hobby's te selecteren"></Label>
                         
                     </Grid>
                     
@@ -55,13 +56,14 @@
                 CachingStrategy="RecycleElement"
                 ItemTapped="FriendFinderListView_ItemTapped"
                 SelectedItem="{Binding id}"
+                HasUnevenRows="True"
                 >
             
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
 
-                        <Grid Margin="5">
+                        <Grid Padding="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="3*" />
@@ -76,8 +78,12 @@
                             <Label Text="{Binding name}" VerticalTextAlignment="Center" Grid.Row="0" Grid.Column="1"/>
                           
                             <!-- hobby's -->
+                            
                             <Label x:Name="lblLocation" Text="{Binding location}" Grid.Row="1" Grid.Column="1"></Label>
-                            <Label Text="{Binding distance}" Grid.Row="1" Grid.Column="2"></Label>
+                            <!--
+                            <Label x:Name="lblDistance" Text="{Binding distance}" Grid.Row="1" Grid.Column="1"></Label>
+                            <Label x:Name="lblHobbyList" Text="{Binding hobbyList}" Grid.Row="2" Grid.Column="1"></Label>
+                            -->
 
                         </Grid>
                     </ViewCell>

@@ -20,13 +20,22 @@ namespace Frindr
 
         public static GlobalVariables.User SelectedUser { get; set; }
         ObservableCollection<GlobalVariables.User> filteredUserCollection = new ObservableCollection<GlobalVariables.User>();
+        ObservableCollection<GlobalVariables.User> selectedUserCollection = new ObservableCollection<GlobalVariables.User>();
+        ObservableCollection<GlobalVariables.WrapUser> wrappedUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
 
         public FriendFinderPage()
         {
             InitializeComponent();
 
+            //SetDistance();
+            //LoadUserInformation();
+            Geocoder geocoder = new Geocoder();
+            string currentUserAddres = "3904 bx";
+            var currentUserPosition = geocoder.GetPositionsForAddressAsync(currentUserAddres);
+
             LoadUsers();
             SetRangeSliderTextFormat();
+            FriendFinderListView.ItemsSource = selectedUserCollection;
 
         }
 
@@ -43,6 +52,71 @@ namespace Frindr
                 ShowFilterButton.Text = "Hide";
             }
         }
+
+        /*private async void LoadUserInformation()
+        {
+
+            try {
+            
+
+            //TODO: observable collection filteren en sorteren.
+
+            var records = GlobalVariables.GetUsers();
+            var userHobby = GlobalVariables.GetUserHobbies();
+
+            if (records != null && GlobalVariables.selectedHobbies != null)
+            {
+
+                wrappedUserCollection = null;
+
+                var root = JsonConvert.DeserializeObject<GlobalVariables.WrapUserRecords>(records);
+                var userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
+
+                //Convert list to observable collection. This is easier for the grouping and filtering in the listview
+                var userCollection = new ObservableCollection<GlobalVariables.WrapUser>(root.records);
+                var userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
+                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(GlobalVariables.selectedHobbies);
+                var selectedUserhobbies = new ObservableCollection<GlobalVariables.UserHobby>();
+
+                //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId
+                foreach (var uHobby in userHobbies)
+                {
+                    if (selectedHobbies.Any(p => p.id == uHobby.hobbyId))
+                    {
+                        selectedUserhobbies.Add(uHobby);
+                    }
+                }
+
+                //loop through each user and check if user.id is present in selectedUserHobbies.userId column. add to filtered user collection if it is.
+                foreach (var user in userCollection)
+                {
+                    if (selectedUserhobbies.Any(p => p.userId == user.User.id) 
+                            && user.User.userVisible == 0)
+                    {
+                        wrappedUserCollection.Add(user);
+                    }
+                }
+
+
+                //Filter users on distance
+                if (DistanceRangeSlider.UpperValue != DistanceRangeSlider.MaximumValue)
+                {
+                    string currentUserAddres = GlobalVariables.loginUser.location;
+
+                    double selectedDistance = DistanceRangeSlider.UpperValue;
+
+                    wrappedUserCollection = await SetUserDistance(wrappedUserCollection, currentUserAddres, selectedDistance);
+                }
+            }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("exception has been thrown: " + e);
+            }
+
+        }
+    */
 
         private async void LoadUsers()
         {
@@ -88,8 +162,6 @@ namespace Frindr
                 //Filter users on distance
                 if(DistanceRangeSlider.UpperValue != DistanceRangeSlider.MaximumValue)
                 {
-                    //huidig adres gebruiker
-                    //gooit null reference
                     string currentUserAddres = GlobalVariables.loginUser.location;
 
                     double selectedDistance = DistanceRangeSlider.UpperValue;
@@ -97,21 +169,18 @@ namespace Frindr
                     filteredUserCollection = await FilterDistance(filteredUserCollection, currentUserAddres, selectedDistance);
                 }
 
-
                 filteredUserCollection = await FilterAge(filteredUserCollection);
-                
-                FriendFinderListView.ItemsSource = filteredUserCollection;
 
+                //check if user has set position to visible. and hide location if not.
                 foreach (var user in userCollection)
                 {
-                    if(user.locationVisible == 1)
+                    if (user.locationVisible == 1)
                     {
                         user.location = "";
                     }
                 }
-            }
-            else
-            if (GlobalVariables.selectedHobbies == null)
+
+                selectedUserCollection = filteredUserCollection;
 
             }
         }
@@ -153,10 +222,39 @@ namespace Frindr
             return age;
         }
 
+        /*private async Task<ObservableCollection<pages.GlobalVariables.WrapUser>> SetUserDistance(ObservableCollection<pages.GlobalVariables.WrapUser> localFilteredUserCollection, string currentUserAddres, double maxDistance)
+        {
+
+            var distanceFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
+
+            Geocoder geocoder = new Geocoder();
+            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
+
+            var currentUserCoordinates = currentUserPosition.ToArray();
+
+            foreach (var user in localFilteredUserCollection)
+            {
+                var userPosition = await geocoder.GetPositionsForAddressAsync(user.User.location);
+                var userCoordinates = userPosition.ToArray();
+
+                double distance = CalculateDistance(currentUserCoordinates[0].Latitude,
+                    currentUserCoordinates[0].Longitude, userCoordinates[0].Latitude, userCoordinates[0].Longitude, 'K');
+
+                user.distance = distance;
+
+            }
+
+            return localFilteredUserCollection;
+
+        }*/
+
         //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
 
         private async Task<ObservableCollection<pages.GlobalVariables.User>> FilterDistance(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
         {
+            try
+            {
+
 
             var distanceFilteredUserCollection = new ObservableCollection<pages.GlobalVariables.User>();
 
@@ -175,14 +273,63 @@ namespace Frindr
 
                 if (distance <= maxDistance)
                 {
-                    user.distance = distance.ToString();
                     distanceFilteredUserCollection.Add(user);
                 }
+
             }
 
-            //filteredUserCollection = distanceFilteredUserCollection;
             return distanceFilteredUserCollection;
 
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception " + e);
+
+                return null;
+            }
+
+        }
+
+        //get distance for other users
+        private async Task<ObservableCollection<pages.GlobalVariables.UserDistance>> GetDistance(ObservableCollection<pages.GlobalVariables.User> localFilteredUserCollection, string currentUserAddres)
+        {
+            try
+            {
+
+            var distanceUserCollection = new ObservableCollection<pages.GlobalVariables.UserDistance>();
+
+            Geocoder geocoder = new Geocoder();
+            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
+
+            var currentUserCoordinates = currentUserPosition.ToArray();
+
+            foreach (var user in localFilteredUserCollection)
+            {
+                var userPosition = await geocoder.GetPositionsForAddressAsync(user.location);
+                var userCoordinates = userPosition.ToArray();
+
+                double distance = CalculateDistance(currentUserCoordinates[0].Latitude,
+                    currentUserCoordinates[0].Longitude, userCoordinates[0].Latitude, userCoordinates[0].Longitude, 'K');
+
+
+                GlobalVariables.UserDistance userDistance = new GlobalVariables.UserDistance();
+                userDistance.id = user.id;
+                userDistance.distance = distance.ToString();
+
+                distanceUserCollection.Add(userDistance);
+
+            }
+
+            return distanceUserCollection;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e);
+
+                return null;
+            }
         }
 
         private void SetRangeSliderTextFormat()
@@ -224,20 +371,6 @@ namespace Frindr
             return (rad / Math.PI * 180.0);
         }
 
-
-
-        //function to filter users distance. first argument is the observable collection that needs to be filtered. second argument is users location. Third argument is maximum distance in kilometers
-
-        private async void FilterDistance(ObservableCollection<GlobalVariables.User> localFilteredUserCollection, string currentUserAddres, double maxDistance)
-        {
-
-            var distanceFilteredUserCollection = new ObservableCollection<GlobalVariables.User>();
-
-            Geocoder geocoder = new Geocoder();
-            var currentUserPosition = await geocoder.GetPositionsForAddressAsync(currentUserAddres);
-        
-        }
-
         //prefent you from going back to the register page
         protected override bool OnBackButtonPressed()
         {
@@ -263,11 +396,13 @@ namespace Frindr
         //filter users when selected age changed
         private void DistanceRangeSlider_DragCompleted(object sender, ValueChangedEventArgs e)
         {
+            Task.Delay(500);
             LoadUsers();
         }
 
         private void AgeRangeSlider_DragCompleted(object sender, FocusEventArgs e)
         {
+            Task.Delay(500);
             LoadUsers();
         }
 

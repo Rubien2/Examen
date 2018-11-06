@@ -78,6 +78,19 @@ namespace Frindr.pages
             public List<User> records { get; set; }
         }
 
+        public class WrapUserRecords
+        {
+            public List<WrapUser> records { get; set; }
+        }
+
+        public class WrapUser
+        {
+            public User User { get; set; }
+            public double distance { get; set; }
+            public string hobbyList { get; set; }
+            public int age { get; set; }
+        }
+
         public class User
         {
             public int? id { get; set; }
@@ -90,6 +103,11 @@ namespace Frindr.pages
             public string imagePath { get; set; }
             public int userVisible { get; set; }
             public int locationVisible { get; set; }
+        }
+
+        public class UserDistance
+        {
+            public int? id { get; set; }
             public string distance { get; set; }
         }
 

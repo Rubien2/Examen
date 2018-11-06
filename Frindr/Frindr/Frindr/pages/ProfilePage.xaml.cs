@@ -38,6 +38,5 @@ namespace Frindr.pages
             
             //return base.OnBackButtonPressed();
         }
-
     }
 }
