@@ -124,5 +124,10 @@ namespace Frindr
         {
             Navigation.PushModalAsync(new FirstRegisterPage());
         }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
     }
 }

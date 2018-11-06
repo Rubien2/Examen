@@ -9,6 +9,8 @@ using Xamarin.Forms.Xaml;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using Frindr.pages;
+using Plugin.Messaging;
+using System.Net.Mail;
 
 namespace Frindr
 {
@@ -45,21 +47,44 @@ namespace Frindr
             
             //get id from user that's registering
             string json2 = rest.GetData($"/records/user?filter=name,eq,{GlobalVariables.loginUser.name}&filter=email,eq,{GlobalVariables.loginUser.email}");
-            //$"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{hashedString}"
             UserRecords deJson = JsonConvert.DeserializeObject<UserRecords>(json2);
 
             foreach (var hobby in selected)
             {
-                //no rows returned
                 GlobalVariables.hobbyUser.userId = deJson.records[0].id ?? default(int);
                 GlobalVariables.hobbyUser.hobbyId = hobby.id;
 
                 json = JsonConvert.SerializeObject(GlobalVariables.hobbyUser);
                 rest.CreateData("/records/userHobby/", json);
             }
+            //SendEmail(GlobalVariables.loginUser.email);
             MenuPage menuPage = new MenuPage();
             Navigation.PushModalAsync(menuPage);
         }
+
+        /*private void SendEmail(string receiverEmail)
+        {
+            SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 465);
+            smtpClient.EnableSsl = true;
+            
+            smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
+            smtpClient.Send("info@frindr.nl",receiverEmail,"Thanks for registering to Frindr","Test");
+
+            //var emailMessenger = CrossMessaging.Current.EmailMessenger;
+            //if (emailMessenger.CanSendEmail)
+            //{
+
+            //    // Alternatively use EmailBuilder fluent interface to construct more complex e-mail with multiple recipients, bcc, attachments etc.
+            //    var email = new EmailMessageBuilder()
+            //      .To(receiverEmail)
+            //      .Subject("Bericht van Frindr")
+            //      .Body($"Hallo {GlobalVariables.loginUser.name}, dank u voor het registreren bij Frindr")
+            //      .Build();
+
+            //    emailMessenger.SendEmail(email);
+            //}
+
+        }*/
 
         void FillListView()
         {

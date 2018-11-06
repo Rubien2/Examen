@@ -91,7 +91,7 @@ namespace Frindr
                     GlobalVariables.loginUser.locationVisible = newUser.records[0].locationVisible;
                     GlobalVariables.loginUser.userVisible = newUser.records[0].userVisible;
 
-                    Navigation.PushModalAsync(new MenuPage());
+                    Navigation.PopModalAsync();
                 }
                 catch (SqliteException ea)
                 {

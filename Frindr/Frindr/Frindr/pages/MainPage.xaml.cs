@@ -76,6 +76,7 @@ namespace Frindr
                                     foreach(var hobby in userHobbyRecords.records)
                                     {
                                         //get all selected hobbies somewhere
+
                                     }
 
                                     Navigation.PushModalAsync(new MenuPage());
