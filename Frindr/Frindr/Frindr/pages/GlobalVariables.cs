@@ -103,7 +103,6 @@ namespace Frindr.pages
                 RestfulClass restfulClass = new RestfulClass();
                 var returnValue = restfulClass.GetData("/records/userHobby");
                 return returnValue;
-
             }
             catch (System.Net.WebException e)
             {

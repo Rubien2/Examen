@@ -32,14 +32,15 @@ namespace Frindr.pages
         {
             base.OnAppearing();
 
+            
+            
             FillListView();
         }
 
         void FillListView()
         {
             var records = MainPage.Hobbies;
-
-
+            
             if (records != null)
             {
                 MyListView.ItemsSource = null;
@@ -47,8 +48,13 @@ namespace Frindr.pages
                 var root = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(records);
                 //Convert list to observable collection. This is easier for the grouping in the listview
                 hobbiesCollection = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
+                selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
 
                 grouped = new ObservableCollection<GlobalVariables.Category>();
+
+                RestfulClass rest = new RestfulClass();
+                string json = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
+                GlobalVariables.UserHobbyRecords hobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json);
 
                 //Define Hobby categories
                 var VideoGamesGroup         = new GlobalVariables.Category() { id = 1, name = "Video games" };
@@ -59,14 +65,20 @@ namespace Frindr.pages
                 var OtherGroup              = new GlobalVariables.Category() { id = 0, name = "Overig"};
 
                 //add hobbies to groups
-                foreach(var hobby in hobbiesCollection)
+                foreach(var hobby in selectedHobbies)
                 {
-                    if (selectedHobbies != null && selectedHobbies.Any(p => p.id == hobby.id))
+                    foreach (var userhobby in hobbyRecords.records)
                     {
-                        hobby.selected = true;
+                        if (hobby.id == userhobby.hobbyId)
+                        {
+                            hobby.selected = true;
+
+                            break;
+                        }
                     }
 
                     int caseSwitch = hobby.hobbyCategoryId;
+
                     switch (caseSwitch)
                     {
                         case 1:
