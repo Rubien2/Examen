@@ -20,6 +20,7 @@ namespace Frindr
 
         public static GlobalVariables.User SelectedUser { get; set; }
         ObservableCollection<GlobalVariables.User> filteredUserCollection = new ObservableCollection<GlobalVariables.User>();
+        
 
         public FriendFinderPage()
         {
@@ -44,26 +45,27 @@ namespace Frindr
             }
         }
 
-        private async void LoadUsers()
+        async void LoadUsers()
         {
-
-            //TODO: observable collection filteren en sorteren.
-
             var records = GlobalVariables.GetUsers();
             var userHobby = GlobalVariables.GetUserHobbies();
+            var getHobbies = GlobalVariables.GetHobbies();
 
-            if (records != null && GlobalVariables.selectedHobbies != null)
+            var json = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
+
+
+            if (records != null && json.records != null)
             {
-                //FriendFinderListView.ItemsSource = null;
                 filteredUserCollection.Clear();
 
                 var root = JsonConvert.DeserializeObject<GlobalVariables.UserRecords>(records);
                 var userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
+                var hobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
 
                 //Convert list to observable collection. This is easier for the grouping and filtering in the listview
                 var userCollection = new ObservableCollection<GlobalVariables.User>(root.records);
                 var userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
-                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(GlobalVariables.selectedHobbies);
+                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(hobbyRoot.records);
                 var selectedUserhobbies = new ObservableCollection<GlobalVariables.UserHobby>();
 
                 //fill selectedUserHobbies with userHobbies items where selectedHobbies contains userHobbies.hobbyId
@@ -88,8 +90,6 @@ namespace Frindr
                 //Filter users on distance
                 if(DistanceRangeSlider.UpperValue != DistanceRangeSlider.MaximumValue)
                 {
-                    //huidig adres gebruiker
-                    //gooit null reference
                     string currentUserAddres = GlobalVariables.loginUser.location;
 
                     double selectedDistance = DistanceRangeSlider.UpperValue;

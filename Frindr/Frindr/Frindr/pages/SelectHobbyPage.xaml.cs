@@ -121,7 +121,6 @@ namespace Frindr.pages
 
         protected override bool OnBackButtonPressed()
         {
-
             return base.OnBackButtonPressed();
         }
 
