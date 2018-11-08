@@ -57,39 +57,35 @@ namespace Frindr
                 json = JsonConvert.SerializeObject(GlobalVariables.hobbyUser);
                 rest.CreateData("/records/userHobby/", json);
             }
-            //SendEmail(GlobalVariables.loginUser.email);
+            SendEmail(GlobalVariables.loginUser.email);
             MenuPage menuPage = new MenuPage();
             Navigation.PushModalAsync(menuPage);
         }
 
-        /*private void SendEmail(string receiverEmail)
+        private void SendEmail(string receiverEmail)
         {
-            SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 465);
+            MailMessage mail = new MailMessage("info@frindr.nl",receiverEmail, "Bedankt voor het registreren bij Frindr","test");
+            SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.UseDefaultCredentials = false;
             smtpClient.EnableSsl = true;
-            
-            smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
-            smtpClient.Send("info@frindr.nl",receiverEmail,"Thanks for registering to Frindr","Test");
+            smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord"); 
+            smtpClient.Send(mail);
 
-            //var emailMessenger = CrossMessaging.Current.EmailMessenger;
-            //if (emailMessenger.CanSendEmail)
-            //{
-
-            //    // Alternatively use EmailBuilder fluent interface to construct more complex e-mail with multiple recipients, bcc, attachments etc.
-            //    var email = new EmailMessageBuilder()
-            //      .To(receiverEmail)
-            //      .Subject("Bericht van Frindr")
-            //      .Body($"Hallo {GlobalVariables.loginUser.name}, dank u voor het registreren bij Frindr")
-            //      .Build();
-
-            //    emailMessenger.SendEmail(email);
-            //}
-
-        }*/
+            //MailMessage mail = new MailMessage("you@yourcompany.com", "user@hotmail.com");
+            //SmtpClient client = new SmtpClient();
+            //client.Port = 25;
+            //client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            //client.UseDefaultCredentials = false;
+            //client.Host = "smtp.gmail.com";
+            //mail.Subject = "this is a test email.";
+            //mail.Body = "this is my test email body";
+            //client.Send(mail);
+        }
 
         void FillListView()
         {
             var records = MainPage.Hobbies;
-
 
             if (records != null)
             {
