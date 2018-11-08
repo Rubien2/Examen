@@ -10,8 +10,10 @@
                     <Image Source="" BackgroundColor="Accent" HorizontalOptions="Start" HeightRequest="145" WidthRequest="145" Grid.Column="0" x:Name="ProfileImage"/>
                 </StackLayout>
                 <StackLayout Margin="0,0,0,30">
-                    <Label Text="Algemene informatie" FontSize="Large"></Label>
+                    <Label Text="Algemene informatie" FontSize="Large"/>
                     <Entry Placeholder="Naam" x:Name="NameEntry"/>
+                    <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry" IsPassword="True"/>
+                    <Button x:Name="ShowPWDButton" Clicked="ShowPWDButton_Clicked" Text="Zien"/>
                     <Entry Placeholder="E-mail" x:Name="EmailEntry"/>
                     <Entry Placeholder="Locatie" x:Name="LocationEntry"/>
 

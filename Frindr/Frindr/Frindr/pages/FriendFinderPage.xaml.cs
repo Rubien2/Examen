@@ -135,7 +135,7 @@ namespace Frindr
                     ageFilteredUserCollection.Add(user);
                 }
 
-            SelectedUser = (GlobalVariables.User)FriendFinderListView.SelectedItem;
+                SelectedUser = (GlobalVariables.User)FriendFinderListView.SelectedItem;
 
             }
 

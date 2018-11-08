@@ -8,6 +8,7 @@ using Xamarin.Forms.Xaml;
 using Frindr.pages;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using System.Net.Mail;
 
 namespace Frindr
 {
@@ -16,6 +17,7 @@ namespace Frindr
 	{
         RestfulClass rest = new RestfulClass();
         Connection conn = new Connection();
+        Hash hash = new Hash();
 
         public ProfileSettingsPage ()
 		{
@@ -64,11 +66,27 @@ namespace Frindr
 
                         con.Close();
                     }
+                    if (PasswordEntry.Text != "")
+                    {
+                        string toBeHashedPWD = PasswordEntry.Text;
+                        string hashedPWD = hash.HashString(toBeHashedPWD);
+                        GlobalVariables.loginUser.pwd = hashedPWD;
+
+                        MailMessage mail = new MailMessage("info@frindr.nl", GlobalVariables.loginUser.email, "Uw Frindr wachtwoord is veranderd", $"U heeft uw wachtwoord veranderd naar {toBeHashedPWD}");
+                        SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.UseDefaultCredentials = false;
+                        smtpClient.EnableSsl = true;
+                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
+                        smtpClient.Send(mail);
+                    }
+                    
+
                     GlobalVariables.loginUser.name = NameEntry.Text;
                     GlobalVariables.loginUser.email = EmailEntry.Text;
                     GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
                     GlobalVariables.loginUser.description = DescriptionEditor.Text;
-                    //imagePath needs to be added
+                    
                     GlobalVariables.loginUser.location = LocationEntry.Text;
                     GlobalVariables.loginUser.userVisible = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
                     GlobalVariables.loginUser.locationVisible = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
@@ -98,6 +116,11 @@ namespace Frindr
                     DisplayAlert("",ea.ToString(),"ok");
                 }
             }
+        }
+
+        private void ShowPWDButton_Clicked(object sender, EventArgs e)
+        {
+
         }
     }
 }

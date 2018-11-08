@@ -129,5 +129,10 @@ namespace Frindr
         {
             return true;
         }
+
+        private void PWDResetButton_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new PasswordResetPage());
+        }
     }
 }

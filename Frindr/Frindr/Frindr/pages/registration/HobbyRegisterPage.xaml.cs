@@ -52,6 +52,7 @@ namespace Frindr
             foreach (var hobby in selected)
             {
                 GlobalVariables.hobbyUser.userId = deJson.records[0].id ?? default(int);
+                GlobalVariables.loginUser.id = deJson.records[0].id;
                 GlobalVariables.hobbyUser.hobbyId = hobby.id;
 
                 json = JsonConvert.SerializeObject(GlobalVariables.hobbyUser);
@@ -71,16 +72,6 @@ namespace Frindr
             smtpClient.EnableSsl = true;
             smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord"); 
             smtpClient.Send(mail);
-
-            //MailMessage mail = new MailMessage("you@yourcompany.com", "user@hotmail.com");
-            //SmtpClient client = new SmtpClient();
-            //client.Port = 25;
-            //client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            //client.UseDefaultCredentials = false;
-            //client.Host = "smtp.gmail.com";
-            //mail.Subject = "this is a test email.";
-            //mail.Body = "this is my test email body";
-            //client.Send(mail);
         }
 
         void FillListView()
