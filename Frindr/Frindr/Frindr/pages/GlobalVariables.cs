@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
+using Xamarin.Forms;
 
 namespace Frindr.pages
 {
@@ -10,6 +11,8 @@ namespace Frindr.pages
         public static string records;
         public static string users;
         public static string userHobbies;
+
+        public static ImageSource currentUserImage { get; set; }
 
         public static ObservableCollection<Hobbies> hobbiesCollection { get; set; }
 
@@ -20,6 +23,12 @@ namespace Frindr.pages
         //----------------------||||CLASSES||||-------------------------
 
         //hobby table
+
+        private GlobalVariables()
+        {
+            
+
+        }
 
         public static string GetHobbies()
         {
@@ -78,6 +87,20 @@ namespace Frindr.pages
             public List<User> records { get; set; }
         }
 
+        public class WrapUserRecords
+        {
+            public List<WrapUser> records { get; set; }
+        }
+
+        public class WrapUser
+        {
+            public User User { get; set; }
+            public ImageSource imageSource { get; set; }
+            public int distance { get; set; }
+            public string hobbyList { get; set; }
+            public int age { get; set; }
+        }
+
         public class User
         {
             public int? id { get; set; }
@@ -90,6 +113,11 @@ namespace Frindr.pages
             public string imagePath { get; set; }
             public int userVisible { get; set; }
             public int locationVisible { get; set; }
+        }
+
+        public class UserDistance
+        {
+            public int? id { get; set; }
             public string distance { get; set; }
         }
 

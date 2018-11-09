@@ -18,6 +18,11 @@ namespace Frindr
         //location of the api.php file
         readonly string apiLocation = "http://www.frindr.nl/api.php";
 
+        //FTP credentials used to store and get images
+        string ftpUser = "frindradmin@frindr.nl";
+        string ftpPassword = "frindrwachtwoord";
+        string ftpPath = "ftp://frindradmin%2540frindr.nl@ftp.strato.com/images/";
+
         HttpClient client;
 
 
@@ -154,5 +159,111 @@ namespace Frindr
             }
 
         }
+
+
+        //file string must reference filepath
+        public async void UploadImage(string file)
+        {
+            
+            try
+            {
+
+                string fileName = Path.GetFileName(file);
+
+                string json = JsonConvert.SerializeObject(pages.GlobalVariables.loginUser);
+                SetData($"/records/user/{pages.GlobalVariables.loginUser.id}",json);
+
+                string ftpImagePath = ftpPath + fileName;
+
+                //FTP webrequest used to upload images to the FTP webserver of frindr
+                bool sendToServer = SendFilesByFTP(ftpPassword, ftpUser, file, ftpPath);
+                if (!sendToServer)
+                {
+                    Console.WriteLine("Image could not be uploaded to server");
+                }
+                else
+                {
+                    pages.GlobalVariables.loginUser.imagePath = Path.GetFileName(file);
+
+                    string updatedUserJson = JsonConvert.SerializeObject(pages.GlobalVariables.loginUser);
+
+                    SetData($"/records/user/{pages.GlobalVariables.loginUser.id}", updatedUserJson);
+                }
+            }
+            catch (Exception e)
+            {
+                //debug
+                Console.WriteLine("Exception Caught: " + e.ToString());
+
+                return;
+            }
+        }
+
+
+        public ImageSource GetImage(string ftpImageName)
+        {
+
+            if (ftpImageName == "iets") ftpImageName = "Default.png";
+            Uri ftpImageFilePath = new Uri("ftp://frindradmin%2540frindr.nl@ftp.strato.com/images/" + ftpImageName);
+             
+            if (ftpImageFilePath.Scheme != Uri.UriSchemeFtp)
+            {
+                return null;
+            }
+
+            WebClient request = new WebClient();
+
+            request.Credentials = new NetworkCredential(ftpUser, ftpPassword);
+            try
+            {
+                byte[] byteArray = request.DownloadData(ftpImageFilePath.ToString());
+                ImageSource imageSource = ImageSource.FromStream(() => new MemoryStream(byteArray));
+
+                return imageSource;
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine(e.ToString());
+
+                return null;
+            }
+
+
+        }
+
+
+        public bool SendFilesByFTP(string password, string userName, string originFile, string destinationFile)
+        {
+            
+            try
+            {
+                
+                string filename = originFile;
+                Uri ftpfullpath = new Uri(destinationFile + Path.GetFileName(originFile));
+
+                FtpWebRequest ftp = (FtpWebRequest)WebRequest.Create(ftpfullpath);
+                ftp.Credentials = new NetworkCredential(ftpUser, ftpPassword);
+                ftp.KeepAlive = false;
+                ftp.UseBinary = true;
+                ftp.Method = WebRequestMethods.Ftp.UploadFile;
+
+                byte[] myFile = File.ReadAllBytes(filename);
+                ftp.ContentLength = myFile.Length;
+
+                Stream ftpstream = ftp.GetRequestStream();
+                ftpstream.Write(myFile, 0, myFile.Length);
+                ftpstream.Close();
+                ftpstream.Flush();
+
+                return true;
+            }
+            catch (WebException e)
+            {
+                String status = ((FtpWebResponse)e.Response).StatusDescription;
+                return false;
+            }
+            
+        }
+
     }
 }

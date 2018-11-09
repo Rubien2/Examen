@@ -16,7 +16,7 @@ namespace Frindr
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class OtherProfilePage : ContentPage
 	{
-        GlobalVariables.User SelectedUser = FriendFinderPage.SelectedUser;
+        GlobalVariables.WrapUser SelectedUser = FriendFinderPage.SelectedUser;
 
         public OtherProfilePage ()
 		{
@@ -31,21 +31,26 @@ namespace Frindr
 
         private void SetLabels()
         {
-            lblEmail.Text       = SelectedUser.email;
-            lblLocation.Text    = SelectedUser.location;
-            lblProfileName.Text = SelectedUser.name;
-            lblDescription.Text = SelectedUser.description;
+            lblEmail.Text = "Email: " + SelectedUser.User.email;
+            lblLocation.Text = "Locatie: ";
+            lblProfileName.Text = "Naam: " + SelectedUser.User.name;
+            lblDescription.Text = SelectedUser.User.description;
 
+            RestfulClass restfulClass = new RestfulClass();
+            //var test = restfulClass.GetImage(GlobalVariables.loginUser.imagePath);
+            var dataBuffer = restfulClass.GetImage(SelectedUser.User.imagePath);
+
+            imgProfileImage.Source = dataBuffer;
 
             //check if location is visible
-            if(SelectedUser.locationVisible == 1)
+            if (SelectedUser.User.locationVisible == 1)
             {
                 lblLocation.IsVisible = false;
             }
             else
             {
                 lblLocation.IsVisible = true;
-                lblLocation.Text = SelectedUser.location;
+                lblLocation.Text = "Locatie: " + SelectedUser.User.location;
             }
         }
 
@@ -58,7 +63,7 @@ namespace Frindr
 
             foreach(GlobalVariables.UserHobby i in userHobby.records)
             {
-                if(i.userId == SelectedUser.id)
+                if(i.userId == SelectedUser.User.id)
                 {
 
                     hobbyIdList.Add(i.hobbyId);
@@ -101,7 +106,7 @@ namespace Frindr
 
         private void btnSendMessage_Clicked(object sender, EventArgs e)
         {
-            SendEmail(SelectedUser.email);
+            SendEmail(SelectedUser.User.email);
         }
 
 
@@ -116,7 +121,7 @@ namespace Frindr
                 var email = new EmailMessageBuilder()
                   .To(receiverEmail)
                   .Subject("Bericht van Frindr")
-                  .Body("Hallo " + SelectedUser.name)
+                  .Body("Goedendag " + SelectedUser.User.name)
                   .Build();
 
                 emailMessenger.SendEmail(email);
