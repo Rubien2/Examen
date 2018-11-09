@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Microsoft.Data.Sqlite;
 
 namespace Frindr.pages
 {
@@ -15,17 +16,27 @@ namespace Frindr.pages
         public LogoutPage()
         {
             InitializeComponent();
-
-            //Navigation.PopToRootAsync();
         }
 
         protected override void OnAppearing()
         {
-            //base.OnAppearing();
+            GlobalVariables.loginUser = null;
+            GlobalVariables.hobbyUser = null;
+            GlobalVariables.userHobbies = null;
+            GlobalVariables.users = null;
+            GlobalVariables.records = null;
 
+            string cmdStr = "DROP TABLE IF EXISTS client";
+            Connection conn = new Connection();
 
-            Navigation.PopToRootAsync(false);
+            using (SqliteConnection con = conn.SQLConnection)
+            {
+                con.Open();
+                SqliteCommand cmd = new SqliteCommand(cmdStr, con);
+                cmd.ExecuteNonQuery();
+                con.Close();
+                Navigation.PushModalAsync(new LoginPage());
+            }
         }
-
     }
 }

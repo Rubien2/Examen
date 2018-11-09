@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections;
+using System.Threading;
 
 namespace Frindr.pages
 {
@@ -31,14 +32,15 @@ namespace Frindr.pages
         {
             base.OnAppearing();
 
+            
+            
             FillListView();
         }
 
         void FillListView()
         {
             var records = MainPage.Hobbies;
-
-
+            
             if (records != null)
             {
                 MyListView.ItemsSource = null;
@@ -46,8 +48,13 @@ namespace Frindr.pages
                 var root = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(records);
                 //Convert list to observable collection. This is easier for the grouping in the listview
                 hobbiesCollection = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
+                selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(root.records);
 
                 grouped = new ObservableCollection<GlobalVariables.Category>();
+
+                RestfulClass rest = new RestfulClass();
+                string json = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
+                GlobalVariables.UserHobbyRecords hobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json);
 
                 //Define Hobby categories
                 var VideoGamesGroup         = new GlobalVariables.Category() { id = 1, name = "Video games" };
@@ -58,14 +65,20 @@ namespace Frindr.pages
                 var OtherGroup              = new GlobalVariables.Category() { id = 0, name = "Overig"};
 
                 //add hobbies to groups
-                foreach(var hobby in hobbiesCollection)
+                foreach(var hobby in selectedHobbies)
                 {
-                    if (selectedHobbies != null && selectedHobbies.Any(p => p.id == hobby.id))
+                    foreach (var userhobby in hobbyRecords.records)
                     {
-                        hobby.selected = true;
+                        if (hobby.id == userhobby.hobbyId)
+                        {
+                            hobby.selected = true;
+
+                            break;
+                        }
                     }
 
                     int caseSwitch = hobby.hobbyCategoryId;
+
                     switch (caseSwitch)
                     {
                         case 1:
@@ -108,7 +121,6 @@ namespace Frindr.pages
 
         protected override bool OnBackButtonPressed()
         {
-
             return base.OnBackButtonPressed();
         }
 
@@ -117,8 +129,60 @@ namespace Frindr.pages
             var selected = hobbiesCollection
             .Where(p => p.selected)
             .ToList();
-            GlobalVariables.selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(selected); //this ACTUALLY works!
+            GlobalVariables.selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(selected);
 
+            RestfulClass rest = new RestfulClass();
+            //get current user id
+
+            string json = rest.GetData($"/records/user?filter=id,eq,{GlobalVariables.loginUser.id}");
+            UserRecords deJson = JsonConvert.DeserializeObject<UserRecords>(json);
+            Thread.Sleep(200);
+            
+            //ignore hobbies previously selected
+            foreach (var hobby in selected)
+            {
+                string json1 = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
+                GlobalVariables.UserHobbyRecords records = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json1);
+
+                GlobalVariables.hobbyUser.userId = deJson.records[0].id ?? default(int);
+                GlobalVariables.hobbyUser.hobbyId = hobby.id;
+
+                bool hobbyExists = false;
+
+                foreach (var userhobby in records.records)
+                {
+                    if (hobby.id == userhobby.hobbyId)
+                    {
+                        hobbyExists = true;
+                        break;
+                    }
+                }
+                if (!hobbyExists)
+                {
+                    string json2 = JsonConvert.SerializeObject(GlobalVariables.hobbyUser);
+                    rest.CreateData("/records/userHobby/", json2);
+                }
+            }
+            foreach (var unselected in hobbiesCollection)
+            {
+                string json1 = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
+                GlobalVariables.UserHobbyRecords hobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json1);
+
+                bool hobbyRemoved = false;
+
+                foreach (var hobby in hobbyRecords.records)
+                {
+                    if (!unselected.selected && hobby.hobbyId == unselected.id)
+                    {
+                        hobbyRemoved = true;
+                        break;
+                    }
+                }
+                if (hobbyRemoved)
+                {
+                    rest.DeleteData($"/records/userHobby/{unselected.id}");
+                }
+            }
             Navigation.PopModalAsync();
         }
     }

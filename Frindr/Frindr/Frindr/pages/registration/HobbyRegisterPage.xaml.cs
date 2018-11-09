@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using Frindr.pages;
+using Plugin.Messaging;
+using System.Net.Mail;
 
 namespace Frindr
 {
@@ -29,7 +31,7 @@ namespace Frindr
             FillListView();
 		}
 
-        private void CreateAccountButton_Clicked(object sender, EventArgs e)
+        private void CreateAccountButton_Clicked(object sender, EventArgs e)    
         {
 
             var selected = hobbiesCollection
@@ -41,14 +43,40 @@ namespace Frindr
             string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
             rest.CreateData("/records/user/", json);
 
+            Thread.Sleep(1000);
+            
+            //get id from user that's registering
+            string json2 = rest.GetData($"/records/user?filter=name,eq,{GlobalVariables.loginUser.name}&filter=email,eq,{GlobalVariables.loginUser.email}");
+            UserRecords deJson = JsonConvert.DeserializeObject<UserRecords>(json2);
+
+            foreach (var hobby in selected)
+            {
+                GlobalVariables.hobbyUser.userId = deJson.records[0].id ?? default(int);
+                GlobalVariables.loginUser.id = deJson.records[0].id;
+                GlobalVariables.hobbyUser.hobbyId = hobby.id;
+
+                json = JsonConvert.SerializeObject(GlobalVariables.hobbyUser);
+                rest.CreateData("/records/userHobby/", json);
+            }
+            SendEmail(GlobalVariables.loginUser.email);
             MenuPage menuPage = new MenuPage();
             Navigation.PushModalAsync(menuPage);
+        }
+
+        private void SendEmail(string receiverEmail)
+        {
+            MailMessage mail = new MailMessage("info@frindr.nl",receiverEmail, "Bedankt voor het registreren bij Frindr","test");
+            SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.EnableSsl = true;
+            smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord"); 
+            smtpClient.Send(mail);
         }
 
         void FillListView()
         {
             var records = MainPage.Hobbies;
-
 
             if (records != null)
             {
