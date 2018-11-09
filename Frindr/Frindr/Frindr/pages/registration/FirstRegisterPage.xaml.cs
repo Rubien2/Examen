@@ -18,9 +18,15 @@ namespace Frindr
         RestfulClass restful = new RestfulClass();
         Hash hash = new Hash();
         string hashedString;
+
         public FirstRegisterPage()
         {
             InitializeComponent();
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
         }
 
         private void NextButton_Clicked(object sender, EventArgs e)

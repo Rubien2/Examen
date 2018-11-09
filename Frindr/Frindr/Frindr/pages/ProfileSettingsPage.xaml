@@ -20,10 +20,14 @@
                     </AbsoluteLayout>
                 </StackLayout>
                 <StackLayout Margin="0,0,0,30">
-                    <Label Text="Algemene informatie" FontSize="Large"></Label>
-                    <Entry Placeholder="Naam" FontSize="Medium" x:Name="NameEntry"/>
-                    <Entry Placeholder="E-mail" FontSize="Medium" x:Name="EmailEntry"/>
-                    <Entry Placeholder="Locatie" FontSize="Medium" x:Name="LocationEntry"/>
+
+                    <Label Text="Algemene informatie" FontSize="Large"/>
+                    <Entry Placeholder="Naam" x:Name="NameEntry"/>
+                    <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry" IsPassword="True"/>
+                    <Button x:Name="ShowPWDButton" Clicked="ShowPWDButton_Clicked" Text="Zien"/>
+                    <Entry Placeholder="E-mail" x:Name="EmailEntry"/>
+                    <Entry Placeholder="Locatie" x:Name="LocationEntry"/>
+
 
                     <StackLayout Orientation="Horizontal">
                         <Label Text="Geboorte datum:" VerticalTextAlignment="Center"></Label>

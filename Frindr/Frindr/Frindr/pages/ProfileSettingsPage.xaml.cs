@@ -8,6 +8,7 @@ using Xamarin.Forms.Xaml;
 using Frindr.pages;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using System.Net.Mail;
 using Plugin.Media.Abstractions;
 using Plugin.Media;
 using System.IO;
@@ -19,6 +20,7 @@ namespace Frindr
 	{
         RestfulClass rest = new RestfulClass();
         Connection conn = new Connection();
+        Hash hash = new Hash();
 
         MediaFile selectedImageFilePath;
 
@@ -82,11 +84,27 @@ namespace Frindr
 
                         con.Close();
                     }
+                    if (PasswordEntry.Text != "")
+                    {
+                        string toBeHashedPWD = PasswordEntry.Text;
+                        string hashedPWD = hash.HashString(toBeHashedPWD);
+                        GlobalVariables.loginUser.pwd = hashedPWD;
+
+                        MailMessage mail = new MailMessage("info@frindr.nl", GlobalVariables.loginUser.email, "Uw Frindr wachtwoord is veranderd", $"U heeft uw wachtwoord veranderd naar {toBeHashedPWD}");
+                        SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.UseDefaultCredentials = false;
+                        smtpClient.EnableSsl = true;
+                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
+                        smtpClient.Send(mail);
+                    }
+                    
+
                     GlobalVariables.loginUser.name = NameEntry.Text;
                     GlobalVariables.loginUser.email = EmailEntry.Text;
                     GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
                     GlobalVariables.loginUser.description = DescriptionEditor.Text;
-                    //imagePath needs to be added
+                    
                     GlobalVariables.loginUser.location = LocationEntry.Text;
                     GlobalVariables.loginUser.userVisible = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
                     GlobalVariables.loginUser.locationVisible = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
@@ -109,7 +127,7 @@ namespace Frindr
                     GlobalVariables.loginUser.locationVisible = newUser.records[0].locationVisible;
                     GlobalVariables.loginUser.userVisible = newUser.records[0].userVisible;
 
-                    Navigation.PushModalAsync(new MenuPage());
+                    Navigation.PopModalAsync();
                 }
                 catch (SqliteException ea)
                 {
@@ -118,6 +136,19 @@ namespace Frindr
             }
         }
 
+
+        private void ShowPWDButton_Clicked(object sender, EventArgs e)
+        {
+            bool switchPWD = PasswordEntry.IsPassword;
+            if (switchPWD)
+            {
+                PasswordEntry.IsPassword = false;
+            }
+            else
+            {
+                PasswordEntry.IsPassword = true;
+            }
+        }
 
 
         private async void OpenGallery()
@@ -139,6 +170,5 @@ namespace Frindr
 
             }
         }
-
     }
 }

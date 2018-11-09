@@ -20,9 +20,11 @@ namespace Frindr
 
         public static GlobalVariables.WrapUser SelectedUser { get; set; }
         ObservableCollection<GlobalVariables.User> filteredUserCollection = new ObservableCollection<GlobalVariables.User>();
+
         ObservableCollection<GlobalVariables.WrapUser> wrappedFilteredUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
 
         ImageSource defaultImage;
+
 
         public FriendFinderPage()
         {
@@ -50,9 +52,8 @@ namespace Frindr
             }
         }
 
-        private async void LoadUsers()
+        async void LoadUsers()
         {
-
             //TODO: observable collection filteren en sorteren.
 
             DistanceRangeSlider.IsEnabled = false;
@@ -60,9 +61,14 @@ namespace Frindr
 
             var records = GlobalVariables.GetUsers();
             var userHobby = GlobalVariables.GetUserHobbies();
+            var getHobbies = GlobalVariables.GetHobbies();
 
-            if (records != null && GlobalVariables.selectedHobbies != null)
+            var json = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
+
+
+            if (records != null && json.records != null)
             {
+
                 wrappedFilteredUserCollection.Clear();
 
                 ObservableCollection<GlobalVariables.WrapUser> selectedWrappedFilteredUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
@@ -70,12 +76,13 @@ namespace Frindr
 
                 var root = JsonConvert.DeserializeObject<GlobalVariables.UserRecords>(records);
                 var userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
+                var hobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
 
                 //Convert list to observable collection. This is easier for the grouping and filtering in the listview
                 var wrappedUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
                 var userCollection = new ObservableCollection<GlobalVariables.User>(root.records);
                 var userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
-                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(GlobalVariables.selectedHobbies);
+                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(hobbyRoot.records);
                 var selectedUserhobbies = new ObservableCollection<GlobalVariables.UserHobby>();
 
                 //wrap user collection
@@ -142,8 +149,6 @@ namespace Frindr
                     }
                 }
 
-
-
                 //gets, sets and filters based on distance
                 string currentUserAddres = GlobalVariables.loginUser.location;
 
@@ -165,7 +170,6 @@ namespace Frindr
                 selectedWrappedFilteredUserCollection = wrappedFilteredUserCollection;
 
                 FriendFinderListView.ItemsSource = selectedWrappedFilteredUserCollection;
-
 
             }
 
@@ -255,7 +259,6 @@ namespace Frindr
 
                 if (user.distance <= maxDistance)
                 {
-                    
                     //user.distance = distance.ToString();
                     distanceFilteredUserCollection.Add(user);
                 }

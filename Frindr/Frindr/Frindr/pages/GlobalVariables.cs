@@ -72,7 +72,7 @@ namespace Frindr.pages
             try
             {
                 RestfulClass restfulClass = new RestfulClass();
-                var returnValue = restfulClass.GetData("/records/user");
+                var returnValue = restfulClass.GetData($"/records/user?filter=id,neq,{loginUser.id}");
                 return returnValue;
 
             }
@@ -115,12 +115,6 @@ namespace Frindr.pages
             public int locationVisible { get; set; }
         }
 
-        public class UserDistance
-        {
-            public int? id { get; set; }
-            public string distance { get; set; }
-        }
-
         public static User loginUser = new User();
 
         //UserHobby table
@@ -132,7 +126,6 @@ namespace Frindr.pages
                 RestfulClass restfulClass = new RestfulClass();
                 var returnValue = restfulClass.GetData("/records/userHobby");
                 return returnValue;
-
             }
             catch (System.Net.WebException e)
             {
@@ -151,6 +144,8 @@ namespace Frindr.pages
             public int userId { get; set; }
             public int hobbyId { get; set; }
         }
+
+        public static UserHobby hobbyUser = new UserHobby();
     }
 
 }
