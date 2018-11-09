@@ -7,15 +7,27 @@
             <StackLayout Margin="10">
                 <StackLayout Margin="0,0,0,30">
                     <Label Text="Afbeelding" FontSize="Large"/>
-                    <Image Source="" BackgroundColor="Accent" HorizontalOptions="Start" HeightRequest="145" WidthRequest="145" Grid.Column="0" x:Name="ProfileImage"/>
+                    <AbsoluteLayout>
+                    <Image Source="" BackgroundColor="Accent" Aspect="AspectFill" HeightRequest="145" WidthRequest="145" Grid.Column="0" 
+                           HorizontalOptions="Start"
+                           VerticalOptions="FillAndExpand"
+                           x:Name="ProfileImage"
+                           AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1"/>
+                    <Image Source="" x:Name="OverlayImage"  Aspect="AspectFit" HeightRequest="145" WidthRequest="145" Grid.Column="0" 
+                           HorizontalOptions="Start"
+                           VerticalOptions="FillAndExpand"
+                           AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0,0,-1,-1"/>
+                    </AbsoluteLayout>
                 </StackLayout>
                 <StackLayout Margin="0,0,0,30">
+
                     <Label Text="Algemene informatie" FontSize="Large"/>
                     <Entry Placeholder="Naam" x:Name="NameEntry"/>
                     <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry" IsPassword="True"/>
                     <Button x:Name="ShowPWDButton" Clicked="ShowPWDButton_Clicked" Text="Zien"/>
                     <Entry Placeholder="E-mail" x:Name="EmailEntry"/>
                     <Entry Placeholder="Locatie" x:Name="LocationEntry"/>
+
 
                     <StackLayout Orientation="Horizontal">
                         <Label Text="Geboorte datum:" VerticalTextAlignment="Center"></Label>
