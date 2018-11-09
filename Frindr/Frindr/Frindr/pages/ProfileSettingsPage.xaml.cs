@@ -120,7 +120,15 @@ namespace Frindr
 
         private void ShowPWDButton_Clicked(object sender, EventArgs e)
         {
-
+            bool switchPWD = PasswordEntry.IsPassword;
+            if (switchPWD)
+            {
+                PasswordEntry.IsPassword = false;
+            }
+            else
+            {
+                PasswordEntry.IsPassword = true;
+            }
         }
     }
 }
