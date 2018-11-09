@@ -129,12 +129,13 @@ namespace Frindr
                             {
                                 foreach(var selectedHobby in selectedHobbies.Where(p => p.id == hobby.hobbyId))
                                 {
+                                    if (hobbysAdded >= 2) break;
+
                                     wrappedUser.hobbyList += selectedHobby.hobby + ", ";
                                     hobbysAdded++;
 
-                                    if (hobbysAdded == 2) break;
+                                    
                                 }
-
                             }
 
                             wrappedUser.hobbyList = wrappedUser.hobbyList.Remove(wrappedUser.hobbyList.Length - 2);
