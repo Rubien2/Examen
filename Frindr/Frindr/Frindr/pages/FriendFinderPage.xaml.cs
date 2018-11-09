@@ -55,14 +55,18 @@ namespace Frindr
 
             //TODO: observable collection filteren en sorteren.
 
+            DistanceRangeSlider.IsEnabled = false;
+            AgeRangeSlider.IsEnabled = false;
+
             var records = GlobalVariables.GetUsers();
             var userHobby = GlobalVariables.GetUserHobbies();
 
             if (records != null && GlobalVariables.selectedHobbies != null)
             {
-                //FriendFinderListView.ItemsSource = null;
-                filteredUserCollection.Clear();
                 wrappedFilteredUserCollection.Clear();
+
+                ObservableCollection<GlobalVariables.WrapUser> selectedWrappedFilteredUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
+                FriendFinderListView.ItemsSource = selectedWrappedFilteredUserCollection;
 
                 var root = JsonConvert.DeserializeObject<GlobalVariables.UserRecords>(records);
                 var userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
@@ -156,17 +160,18 @@ namespace Frindr
                     }
                 }
 
-                wrappedFilteredUserCollection = await FilterAge(wrappedFilteredUserCollection);                
-                
-                FriendFinderListView.ItemsSource = wrappedFilteredUserCollection;
+                wrappedFilteredUserCollection = await FilterAge(wrappedFilteredUserCollection);
 
-               
-            }
-            else
-            if (GlobalVariables.selectedHobbies == null)
-            {
+                selectedWrappedFilteredUserCollection = wrappedFilteredUserCollection;
+
+                FriendFinderListView.ItemsSource = selectedWrappedFilteredUserCollection;
+
 
             }
+
+            DistanceRangeSlider.IsEnabled = true;
+            AgeRangeSlider.IsEnabled = true;
+
         }
 
         //function to filter users age. age format: yyyyMMdd
