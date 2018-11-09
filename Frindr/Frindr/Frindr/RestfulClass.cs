@@ -181,6 +181,14 @@ namespace Frindr
                 {
                     Console.WriteLine("Image could not be uploaded to server");
                 }
+                else
+                {
+                    pages.GlobalVariables.loginUser.imagePath = Path.GetFileName(file);
+
+                    string updatedUserJson = JsonConvert.SerializeObject(pages.GlobalVariables.loginUser);
+
+                    SetData($"/records/user/{pages.GlobalVariables.loginUser.id}", updatedUserJson);
+                }
             }
             catch (Exception e)
             {
@@ -192,86 +200,69 @@ namespace Frindr
         }
 
 
-        public string GetImage(string ftpImageName)
+        public ImageSource GetImage(string ftpImageName)
         {
+
+            if (ftpImageName == "iets") ftpImageName = "Default.png";
+            Uri ftpImageFilePath = new Uri("ftp://frindradmin%2540frindr.nl@ftp.strato.com/images/" + ftpImageName);
+             
+            if (ftpImageFilePath.Scheme != Uri.UriSchemeFtp)
+            {
+                return null;
+            }
+
+            WebClient request = new WebClient();
+
+            request.Credentials = new NetworkCredential(ftpUser, ftpPassword);
             try
             {
-                string ftpImageFilePath = "ftp://frindradmin%2540frindr.nl@ftp.strato.com/images/" + ftpImageName;
+                byte[] byteArray = request.DownloadData(ftpImageFilePath.ToString());
+                ImageSource imageSource = ImageSource.FromStream(() => new MemoryStream(byteArray));
 
-                // Create a new WebClient instance.
-                WebClient myWebClient = new WebClient();
-                myWebClient.Credentials = new System.Net.NetworkCredential(ftpUser, ftpPassword);
-
-                Console.WriteLine("Downloading " + ftpImageFilePath);
-                byte[] myDataBuffer = myWebClient.DownloadData(ftpImageFilePath);
-
-                string download = Encoding.ASCII.GetString(myDataBuffer);
-                Console.WriteLine(download);
-
-                return download;
-
-
+                return imageSource;
             }
-            catch (Exception e)
+            catch (WebException e)
             {
-                Console.WriteLine("Get Image exception:" + e.ToString());
+                Console.WriteLine(e.ToString());
 
-                return e.ToString();
+                return null;
             }
+
+
         }
 
 
-        public static bool SendFilesByFTP(string password, string userName, string originFile, string destinationFile)
+        public bool SendFilesByFTP(string password, string userName, string originFile, string destinationFile)
         {
+            
             try
             {
-
-                //
-                Uri severUri = new Uri(destinationFile);
-
-                //
-                if (severUri.Scheme != Uri.UriSchemeFtp)
-                    return false;
-
-                //
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(severUri);
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-                request.UseBinary = true;
-                request.UsePassive = false;//true;
-                request.KeepAlive = false;
-                request.Timeout = System.Threading.Timeout.Infinite;
-                request.AuthenticationLevel = System.Net.Security.AuthenticationLevel.None;
-                request.Credentials = new NetworkCredential(userName, password);
-
-                StreamReader sourceStream = new StreamReader(originFile);
-                byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
-                sourceStream.Close();
-                request.ContentLength = fileContents.Length;
-
                 
-                Stream requestStream = request.GetRequestStream();
-                requestStream.Write(fileContents, 0, fileContents.Length);
-                requestStream.Close();
-                requestStream.Dispose();
-                
-                //
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                string filename = originFile;
+                Uri ftpfullpath = new Uri(destinationFile + Path.GetFileName(originFile));
 
-                //
-                response.Close();
-                response.Dispose();
+                FtpWebRequest ftp = (FtpWebRequest)WebRequest.Create(ftpfullpath);
+                ftp.Credentials = new NetworkCredential(ftpUser, ftpPassword);
+                ftp.KeepAlive = false;
+                ftp.UseBinary = true;
+                ftp.Method = WebRequestMethods.Ftp.UploadFile;
 
-                //
+                byte[] myFile = File.ReadAllBytes(filename);
+                ftp.ContentLength = myFile.Length;
+
+                Stream ftpstream = ftp.GetRequestStream();
+                ftpstream.Write(myFile, 0, myFile.Length);
+                ftpstream.Close();
+                ftpstream.Flush();
+
                 return true;
             }
-            catch (Exception e)
+            catch (WebException e)
             {
-                //
-                Console.WriteLine("SendFilesByFTP", e);
-
-                //
-                return (false);
+                String status = ((FtpWebResponse)e.Response).StatusDescription;
+                return false;
             }
+            
         }
 
     }

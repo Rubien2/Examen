@@ -6,12 +6,12 @@
         <StackLayout Margin="10">
 
               <StackLayout Orientation="Horizontal">
-              
-                <Image Source="" BackgroundColor="Accent" HorizontalOptions="Start" HeightRequest="145" WidthRequest="145" x:Name="ProfileImage"/>
-                <StackLayout>
-                    <Label x:Name="lblProfileName" Text="[Account naam]"/>
-                    <Label x:Name="lblEmail" Text="[Email]"/>
-                    <Label x:Name="lblLocation" Text="[Locatie]"/>
+
+                <Image Source="" BackgroundColor="Accent" Aspect="AspectFill" HorizontalOptions="Start" HeightRequest="145" WidthRequest="145" x:Name="ProfileImage"/>
+                <StackLayout Margin="10,0,0,0">
+                    <Label x:Name="lblProfileName" Text="Naam: "/>
+                    <Label x:Name="lblEmail" Text="Email: "/>
+                    <Label x:Name="lblLocation" Text="Locatie: "/>
                 </StackLayout>
             </StackLayout>
 

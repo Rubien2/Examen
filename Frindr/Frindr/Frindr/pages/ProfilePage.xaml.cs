@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,15 +17,29 @@ namespace Frindr.pages
         public ProfilePage ()
 		{
             InitializeComponent();
-            lblProfileName.Text = GlobalVariables.loginUser.name;
-            lblEmail.Text = GlobalVariables.loginUser.email;
-            lblLocation.Text = GlobalVariables.loginUser.location;
+            lblProfileName.Text = "Naam: " + GlobalVariables.loginUser.name;
+            lblEmail.Text = "Email: " + GlobalVariables.loginUser.email;
+            lblLocation.Text = "Locatie: " + GlobalVariables.loginUser.location;
             lblDescription.Text = GlobalVariables.loginUser.description;
-		}
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
+            try
+            {
+
+            RestfulClass restfulClass = new RestfulClass();
+
+            var dataBuffer = restfulClass.GetImage(GlobalVariables.loginUser.imagePath);
+            GlobalVariables.currentUserImage = dataBuffer;
+
+            ProfileImage.Source = GlobalVariables.currentUserImage;
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e);
+            }
+
+
+
         }
 
         private void btnSettings_Clicked(object sender, EventArgs e)

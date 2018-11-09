@@ -26,12 +26,18 @@ namespace Frindr
 		{
 			InitializeComponent ();
 
+   
+            ProfileImage.Source = GlobalVariables.currentUserImage;
+
+            RestfulClass restfulClass = new RestfulClass();
+            OverlayImage.Source = restfulClass.GetImage("AddOverlay.png");
+
             var tapGestureRecognizer = new TapGestureRecognizer();
             tapGestureRecognizer.Tapped += (s, e) => {
                 OpenGallery();
             };
 
-            ProfileImage.GestureRecognizers.Add(tapGestureRecognizer);
+            OverlayImage.GestureRecognizers.Add(tapGestureRecognizer);
 
             NameEntry.Text = GlobalVariables.loginUser.name;
             EmailEntry.Text = GlobalVariables.loginUser.email;
@@ -116,6 +122,8 @@ namespace Frindr
 
         private async void OpenGallery()
         {
+            try
+            {
             await CrossMedia.Current.Initialize();
 
             selectedImageFilePath = await CrossMedia.Current.PickPhotoAsync();
@@ -125,6 +133,11 @@ namespace Frindr
             RestfulClass restfulClass = new RestfulClass();
 
             restfulClass.UploadImage(selectedImageFilePath.Path);
+            }
+            catch (MediaPermissionException e)
+            {
+
+            }
         }
 
     }
