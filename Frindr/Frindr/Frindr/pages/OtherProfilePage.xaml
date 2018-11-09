@@ -13,7 +13,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Image Source="" BackgroundColor="Accent" HeightRequest="145" WidthRequest="145" Grid.Column="0"/>
+                <Image x:Name="imgProfileImage" Source="" Aspect="AspectFill" HeightRequest="145" WidthRequest="145" Grid.Column="0"/>
 
                 <StackLayout Grid.Column="1">
                     <Label x:Name="lblProfileName" Text="[Account naam]"/>
@@ -23,6 +23,7 @@
             </Grid>
 
             <StackLayout Margin="0,0,0,10" VerticalOptions="End">
+                <Label Text="Beschrijving" FontSize="Large"/>
                 <Label x:Name="lblDescription" Text="[Beschrijving]"/>
                 <Label Text="Hobby's" FontSize="Large"/>
                 <Label x:Name="lblHobbies" Text="[Hobby lijst]"/>

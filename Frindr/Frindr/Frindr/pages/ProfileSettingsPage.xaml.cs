@@ -8,6 +8,9 @@ using Xamarin.Forms.Xaml;
 using Frindr.pages;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using Plugin.Media.Abstractions;
+using Plugin.Media;
+using System.IO;
 using System.Net.Mail;
 
 namespace Frindr
@@ -19,9 +22,24 @@ namespace Frindr
         Connection conn = new Connection();
         Hash hash = new Hash();
 
+        MediaFile selectedImageFilePath;
+
         public ProfileSettingsPage ()
 		{
 			InitializeComponent ();
+
+   
+            ProfileImage.Source = GlobalVariables.currentUserImage;
+
+            RestfulClass restfulClass = new RestfulClass();
+            OverlayImage.Source = restfulClass.GetImage("AddOverlay.png");
+
+            var tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += (s, e) => {
+                OpenGallery();
+            };
+
+            OverlayImage.GestureRecognizers.Add(tapGestureRecognizer);
 
             NameEntry.Text = GlobalVariables.loginUser.name;
             EmailEntry.Text = GlobalVariables.loginUser.email;
@@ -117,7 +135,25 @@ namespace Frindr
                 }
             }
         }
+        private async void OpenGallery()
+        {
+            try
+            {
+            await CrossMedia.Current.Initialize();
 
+            selectedImageFilePath = await CrossMedia.Current.PickPhotoAsync();
+
+            ProfileImage.Source = selectedImageFilePath.Path;
+
+            RestfulClass restfulClass = new RestfulClass();
+
+            restfulClass.UploadImage(selectedImageFilePath.Path);
+            }
+            catch (MediaPermissionException e)
+            {
+
+            }
+        }
         private void ShowPWDButton_Clicked(object sender, EventArgs e)
         {
             bool switchPWD = PasswordEntry.IsPassword;
