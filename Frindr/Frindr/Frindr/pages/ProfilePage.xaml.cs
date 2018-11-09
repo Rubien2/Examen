@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -21,7 +21,7 @@ namespace Frindr.pages
             lblEmail.Text = "Email: " + GlobalVariables.loginUser.email;
             lblLocation.Text = "Locatie: " + GlobalVariables.loginUser.location;
             lblDescription.Text = GlobalVariables.loginUser.description;
-
+            SetSelectedHobbies();
             try
             {
 
@@ -52,6 +52,55 @@ namespace Frindr.pages
             return true;
             
             //return base.OnBackButtonPressed();
+        }
+        private List<int> GetSelectedUserHobbies()
+        {
+
+            GlobalVariables.UserHobbyRecords userHobby = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(MainPage.UserHobby);
+
+            List<int> hobbyIdList = new List<int>();
+
+            foreach (GlobalVariables.UserHobby i in userHobby.records)
+            {
+                if (i.userId == GlobalVariables.loginUser.id)
+                {
+
+                    hobbyIdList.Add(i.hobbyId);
+
+                }
+            }
+
+            return hobbyIdList;
+        }
+
+        private void SetSelectedHobbies()
+        {
+            RestfulClass restfulClass = new RestfulClass();
+
+            List<int> selectedUserHobbies = GetSelectedUserHobbies();
+
+            GlobalVariables.HobbyRecords hobbies = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(MainPage.Hobbies);
+
+            string userHobbies = null;
+
+            foreach (GlobalVariables.Hobbies i in hobbies.records)
+            {
+                if (selectedUserHobbies.Contains(i.id))
+                {
+                    userHobbies += i.hobby + ", ";
+                }
+            }
+
+            if (userHobbies != null)
+            {
+                userHobbies = userHobbies.Remove(userHobbies.Length - 2);
+            }
+            else
+            {
+                userHobbies = "Deze gebruiker heeft nog geen hobby's geselecteerd.";
+            }
+
+            lblHobbies.Text = userHobbies;
         }
     }
 }

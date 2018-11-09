@@ -22,6 +22,7 @@
 
             <StackLayout Margin="0,0,0,10">
                 <Label Text="Hobby's" FontSize="Large"/>
+                <Label x:Name="lblHobbies" Text="[Hobby lijst]"/>
                 <ListView ItemsSource="">
                     <ListView.ItemTemplate>
                         <DataTemplate></DataTemplate>
