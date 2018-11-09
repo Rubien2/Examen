@@ -66,6 +66,10 @@ namespace Frindr
     {
         public string HashString(string passwordString)
         {
+            try
+            {
+
+            
             using (SHA256 sha = SHA256.Create())
             {
                 byte[] toBeHashed = sha.ComputeHash(Encoding.UTF8.GetBytes(passwordString));
@@ -76,6 +80,13 @@ namespace Frindr
                 }
                 return builder.ToString();
             }
+
+            }
+            catch (NullReferenceException e)
+            {
+                return null;
+            }
+
         }
     }
 }
