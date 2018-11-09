@@ -24,13 +24,25 @@ namespace Frindr
         ObservableCollection<GlobalVariables.WrapUser> wrappedFilteredUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
 
         ImageSource defaultImage;
+        static string userHobby = GlobalVariables.GetUserHobbies();
+        static GlobalVariables.UserHobbyRecords userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
+        ObservableCollection<GlobalVariables.UserHobby> userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
 
+        static string getHobbies = GlobalVariables.GetHobbies();
+        static GlobalVariables.HobbyRecords hobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
+        ObservableCollection<GlobalVariables.Hobbies> allHobbies = new ObservableCollection<GlobalVariables.Hobbies>(hobbyRoot.records);
+
+        ObservableCollection<GlobalVariables.Hobbies> selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>();
+
+        //this is not a test
 
         public FriendFinderPage()
         {
             InitializeComponent();
-            
+
             //get default image
+            selectedHobbies = GetSelectedHobbies();
+
             RestfulClass restfulClass = new RestfulClass();
             defaultImage = restfulClass.GetImage("Default.png");
 
@@ -52,7 +64,22 @@ namespace Frindr
             }
         }
 
-        async void LoadUsers()
+        private ObservableCollection<GlobalVariables.Hobbies> GetSelectedHobbies()
+        {
+            var sHobbies = new ObservableCollection<GlobalVariables.Hobbies>();
+
+            var selectedUserHobbies = userHobbies.Where(p => p.userId == GlobalVariables.loginUser.id);
+            foreach (var hobby in allHobbies)
+            {
+                if (selectedUserHobbies.Any(p => p.hobbyId == hobby.id))
+                    sHobbies.Add(hobby);
+                
+            }
+
+            return sHobbies;
+        }
+
+        private async void LoadUsers()
         {
             //TODO: observable collection filteren en sorteren.
 
@@ -60,9 +87,7 @@ namespace Frindr
             AgeRangeSlider.IsEnabled = false;
 
             var records = GlobalVariables.GetUsers();
-            var userHobby = GlobalVariables.GetUserHobbies();
-            var getHobbies = GlobalVariables.GetHobbies();
-
+            
             var json = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
 
 
@@ -75,18 +100,13 @@ namespace Frindr
                 FriendFinderListView.ItemsSource = selectedWrappedFilteredUserCollection;
 
                 var root = JsonConvert.DeserializeObject<GlobalVariables.UserRecords>(records);
-                var userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
-                var hobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
-
+                
                 //Convert list to observable collection. This is easier for the grouping and filtering in the listview
                 var wrappedUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
                 var userCollection = new ObservableCollection<GlobalVariables.User>(root.records);
-                var userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
-                var selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(hobbyRoot.records);
                 var selectedUserhobbies = new ObservableCollection<GlobalVariables.UserHobby>();
-
+               
                 //wrap user collection
-
                 //check of userCollection is filled with different users
                 
                 foreach (var user in userCollection)
@@ -245,7 +265,11 @@ namespace Frindr
             {
                 if (user.distance == 0)
                 {
-                    var userPosition = await geocoder.GetPositionsForAddressAsync(user.User.location);
+                    try
+                    {
+                    string userLocation = user.User.location;
+
+                    var userPosition = await geocoder.GetPositionsForAddressAsync(userLocation);
                     var userCoordinates = userPosition.ToArray();
 
                     double distance = CalculateDistance(currentUserCoordinates[0].Latitude,
@@ -254,6 +278,12 @@ namespace Frindr
                     user.distance = (int)Math.Round(distance);
 
                     int d = user.distance;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Exception: " + e);
+                    }
+
                 }
                 
                 

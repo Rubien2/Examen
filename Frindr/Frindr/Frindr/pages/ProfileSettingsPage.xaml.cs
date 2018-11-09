@@ -84,9 +84,14 @@ namespace Frindr
 
                         con.Close();
                     }
-                    if (PasswordEntry.Text != "")
+                    string toBeHashedPWD = PasswordEntry.Text;
+
+                    if (toBeHashedPWD == "" || toBeHashedPWD == null)
                     {
-                        string toBeHashedPWD = PasswordEntry.Text;
+                        //i'm so sorry :(
+                    }else
+                    {
+                        
                         string hashedPWD = hash.HashString(toBeHashedPWD);
                         GlobalVariables.loginUser.pwd = hashedPWD;
 
