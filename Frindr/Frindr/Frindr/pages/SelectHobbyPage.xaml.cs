@@ -168,20 +168,16 @@ namespace Frindr.pages
                 string json1 = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
                 GlobalVariables.UserHobbyRecords hobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json1);
 
-                bool hobbyRemoved = false;
-
                 foreach (var hobby in hobbyRecords.records)
                 {
                     if (!unselected.selected && hobby.hobbyId == unselected.id)
                     {
-                        hobbyRemoved = true;
+
+                        rest.DeleteData($"/records/userHobby/{hobby.id}");
                         break;
                     }
                 }
-                if (hobbyRemoved)
-                {
-                    rest.DeleteData($"/records/userHobby/{unselected.id}");
-                }
+                
             }
             Navigation.PopModalAsync();
         }

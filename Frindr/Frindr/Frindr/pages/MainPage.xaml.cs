@@ -55,8 +55,7 @@ namespace Frindr
                                 while (rdr2.Read())
                                 {
                                     RestfulClass restful = new RestfulClass();
-
-                                    string rest = restful.GetData($"/records/user?filter=pwd,eq,{rdr2.GetString(2)}&filter=email,eq,{rdr2.GetString(3)}");
+                                    string rest = restful.GetData($"/records/user?filter=pwd,eq,{rdr2.GetString(2)}&filter=email,sw,{rdr2.GetString(3)}");
                                     UserRecords json = JsonConvert.DeserializeObject<UserRecords>(rest);
 
                                     GlobalVariables.loginUser.id = json.records[0].id;
