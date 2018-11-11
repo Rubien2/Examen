@@ -65,7 +65,7 @@ namespace Frindr
 
         private void SendEmail(string receiverEmail)
         {
-            MailMessage mail = new MailMessage("info@frindr.nl",receiverEmail, "Bedankt voor het registreren bij Frindr","test");
+            MailMessage mail = new MailMessage("info@frindr.nl",receiverEmail, "Bedankt voor het registreren bij Frindr",$"Welkom bij Frindr {GlobalVariables.loginUser.name}, een plaats waar u mensen kan vinden met dezelfde hobby's als u");
             SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
             smtpClient.UseDefaultCredentials = false;

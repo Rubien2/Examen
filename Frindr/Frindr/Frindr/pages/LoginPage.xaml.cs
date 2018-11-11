@@ -116,7 +116,7 @@ namespace Frindr
                                         }
                                         catch (SqliteException)
                                         {
-                                            DisplayAlert("Login error", "Couldn't log you in. Please try again or come back later", "ok");
+                                            
                                         }
                                     }
                                     rdr.Close();
@@ -130,12 +130,12 @@ namespace Frindr
 
                 catch (Exception)
                 {
-                    DisplayAlert("Login error", "Couldn't log you in. Please try again or come back later", "ok");
+                    
                 }
             }
             else
             {
-                DisplayAlert("Check internet connection", "Frindr could not connect to the internet, please check your internet connection and try again", "Continue");
+                DisplayAlert("Check internet verbinding", "Frindr kon geen internetverbinding krijgen", "ok");
             }
         }
 
