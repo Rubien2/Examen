@@ -24,29 +24,29 @@ namespace Frindr
         ObservableCollection<GlobalVariables.WrapUser> wrappedFilteredUserCollection = new ObservableCollection<GlobalVariables.WrapUser>();
 
         ImageSource defaultImage;
-        static string userHobby = GlobalVariables.GetUserHobbies();
-        static GlobalVariables.UserHobbyRecords userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
-        ObservableCollection<GlobalVariables.UserHobby> userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
 
         static string getHobbies = GlobalVariables.GetHobbies();
         static GlobalVariables.HobbyRecords hobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.HobbyRecords>(getHobbies);
         ObservableCollection<GlobalVariables.Hobbies> allHobbies = new ObservableCollection<GlobalVariables.Hobbies>(hobbyRoot.records);
 
         ObservableCollection<GlobalVariables.Hobbies> selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>();
-
+        RestfulClass restfulClass = new RestfulClass();
         //this is not a test
 
         public FriendFinderPage()
         {
             InitializeComponent();
 
+            string userHobby = GlobalVariables.GetUserHobbies();
+            GlobalVariables.UserHobbyRecords userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
+            ObservableCollection<GlobalVariables.UserHobby> userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
             //get default image
-            selectedHobbies = GetSelectedHobbies();
+            selectedHobbies = GetSelectedHobbies(userHobbies);
 
-            RestfulClass restfulClass = new RestfulClass();
+            
             defaultImage = restfulClass.GetImage("Default.png");
 
-            LoadUsers();
+            LoadUsers(userHobbies);
             SetRangeSliderTextFormat();
         }
 
@@ -64,7 +64,7 @@ namespace Frindr
             }
         }
 
-        private ObservableCollection<GlobalVariables.Hobbies> GetSelectedHobbies()
+        private ObservableCollection<GlobalVariables.Hobbies> GetSelectedHobbies(ObservableCollection<GlobalVariables.UserHobby> userHobbies)
         {
             var sHobbies = new ObservableCollection<GlobalVariables.Hobbies>();
 
@@ -79,7 +79,7 @@ namespace Frindr
             return sHobbies;
         }
 
-        private async void LoadUsers()
+        private async void LoadUsers(ObservableCollection<GlobalVariables.UserHobby> userHobbies)
         {
             //TODO: observable collection filteren en sorteren.
 
@@ -364,12 +364,20 @@ namespace Frindr
         //filter users when selected age changed
         private void DistanceRangeSlider_DragCompleted(object sender, ValueChangedEventArgs e)
         {
-            LoadUsers();
+            string userHobby = GlobalVariables.GetUserHobbies();
+            GlobalVariables.UserHobbyRecords userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
+            ObservableCollection<GlobalVariables.UserHobby> userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
+
+            LoadUsers(userHobbies);
         }
 
         private void AgeRangeSlider_DragCompleted(object sender, FocusEventArgs e)
         {
-            LoadUsers();
+            string userHobby = GlobalVariables.GetUserHobbies();
+            GlobalVariables.UserHobbyRecords userHobbyRoot = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(userHobby);
+            ObservableCollection<GlobalVariables.UserHobby> userHobbies = new ObservableCollection<GlobalVariables.UserHobby>(userHobbyRoot.records);
+
+            LoadUsers(userHobbies);
         }
 
         private void DistanceRangeSlider_UpperValueChanged(object sender, EventArgs e)

@@ -69,15 +69,6 @@ namespace Frindr
                                     GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
                                     GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
 
-                                    rest = restful.GetData($"/records/userHobby?filter=userId,eq,{json.records[0].id}");
-
-                                    GlobalVariables.UserHobbyRecords userHobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(rest);
-                                    foreach(var hobby in userHobbyRecords.records)
-                                    {
-                                        //get all selected hobbies somewhere
-
-                                    }
-
                                     Navigation.PushModalAsync(new MenuPage());
                                 }
                                 rdr2.Close();
