@@ -10,9 +10,7 @@ namespace Frindr
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LoginPage : ContentPage
     {
-        Connection conn = new Connection();
-        RestfulClass restful = new RestfulClass();
-        Hash hash = new Hash();
+        
 
         public LoginPage()
         {
@@ -21,6 +19,10 @@ namespace Frindr
 
         private void LoginButton_Clicked(object sender, EventArgs e)
         {
+            Connection conn = new Connection();
+            RestfulClass restful = new RestfulClass();
+            Hash hash = new Hash();
+
             if (conn.IsOnline())
             {
                 string hashedString = "";

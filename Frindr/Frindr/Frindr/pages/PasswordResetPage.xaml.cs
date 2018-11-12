@@ -72,6 +72,8 @@ namespace Frindr
 
                     
                     rest.SetData($"/records/user/{user.records[0].id}", json);
+
+                    Navigation.PushModalAsync(new LoginPage());
                 }
             }
             else
