@@ -51,29 +51,37 @@ namespace Frindr
             {
                 if (mailCheck)
                 {
-                    string toBeHashedPWD = RandomString();
+                    try
+                    {
+                        string toBeHashedPWD = RandomString();
 
-                    MailMessage mail = new MailMessage("info@frindr.nl", txtPasswordReset.Text, "Uw Frindr wachtwoord is gereset", $"Uw wachtwoord is veranderd naar {toBeHashedPWD}. U kunt uw wachtwoord de volgende keer weer veranderen in uw profiel instellingen");
-                    SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
-                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtpClient.UseDefaultCredentials = false;
-                    smtpClient.EnableSsl = true;
-                    smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
-                    smtpClient.Send(mail);
+                        MailMessage mail = new MailMessage("info@frindr.nl", txtPasswordReset.Text, "Uw Frindr wachtwoord is gereset", $"Uw wachtwoord is veranderd naar {toBeHashedPWD}. U kunt uw wachtwoord de volgende keer weer veranderen in uw profiel instellingen");
+                        SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.UseDefaultCredentials = false;
+                        smtpClient.EnableSsl = true;
+                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
+                        smtpClient.Send(mail);
 
-                    string getLostUser = rest.GetData($"/records/user?filter=email,eq,{txtPasswordReset.Text}");
-                    UserRecords user = JsonConvert.DeserializeObject<UserRecords>(getLostUser);
+                        string getLostUser = rest.GetData($"/records/user?filter=email,eq,{txtPasswordReset.Text}");
+                        UserRecords user = JsonConvert.DeserializeObject<UserRecords>(getLostUser);
+
+
+                        string hashedPWD = hash.HashString(toBeHashedPWD);
+
+                        user.records[0].pwd = hashedPWD;
+                        string json = JsonConvert.SerializeObject(user.records[0]);
+
+
+                        rest.SetData($"/records/user/{user.records[0].id}", json);
+
+                        Navigation.PushModalAsync(new LoginPage());
+                    }
+                    catch (SmtpException)
+                    {
+                        DisplayAlert("","Ongeldig emailadres, typ een geldig email adres in","ok");
+                    }
                     
-                    
-                    string hashedPWD = hash.HashString(toBeHashedPWD);
-
-                    user.records[0].pwd = hashedPWD;
-                    string json = JsonConvert.SerializeObject(user.records[0]);
-
-                    
-                    rest.SetData($"/records/user/{user.records[0].id}", json);
-
-                    Navigation.PushModalAsync(new LoginPage());
                 }
             }
             else

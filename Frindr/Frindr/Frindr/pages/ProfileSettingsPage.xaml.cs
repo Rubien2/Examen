@@ -91,7 +91,6 @@ namespace Frindr
                         //i'm so sorry :(
                     }else
                     {
-                        
                         string hashedPWD = hash.HashString(toBeHashedPWD);
                         GlobalVariables.loginUser.pwd = hashedPWD;
 
@@ -138,6 +137,10 @@ namespace Frindr
                 catch (SqliteException ea)
                 {
                     DisplayAlert("",ea.ToString(),"ok");
+                }
+                catch (SmtpException)
+                {
+                    DisplayAlert("", "Nieuw wachtwoord kon niet verzonden worden naar uw huidige email adres", "ok");
                 }
             }
         }
