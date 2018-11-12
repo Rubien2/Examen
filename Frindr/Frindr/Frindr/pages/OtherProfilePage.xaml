@@ -4,24 +4,16 @@
              x:Class="Frindr.OtherProfilePage">
     <ContentPage.Content>
         <StackLayout Margin="10">
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
 
-                <Image x:Name="imgProfileImage" Source="" Aspect="AspectFill" HeightRequest="145" WidthRequest="145" Grid.Column="0"/>
+            <StackLayout Orientation="Horizontal">
+                <Image x:Name="imgProfileImage" Source="" Aspect="AspectFill" HeightRequest="145" WidthRequest="145"/>
 
-                <StackLayout Grid.Column="1">
+                <StackLayout>
                     <Label x:Name="lblProfileName" Text="[Account naam]"/>
                     <Label x:Name="lblEmail" Text="[Email]"/>
                     <Label x:Name="lblLocation" Text="[Locatie]"/>
                 </StackLayout>
-            </Grid>
-
+            </StackLayout>
             <StackLayout Margin="0,0,0,10" VerticalOptions="End">
                 <Label Text="Beschrijving" FontSize="Large"/>
                 <Label x:Name="lblDescription" Text="[Beschrijving]"/>
