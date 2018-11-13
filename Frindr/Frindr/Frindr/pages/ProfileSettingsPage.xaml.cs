@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Frindr.pages;
@@ -61,70 +61,78 @@ namespace Frindr
             IsEnabled = true;
         }
 
+        private bool CheckAge()
+        {
+            var birthday = int.Parse(BirthdayPicker.Date.ToString("yyyyMMdd"));
+            var today = int.Parse(DateTime.Today.ToString("yyyyMMdd"));
+            var age = (today - birthday) / 10000;
+
+            if (age >= 18) return true;
+
+            else
+            {
+                DisplayAlert("", "Je moet minimaal 18 jaar zijn", "ok");
+                return false;
+            }
+        }
+
         private void SaveSettingsButton_Clicked(object sender, EventArgs e)
         {
             if (conn.IsOnline())
             {
                 try
                 {
-                    using (SqliteConnection con = conn.SQLConnection)
+                    if (CheckAge())
                     {
-                        con.Open();
+                        using (SqliteConnection con = conn.SQLConnection)
+                        {
+                            con.Open();
+                            SqliteCommand cmd = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}', email = '{EmailEntry.Text}'", con);
+                            cmd.ExecuteNonQuery();
+
+                            con.Close();
+                        }
+                        string toBeHashedPWD = PasswordEntry.Text;
+
+                        if (toBeHashedPWD != "" || toBeHashedPWD != null)
+                        {
+                            string hashedPWD = hash.HashString(toBeHashedPWD);
+                            GlobalVariables.loginUser.pwd = hashedPWD;
+
+                            MailMessage mail = new MailMessage("info@frindr.nl", GlobalVariables.loginUser.email, "Uw Frindr wachtwoord is veranderd", $"U heeft uw wachtwoord veranderd naar {toBeHashedPWD}");
+                            GlobalVariables.Client(mail);
+                        }
+
+
+                        GlobalVariables.loginUser.name = NameEntry.Text;
+                        GlobalVariables.loginUser.email = EmailEntry.Text;
+                        GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
+                        GlobalVariables.loginUser.description = DescriptionEditor.Text;
+
+                        GlobalVariables.loginUser.location = LocationEntry.Text;
+                        GlobalVariables.loginUser.userVisible = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
+                        GlobalVariables.loginUser.locationVisible = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
+
+                        string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
+
+                        //SetData's URL can not have filters in it and needs a primary key only
+                        rest.SetData($"/records/user/{GlobalVariables.loginUser.id}", json);
+                        Thread.Sleep(200);
+                        string newUserData = rest.GetData($"/records/user?filter=id,eq,{GlobalVariables.loginUser.id}");
+                        UserRecords newUser = JsonConvert.DeserializeObject<UserRecords>(newUserData);
+
+                        GlobalVariables.loginUser.name = newUser.records[0].name;
+                        GlobalVariables.loginUser.pwd = newUser.records[0].pwd;
+                        GlobalVariables.loginUser.email = newUser.records[0].email;
+                        GlobalVariables.loginUser.description = newUser.records[0].description;
+                        GlobalVariables.loginUser.birthday = newUser.records[0].birthday;
+                        GlobalVariables.loginUser.imagePath = newUser.records[0].imagePath;
+                        GlobalVariables.loginUser.location = newUser.records[0].location;
+                        GlobalVariables.loginUser.locationVisible = newUser.records[0].locationVisible;
+                        GlobalVariables.loginUser.userVisible = newUser.records[0].userVisible;
                         
-                        SqliteCommand cmd = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}', email = '{EmailEntry.Text}'",con);
-                        cmd.ExecuteNonQuery();
-
-                        con.Close();
+                        Navigation.PushModalAsync(new MenuPage());
                     }
-                    string toBeHashedPWD = PasswordEntry.Text;
-
-                    if (toBeHashedPWD == "" || toBeHashedPWD == null)
-                    {
-                        //i'm so sorry :(
-                    }else
-                    {
-                        string hashedPWD = hash.HashString(toBeHashedPWD);
-                        GlobalVariables.loginUser.pwd = hashedPWD;
-
-                        MailMessage mail = new MailMessage("info@frindr.nl", GlobalVariables.loginUser.email, "Uw Frindr wachtwoord is veranderd", $"U heeft uw wachtwoord veranderd naar {toBeHashedPWD}");
-                        SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
-                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtpClient.UseDefaultCredentials = false;
-                        smtpClient.EnableSsl = true;
-                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FrindrWachtwoord");
-                        smtpClient.Send(mail);
-                    }
-                    
-
-                    GlobalVariables.loginUser.name = NameEntry.Text;
-                    GlobalVariables.loginUser.email = EmailEntry.Text;
-                    GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
-                    GlobalVariables.loginUser.description = DescriptionEditor.Text;
-                    
-                    GlobalVariables.loginUser.location = LocationEntry.Text;
-                    GlobalVariables.loginUser.userVisible = Convert.ToInt32(PrivacyFindSwitch.IsToggled);
-                    GlobalVariables.loginUser.locationVisible = Convert.ToInt32(PrivacyLocationSwitch.IsToggled);
-
-                    string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
-                    
-                    //SetData's URL can not have filters in it and needs a primary key only
-                    rest.SetData($"/records/user/{GlobalVariables.loginUser.id}", json);
-
-                    string newUserData = rest.GetData($"/records/user?filter=id,eq,{GlobalVariables.loginUser.id}");
-                    UserRecords newUser = JsonConvert.DeserializeObject<UserRecords>(newUserData);
-                    
-                    GlobalVariables.loginUser.name = newUser.records[0].name;
-                    GlobalVariables.loginUser.pwd = newUser.records[0].pwd;
-                    GlobalVariables.loginUser.email = newUser.records[0].email;
-                    GlobalVariables.loginUser.description = newUser.records[0].description;
-                    GlobalVariables.loginUser.birthday = newUser.records[0].birthday;
-                    GlobalVariables.loginUser.imagePath = newUser.records[0].imagePath;
-                    GlobalVariables.loginUser.location = newUser.records[0].location;
-                    GlobalVariables.loginUser.locationVisible = newUser.records[0].locationVisible;
-                    GlobalVariables.loginUser.userVisible = newUser.records[0].userVisible;
-
-                    //Navigation.PopModalAsync();
-                    Navigation.PushModalAsync(new MainPage());
                 }
                 catch (SqliteException ea)
                 {

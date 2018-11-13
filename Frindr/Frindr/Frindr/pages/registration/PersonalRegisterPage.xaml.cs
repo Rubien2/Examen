@@ -33,7 +33,7 @@ namespace Frindr
                 {
                     GlobalVariables.loginUser.name = NameEntry.Text;
                     GlobalVariables.loginUser.location = LocationEntry.Text;
-                    GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
+                    GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyy-MM-dd");
                     GlobalVariables.loginUser.imagePath = "iets";
 
                     HobbyRegisterPage hobbyRegisterPage = new HobbyRegisterPage();

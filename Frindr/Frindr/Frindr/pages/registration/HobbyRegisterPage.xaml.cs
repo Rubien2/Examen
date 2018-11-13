@@ -103,12 +103,7 @@ namespace Frindr
             try
             {
                 MailMessage mail = new MailMessage("info@frindr.nl", receiverEmail, "Bedankt voor het registreren bij Frindr", $"Welkom bij Frindr {GlobalVariables.loginUser.name}, een plaats waar u mensen kan vinden met dezelfde hobby's als u");
-                SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
-                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtpClient.UseDefaultCredentials = false;
-                smtpClient.EnableSsl = true;
-                smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FrindrWachtwoord");
-                smtpClient.Send(mail);
+                GlobalVariables.Client(mail);
             }
             catch (SmtpException)
             {

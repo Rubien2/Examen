@@ -55,8 +55,8 @@ namespace Frindr.pages
         }
         private List<int> GetSelectedUserHobbies()
         {
-
-            GlobalVariables.UserHobbyRecords userHobby = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(MainPage.UserHobby);
+            string getUserHobbies = GlobalVariables.GetUserHobbies();
+            GlobalVariables.UserHobbyRecords userHobby = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(getUserHobbies);
 
             List<int> hobbyIdList = new List<int>();
 

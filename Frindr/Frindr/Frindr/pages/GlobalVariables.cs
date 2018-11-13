@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
+using System.Net.Mail;
 
 namespace Frindr.pages
 {
@@ -43,6 +44,17 @@ namespace Frindr.pages
                 return null;
             }
 
+        }
+
+        public static SmtpClient Client (MailMessage mail)
+        {
+            SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.EnableSsl = true;
+            smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FantastischFrindrWachtwoord");
+            smtpClient.Send(mail);
+            return smtpClient;
         }
 
         public class Hobbies

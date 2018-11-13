@@ -56,12 +56,8 @@ namespace Frindr
                         string toBeHashedPWD = RandomString();
 
                         MailMessage mail = new MailMessage("info@frindr.nl", txtPasswordReset.Text, "Uw Frindr wachtwoord is gereset", $"Uw wachtwoord is veranderd naar {toBeHashedPWD}. U kunt uw wachtwoord de volgende keer weer veranderen in uw profiel instellingen");
-                        SmtpClient smtpClient = new SmtpClient("smtp.strato.com", 587);
-                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtpClient.UseDefaultCredentials = false;
-                        smtpClient.EnableSsl = true;
-                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FrindrWachtwoord");
-                        smtpClient.Send(mail);
+
+                        GlobalVariables.Client(mail);
 
                         string getLostUser = rest.GetData($"/records/user?filter=email,eq,{txtPasswordReset.Text}");
                         UserRecords user = JsonConvert.DeserializeObject<UserRecords>(getLostUser);

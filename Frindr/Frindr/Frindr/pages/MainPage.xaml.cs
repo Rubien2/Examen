@@ -3,16 +3,13 @@ using Microsoft.Data.Sqlite;
 using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
-using Frindr.pages;
 
 namespace Frindr
 {
     public partial class MainPage : ContentPage
     {
         Connection conn = new Connection();
-        
 
-        public static string Users { get; set; }
         public static string Hobbies { get; set; }
         public static string UserHobby { get; set; }
 
@@ -20,9 +17,9 @@ namespace Frindr
         {
             InitializeComponent();
 
-            Users = GlobalVariables.GetUsers();
             Hobbies = GlobalVariables.GetHobbies();
             UserHobby = GlobalVariables.GetUserHobbies();
+
             try
             {
                 using (SqliteConnection con = conn.SQLConnection)
