@@ -31,14 +31,6 @@ namespace Frindr
 
                 if (CheckName(NameEntry.Text) && await CheckLocationAsync(LocationEntry.Text) && CheckAge())
                 {
-                    using (SqliteConnection con = conn.SQLConnection)
-                    {
-                        con.Open();
-                        SqliteCommand cmd = new SqliteCommand($"UPDATE client SET name = '{NameEntry.Text}'", con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                    }
-
                     GlobalVariables.loginUser.name = NameEntry.Text;
                     GlobalVariables.loginUser.location = LocationEntry.Text;
                     GlobalVariables.loginUser.birthday = BirthdayPicker.Date.ToString("yyyyMMdd");
@@ -50,7 +42,7 @@ namespace Frindr
             }
             else
             {
-                await DisplayAlert("Check internet connection", "Frindr could not connect to the internet, please check your internet connection and try again", "Continue");
+                await DisplayAlert("Check internet verbinding", "Frindr kon niet met het internet verbinden", "ok");
             }
         }
 

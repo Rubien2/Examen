@@ -60,7 +60,7 @@ namespace Frindr
                         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                         smtpClient.UseDefaultCredentials = false;
                         smtpClient.EnableSsl = true;
-                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
+                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FrindrWachtwoord");
                         smtpClient.Send(mail);
 
                         string getLostUser = rest.GetData($"/records/user?filter=email,eq,{txtPasswordReset.Text}");
@@ -77,10 +77,15 @@ namespace Frindr
 
                         Navigation.PushModalAsync(new LoginPage());
                     }
-                    catch (SmtpException)
+                    catch (SmtpException ea)
                     {
-                        DisplayAlert("","Ongeldig emailadres, typ een geldig email adres in","ok");
+                        DisplayAlert(ea.ToString(), ea.ToString(), "ok");
                     }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        DisplayAlert("","Email bestaat niet, kies een geldig email adres","ok");
+                    }
+
                     
                 }
             }

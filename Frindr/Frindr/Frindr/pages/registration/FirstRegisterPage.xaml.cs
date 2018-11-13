@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Microsoft.Data.Sqlite;
 using Frindr.pages;
+using Newtonsoft.Json;
 
 namespace Frindr
 {
@@ -15,7 +16,7 @@ namespace Frindr
     public partial class FirstRegisterPage : ContentPage
     {
         Connection conn = new Connection();
-        RestfulClass restful = new RestfulClass();
+        RestfulClass rest = new RestfulClass();
         Hash hash = new Hash();
         string hashedString;
 
@@ -33,43 +34,11 @@ namespace Frindr
         {
             if (conn.IsOnline())
             {
-                if (CheckEmail(EmailEntry.Text) && CheckPassword(PasswordEntry.Text) && PasswordEntry.Text == ConfirmPasswordEntry.Text)
+                string checkEmail = rest.GetData($"/records/user?filter=email,eq,{EmailEntry.Text}");
+                UserRecords userRecords = JsonConvert.DeserializeObject<UserRecords>(checkEmail);
+
+                if (ValidateEmail(EmailEntry.Text) && CheckPassword(PasswordEntry.Text) && PasswordEntry.Text == ConfirmPasswordEntry.Text && userRecords.records.Count == 0)
                 {
-                    try
-                    {
-                        using (SqliteConnection con = conn.SQLConnection)
-                        {
-                            con.Open();
-                            SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
-                            cmd.ExecuteNonQuery();
-
-                            SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1", con);
-                            cmd1.ExecuteNonQuery();
-
-                            using (SqliteDataReader rdr = cmd1.ExecuteReader())
-                            {
-                                if (!rdr.HasRows)
-                                {
-                                    SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (pw, email, auto) VALUES ('{hashedString}', '{EmailEntry.Text}', 1)", con);
-                                    cmd2.ExecuteNonQuery();
-                                }
-
-                                while (rdr.Read())
-                                {
-                                    SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET pw = '{hashedString}', email = '{EmailEntry.Text}', auto = 1", con);
-                                    cmd3.ExecuteNonQuery();
-                                }
-                                rdr.Close();
-                            }
-                            con.Close();
-                        }
-                    }
-                    //remove later
-                    catch (SqliteException)
-                    {
-                        DisplayAlert("An error occurred", "Git gud", "Ok");
-                    }
-
                     GlobalVariables.loginUser.email = EmailEntry.Text;
                     GlobalVariables.loginUser.pwd = hashedString;
                     GlobalVariables.loginUser.description = "";
@@ -77,10 +46,18 @@ namespace Frindr
                     PersonalRegisterPage personalRegisterPage = new PersonalRegisterPage();
                     Navigation.PushModalAsync(personalRegisterPage);
                 }
+                else if (!ValidateEmail(EmailEntry.Text))
+                {
+                    DisplayAlert("", "Email adres is niet geldig", "ok");
+                }
+                else if (userRecords.records.Count > 0)
+                {
+                    DisplayAlert("","Email is al in gebruik","ok");
+                }
             }
             else
             {
-                DisplayAlert("Check internet connection", "Frindr could not connect to the internet, please check your internet connection and try again", "Continue");
+                DisplayAlert("Check internet verbinding", "Frindr kon niet met het internet verbinden", "ok");
             }
         }
 
@@ -90,18 +67,15 @@ namespace Frindr
             Navigation.PushModalAsync(loginPage);
         }
 
-        private bool CheckEmail(string email)
+        public bool ValidateEmail(string email)
         {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                DisplayAlert("", "Email adres is niet geldig", "ok");
+            Regex EmailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+
+            if (string.IsNullOrWhiteSpace(email)){
                 return false;
             }
+
+            return EmailRegex.IsMatch(email);
         }
 
         private bool CheckPassword(string password)

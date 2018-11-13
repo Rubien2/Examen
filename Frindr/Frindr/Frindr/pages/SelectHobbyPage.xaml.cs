@@ -137,12 +137,14 @@ namespace Frindr.pages
             string json = rest.GetData($"/records/user?filter=id,eq,{GlobalVariables.loginUser.id}");
             UserRecords deJson = JsonConvert.DeserializeObject<UserRecords>(json);
             Thread.Sleep(200);
-            
+
+            string json1 = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
+            GlobalVariables.UserHobbyRecords records = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json1);
+
             //ignore hobbies previously selected
             foreach (var hobby in selected)
             {
-                string json1 = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
-                GlobalVariables.UserHobbyRecords records = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json1);
+                
 
                 GlobalVariables.hobbyUser.userId = deJson.records[0].id ?? default(int);
                 GlobalVariables.hobbyUser.hobbyId = hobby.id;
@@ -165,8 +167,8 @@ namespace Frindr.pages
             }
             foreach (var unselected in hobbiesCollection)
             {
-                string json1 = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
-                GlobalVariables.UserHobbyRecords hobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json1);
+                string json3 = rest.GetData($"/records/userHobby?filter=userId,eq,{GlobalVariables.loginUser.id}");
+                GlobalVariables.UserHobbyRecords hobbyRecords = JsonConvert.DeserializeObject<GlobalVariables.UserHobbyRecords>(json3);
 
                 foreach (var hobby in hobbyRecords.records)
                 {

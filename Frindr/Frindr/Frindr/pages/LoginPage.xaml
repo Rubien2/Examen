@@ -6,7 +6,7 @@
         <StackLayout>
             <Label Text="FRINDR" FontSize="75" HorizontalOptions="CenterAndExpand" Margin="50"/>
             <StackLayout Margin="0, 50, 0, 0">
-            <Entry Placeholder="Naam" x:Name="NameEntry"/>
+            <Entry Placeholder="Email" x:Name="NameEntry"/>
             <Entry Placeholder="Wachtwoord" x:Name="PasswordEntry" IsPassword="True"/>
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
                 <Button Text="Registreer" x:Name="RegisterButton" HorizontalOptions="CenterAndExpand" WidthRequest="150" Clicked="RegisterButton_Clicked"/>
