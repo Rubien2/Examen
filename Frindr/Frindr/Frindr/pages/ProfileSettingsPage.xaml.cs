@@ -26,6 +26,7 @@ namespace Frindr
 
         public ProfileSettingsPage ()
 		{
+
 			InitializeComponent ();
 
    
@@ -157,7 +158,15 @@ namespace Frindr
             {
             await CrossMedia.Current.Initialize();
 
-            selectedImageFilePath = await CrossMedia.Current.PickPhotoAsync();
+            //selectedImageFilePath = await CrossMedia.Current.PickPhotoAsync();
+
+            var selectedImageFilePath = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions
+            {
+                    PhotoSize = PhotoSize.Small,
+
+                    CompressionQuality = 75,
+            });
+               
 
             ProfileImage.Source = selectedImageFilePath.Path;
 
