@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 using Frindr.pages;
+using Xamarin.Forms.Maps;
 
 namespace Frindr
 {
@@ -23,11 +24,12 @@ namespace Frindr
             InitializeComponent();
         }
 
-        private void NextButton_Clicked(object sender, EventArgs e)
+        private async void NextButton_Clicked(object sender, EventArgs e)
         {
             if (conn.IsOnline())
             {
-                if (CheckName(NameEntry.Text) && CheckLocation(LocationEntry.Text) && CheckAge())
+
+                if (CheckName(NameEntry.Text) && await CheckLocationAsync(LocationEntry.Text) && CheckAge())
                 {
                     using (SqliteConnection con = conn.SQLConnection)
                     {
@@ -43,34 +45,46 @@ namespace Frindr
                     GlobalVariables.loginUser.imagePath = "iets";
 
                     HobbyRegisterPage hobbyRegisterPage = new HobbyRegisterPage();
-                    Navigation.PushModalAsync(hobbyRegisterPage);
+                    await Navigation.PushModalAsync(hobbyRegisterPage);
                 }
             }
             else
             {
-                DisplayAlert("Check internet connection", "Frindr could not connect to the internet, please check your internet connection and try again", "Continue");
+                await DisplayAlert("Check internet connection", "Frindr could not connect to the internet, please check your internet connection and try again", "Continue");
             }
         }
 
-        private bool CheckLocation(string location)
+        private async Task<bool> CheckLocationAsync(string location)
         {
             string regex = @"^[1-9][0-9]{3}\s?[a-zA-Z]{2}$";
 
             if (location == null)
             {
-                DisplayAlert("", "Voer een Postcode in", "ok");
+                await DisplayAlert("", "Voer een Postcode in", "ok");
                 return false;
             }
 
             bool isLocationValid = Regex.IsMatch(location, regex);
 
+            
+
             if (isLocationValid)
             {
+
+                Geocoder geocoder = new Geocoder();
+                var currentUserPosition = await geocoder.GetPositionsForAddressAsync(location);
+
+                if(currentUserPosition == null)
+                {
+                    await DisplayAlert("", "Postcode is ongeldig", "ok");
+                    return false;
+                }
+
                 return true;
             }
             else
             {
-                DisplayAlert("", "Postcode is ongeldig", "ok");
+                await DisplayAlert("", "Postcode is ongeldig", "ok");
                 return false;
             }
         }
