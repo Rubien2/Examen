@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using Frindr.pages;
 using Plugin.Messaging;
 using System.Net.Mail;
+using Microsoft.Data.Sqlite;
 
 namespace Frindr
 {
@@ -23,6 +24,7 @@ namespace Frindr
         private ObservableCollection<GlobalVariables.Hobbies> hobbiesCollection = GlobalVariables.hobbiesCollection;
         private ObservableCollection<GlobalVariables.Hobbies> selectedHobbies = GlobalVariables.selectedHobbies;
 
+        Connection conn = new Connection();
 
         public HobbyRegisterPage ()
 		{
@@ -33,6 +35,39 @@ namespace Frindr
 
         private void CreateAccountButton_Clicked(object sender, EventArgs e)    
         {
+            try
+            {
+                using (SqliteConnection con = conn.SQLConnection)
+                {
+                    con.Open();
+                    SqliteCommand cmd = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
+                    cmd.ExecuteNonQuery();
+
+                    SqliteCommand cmd1 = new SqliteCommand("SELECT * FROM client WHERE id = 1", con);
+                    cmd1.ExecuteNonQuery();
+
+                    using (SqliteDataReader rdr = cmd1.ExecuteReader())
+                    {
+                        if (!rdr.HasRows)
+                        {
+                            SqliteCommand cmd2 = new SqliteCommand($"INSERT INTO client (name, pw, email, auto) VALUES ('{GlobalVariables.loginUser.name}', '{GlobalVariables.loginUser.pwd}', '{GlobalVariables.loginUser.email}', 1)", con);
+                            cmd2.ExecuteNonQuery();
+                        }
+
+                        while (rdr.Read())
+                        {
+                            SqliteCommand cmd3 = new SqliteCommand($"UPDATE client SET name = '{GlobalVariables.loginUser.name}', pw = '{GlobalVariables.loginUser.pwd}', email = '{GlobalVariables.loginUser.email}', auto = 1", con);
+                            cmd3.ExecuteNonQuery();
+                        }
+                        rdr.Close();
+                    }
+                    con.Close();
+                }
+
+            }
+            catch (SqliteException)
+            {
+            }
 
             var selected = hobbiesCollection
              .Where(p => p.selected)
@@ -72,7 +107,7 @@ namespace Frindr
                 smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtpClient.UseDefaultCredentials = false;
                 smtpClient.EnableSsl = true;
-                smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
+                smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FrindrWachtwoord");
                 smtpClient.Send(mail);
             }
             catch (SmtpException)

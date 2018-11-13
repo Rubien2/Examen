@@ -50,14 +50,14 @@ namespace Frindr
                             SqliteCommand cmd5 = new SqliteCommand("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), pw VARCHAR(256), email VARCHAR(255), auto TINYINT(1))", con);
                             cmd5.ExecuteNonQuery();
 
-                            string getUser = restful.GetData($"/records/user?filter=name,eq,{NameEntry.Text}&filter=pwd,eq,{hashedString}");
+                            string getUser = restful.GetData($"/records/user?filter=email,eq,{NameEntry.Text}&filter=pwd,eq,{hashedString}");
 
                             UserRecords json = JsonConvert.DeserializeObject<UserRecords>(getUser);
                             if (json.records.Count == 0)
                             {
                                 DisplayAlert("", "Gebruikersnaam en/of wachtwoord is verkeerd, vul dit a.u.b. correct in", "ok");
                             }
-                            if (NameEntry.Text == json.records[0].name && hashedString == json.records[0].pwd)
+                            if (NameEntry.Text == json.records[0].email && hashedString == json.records[0].pwd)
                             {
                                 string cmdStr = $"SELECT * FROM client WHERE id = 1";
 

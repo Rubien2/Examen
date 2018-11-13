@@ -43,18 +43,9 @@ namespace Frindr
 
             NameEntry.Text = GlobalVariables.loginUser.name;
             EmailEntry.Text = GlobalVariables.loginUser.email;
+            BirthdayPicker.Date = Convert.ToDateTime(GlobalVariables.loginUser.birthday);
             LocationEntry.Text = GlobalVariables.loginUser.location;
             DescriptionEditor.Text = GlobalVariables.loginUser.description;
-
-            try
-            {
-                BirthdayPicker.Date = Convert.ToDateTime(GlobalVariables.loginUser.birthday);
-            }
-            catch (FormatException f)
-            {
-                //check later
-                //BirthdayPicker.Date = GlobalVariables.loginUser.birthday;
-            }
             
             PrivacyFindSwitch.IsToggled = Convert.ToBoolean(GlobalVariables.loginUser.userVisible);
             PrivacyLocationSwitch.IsToggled = Convert.ToBoolean(GlobalVariables.loginUser.locationVisible);
@@ -99,7 +90,7 @@ namespace Frindr
                         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                         smtpClient.UseDefaultCredentials = false;
                         smtpClient.EnableSsl = true;
-                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "frindrwachtwoord");
+                        smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FrindrWachtwoord");
                         smtpClient.Send(mail);
                     }
                     
