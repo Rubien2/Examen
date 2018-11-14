@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Microsoft.Data.Sqlite;
@@ -16,7 +16,7 @@ namespace Frindr.pages
         public LogoutPage()
         {
             InitializeComponent();
-            string cmdStr = "DROP TABLE IF EXISTS client";
+            string cmdStr = "DELETE FROM client";
             Connection conn = new Connection();
 
             using (SqliteConnection con = conn.SQLConnection)

@@ -75,6 +75,7 @@ namespace Frindr
             GlobalVariables.selectedHobbies = new ObservableCollection<GlobalVariables.Hobbies>(selected);
 
             RestfulClass rest = new RestfulClass();
+            GlobalVariables.loginUser.id = null;
             string json = JsonConvert.SerializeObject(GlobalVariables.loginUser);
             rest.CreateData("/records/user/", json);
 
@@ -137,11 +138,6 @@ namespace Frindr
                 //add hobbies to groups
                 foreach (var hobby in hobbiesCollection)
                 {
-                    if (selectedHobbies != null && selectedHobbies.Any(p => p.id == hobby.id))
-                    {
-                        hobby.selected = true;
-                    }
-
                     int caseSwitch = hobby.hobbyCategoryId;
                     switch (caseSwitch)
                     {
