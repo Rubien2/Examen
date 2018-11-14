@@ -94,12 +94,12 @@ namespace Frindr
                         }
                         string toBeHashedPWD = PasswordEntry.Text;
 
-                        if (toBeHashedPWD != "" || toBeHashedPWD != null)
+                        if (toBeHashedPWD != "" && toBeHashedPWD != null)
                         {
                             string hashedPWD = hash.HashString(toBeHashedPWD);
                             GlobalVariables.loginUser.pwd = hashedPWD;
 
-                            MailMessage mail = new MailMessage("info@frindr.nl", GlobalVariables.loginUser.email, "Uw Frindr wachtwoord is veranderd", $"U heeft uw wachtwoord veranderd naar {toBeHashedPWD}");
+                            MailMessage mail = new MailMessage("no-reply@frindr.nl", GlobalVariables.loginUser.email, "Uw Frindr wachtwoord is veranderd", $"U heeft uw wachtwoord veranderd naar {toBeHashedPWD}");
                             GlobalVariables.Client(mail);
                         }
 

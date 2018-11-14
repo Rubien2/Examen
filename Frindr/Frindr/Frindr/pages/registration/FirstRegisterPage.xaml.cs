@@ -37,6 +37,8 @@ namespace Frindr
                 string checkEmail = rest.GetData($"/records/user?filter=email,eq,{EmailEntry.Text}");
                 UserRecords userRecords = JsonConvert.DeserializeObject<UserRecords>(checkEmail);
 
+                EmailEntry.Text.Replace(" ", string.Empty);
+
                 if (ValidateEmail(EmailEntry.Text) && CheckPassword(PasswordEntry.Text) && PasswordEntry.Text == ConfirmPasswordEntry.Text && userRecords.records.Count == 0)
                 {
                     GlobalVariables.loginUser.email = EmailEntry.Text;

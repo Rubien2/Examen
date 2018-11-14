@@ -52,7 +52,7 @@ namespace Frindr.pages
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
             smtpClient.UseDefaultCredentials = false;
             smtpClient.EnableSsl = true;
-            smtpClient.Credentials = new System.Net.NetworkCredential("info@frindr.nl", "FantastischFrindrWachtwoord");
+            smtpClient.Credentials = new System.Net.NetworkCredential("no-reply@frindr.nl", "frindrwachtwoord");
             smtpClient.Send(mail);
             return smtpClient;
         }

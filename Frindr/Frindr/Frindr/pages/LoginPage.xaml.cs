@@ -57,82 +57,90 @@ namespace Frindr
                             {
                                 DisplayAlert("", "Gebruikersnaam en/of wachtwoord is verkeerd, vul dit a.u.b. correct in", "ok");
                             }
-                            if (NameEntry.Text == json.records[0].email && hashedString == json.records[0].pwd)
+                            else
                             {
-                                string cmdStr = $"SELECT * FROM client WHERE id = 1";
+                                NameEntry.Text.Replace(" ", string.Empty);
 
-                                SqliteCommand cmd = new SqliteCommand(cmdStr, con);
-                                cmd.ExecuteNonQuery();
-
-                                using (SqliteDataReader rdr = cmd.ExecuteReader())
+                                if (NameEntry.Text == json.records[0].email && hashedString == json.records[0].pwd)
                                 {
-                                    if (!rdr.HasRows)
+                                    string cmdStr = $"SELECT * FROM client WHERE id = 1";
+
+                                    SqliteCommand cmd = new SqliteCommand(cmdStr, con);
+                                    cmd.ExecuteNonQuery();
+
+                                    using (SqliteDataReader rdr = cmd.ExecuteReader())
                                     {
-                                        try
+                                        if (!rdr.HasRows)
                                         {
-                                            string cmdStr2 = $"INSERT INTO client (name, pw, email, auto) VALUES ('{json.records[0].name}','{json.records[0].pwd}','{json.records[0].email}', {Convert.ToInt32(RememberSwitch.IsToggled)})";
-                                            SqliteCommand cmd2 = new SqliteCommand(cmdStr2, con);
-                                            cmd2.ExecuteNonQuery();
+                                            try
+                                            {
+                                                string cmdStr2 = $"INSERT INTO client (name, pw, email, auto) VALUES ('{json.records[0].name}','{json.records[0].pwd}','{json.records[0].email}', {Convert.ToInt32(RememberSwitch.IsToggled)})";
+                                                SqliteCommand cmd2 = new SqliteCommand(cmdStr2, con);
+                                                cmd2.ExecuteNonQuery();
 
-                                            GlobalVariables.loginUser.id = json.records[0].id;
-                                            GlobalVariables.loginUser.name = json.records[0].name;
-                                            GlobalVariables.loginUser.pwd = json.records[0].pwd;
-                                            GlobalVariables.loginUser.email = json.records[0].email;
-                                            GlobalVariables.loginUser.description = json.records[0].description;
-                                            GlobalVariables.loginUser.birthday = json.records[0].birthday;
-                                            GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
-                                            GlobalVariables.loginUser.location = json.records[0].location;
-                                            GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
-                                            GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
+                                                GlobalVariables.loginUser.id = json.records[0].id;
+                                                GlobalVariables.loginUser.name = json.records[0].name;
+                                                GlobalVariables.loginUser.pwd = json.records[0].pwd;
+                                                GlobalVariables.loginUser.email = json.records[0].email;
+                                                GlobalVariables.loginUser.description = json.records[0].description;
+                                                GlobalVariables.loginUser.birthday = json.records[0].birthday;
+                                                GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
+                                                GlobalVariables.loginUser.location = json.records[0].location;
+                                                GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
+                                                GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
 
-                                            MenuPage profile = new MenuPage();
-                                            Navigation.PushModalAsync(profile);
+                                                MenuPage profile = new MenuPage();
+                                                Navigation.PushModalAsync(profile);
+                                            }
+                                            catch (SqliteException)
+                                            {
+                                                DisplayAlert("Login error", "Couldn't log you in. Please try again or come back later", "ok");
+                                            }
                                         }
-                                        catch (SqliteException)
+
+                                        while (rdr.Read())
                                         {
-                                            DisplayAlert("Login error", "Couldn't log you in. Please try again or come back later", "ok");
+                                            try
+                                            {
+                                                string cmdStr1 = $"UPDATE client SET name = '{json.records[0].name}', pw = '{json.records[0].pwd}', email = '{json.records[0].email}', auto = {Convert.ToInt32(RememberSwitch.IsToggled)} WHERE id = 1";
+                                                SqliteCommand cmd1 = new SqliteCommand(cmdStr1, con);
+                                                cmd1.ExecuteNonQuery();
+
+                                                GlobalVariables.loginUser.id = json.records[0].id;
+                                                GlobalVariables.loginUser.name = json.records[0].name;
+                                                GlobalVariables.loginUser.pwd = json.records[0].pwd;
+                                                GlobalVariables.loginUser.email = json.records[0].email;
+                                                GlobalVariables.loginUser.description = json.records[0].description;
+                                                GlobalVariables.loginUser.birthday = json.records[0].birthday;
+                                                GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
+                                                GlobalVariables.loginUser.location = json.records[0].location;
+                                                GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
+                                                GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
+
+                                                MenuPage menuPage = new MenuPage();
+                                                Navigation.PushModalAsync(menuPage);
+                                            }
+                                            catch (SqliteException)
+                                            {
+
+                                            }
                                         }
+                                        rdr.Close();
                                     }
-
-                                    while (rdr.Read())
-                                    {
-                                        try
-                                        {
-                                            string cmdStr1 = $"UPDATE client SET name = '{json.records[0].name}', pw = '{json.records[0].pwd}', email = '{json.records[0].email}', auto = {Convert.ToInt32(RememberSwitch.IsToggled)} WHERE id = 1";
-                                            SqliteCommand cmd1 = new SqliteCommand(cmdStr1, con);
-                                            cmd1.ExecuteNonQuery();
-
-                                            GlobalVariables.loginUser.id = json.records[0].id;
-                                            GlobalVariables.loginUser.name = json.records[0].name;
-                                            GlobalVariables.loginUser.pwd = json.records[0].pwd;
-                                            GlobalVariables.loginUser.email = json.records[0].email;
-                                            GlobalVariables.loginUser.description = json.records[0].description;
-                                            GlobalVariables.loginUser.birthday = json.records[0].birthday;
-                                            GlobalVariables.loginUser.imagePath = json.records[0].imagePath;
-                                            GlobalVariables.loginUser.location = json.records[0].location;
-                                            GlobalVariables.loginUser.locationVisible = json.records[0].locationVisible;
-                                            GlobalVariables.loginUser.userVisible = json.records[0].userVisible;
-
-                                            MenuPage menuPage = new MenuPage();
-                                            Navigation.PushModalAsync(menuPage);
-                                        }
-                                        catch (SqliteException)
-                                        {
-                                            
-                                        }
-                                    }
-                                    rdr.Close();
+                                    con.Close();
                                 }
-                                con.Close();
+                                else
+                                {
+                                    DisplayAlert("", "Gebruikersnaam en/of wachtwoord klopt niet", "ok");
+                                }
                             }
                         }
                     }
-                    
                 }
 
-                catch (Exception)
+                catch (Exception ea)
                 {
-                    
+                    DisplayAlert("",ea.ToString(),"ok");
                 }
             }
             else

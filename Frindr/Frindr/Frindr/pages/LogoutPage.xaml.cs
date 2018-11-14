@@ -16,16 +16,6 @@ namespace Frindr.pages
         public LogoutPage()
         {
             InitializeComponent();
-        }
-
-        protected override void OnAppearing()
-        {
-            GlobalVariables.loginUser = null;
-            GlobalVariables.hobbyUser = null;
-            GlobalVariables.userHobbies = null;
-            GlobalVariables.users = null;
-            GlobalVariables.records = null;
-
             string cmdStr = "DROP TABLE IF EXISTS client";
             Connection conn = new Connection();
 
@@ -35,7 +25,7 @@ namespace Frindr.pages
                 SqliteCommand cmd = new SqliteCommand(cmdStr, con);
                 cmd.ExecuteNonQuery();
                 con.Close();
-                Navigation.PushModalAsync(new LoginPage());
+                Navigation.PushModalAsync(new MainPage());
             }
         }
     }
